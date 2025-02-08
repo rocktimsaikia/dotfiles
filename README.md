@@ -1,11 +1,10 @@
-### 0. Aliases and shell config
+### 1. Requirements and essentials packages
 
 ```sh
-# Soft link the alias config to root dir
-ln -sf ~/dot/.aliases ~/
+sudo apt install zsh neofetch bat ripgrep fuse
 ```
 
-> Change the default shell to Zsh in case it's something else.
+### 2. Aliases and shell config
 
 ```sh
 # Check current shell
@@ -14,41 +13,17 @@ echo $SHELL
 # Check in zsh is available or not
 cat /etc/shells
 
-# If not installed, install it
-sudo apt install zsh
-
 # Change it to zsh and reboot
 chsh -s /bin/zsh
 
 # Setup my zsh config and plugins
+ln -sf ~/dot/.aliases ~/
 ln -sf ~/dot/.zshrc ~/
 ln -sf ~/dot/antigen.zsh ~/
 
 # Install/setup starship (customizable prompt)
 curl -sS https://starship.rs/install.sh | sh
 ln -sf ~/dot/.config/starship.toml ~/.config/
-```
-
-### 1. Requirements and essentials packages
-
-```sh
-sudo apt install
-neofetch \
-exa \
-bat \
-ripgrep \
-gh \
-```
-
-### 2. Custom scripts and fonts
-
-```sh
-# Setup local bin scripts
-ln -sf ~/dot/bin ~/bin
-
-# Install the custom fonts
-ln -sf ~/dot/.local/share/fonts ~/.local/share
-fc-cache -f -v
 ```
 
 ### 3. Install/setup Neovim
@@ -95,12 +70,24 @@ lua-language-server
 curl -L https://bit.ly/n-install | bash
 
 # We will only install `pnpm` LSP servers and formatters for nvim globally via npm
-npm install -g
-pnpm \
-typescript \
-typescript-language-server \
-pyright \
-@johnnymorganz/stylua-bin \
-@biomejs/biome \
-@tailwindcss/language-server
+npm install -g \
+  pnpm \
+  typescript \
+  typescript-language-server \
+  pyright \
+  @johnnymorganz/stylua-bin \
+  @biomejs/biome \
+  @tailwindcss/language-server
+```
+
+
+### 2. Custom scripts and fonts
+
+```sh
+# Setup local bin scripts
+ln -sf ~/dot/bin ~/bin
+
+# Install the custom fonts
+ln -sf ~/dot/.local/share/fonts ~/.local/share
+fc-cache -f -v
 ```
