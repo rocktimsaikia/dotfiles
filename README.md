@@ -94,12 +94,9 @@ lua-language-server
 # This will install n, latest LTS node and npm version.
 curl -L https://bit.ly/n-install | bash
 
-# We will only install `pnpm` globally via npm nothing else
-# all other global packages will be installed via pnpm only.
-npm install -g pnpm
-
-# Install LSP servers and formatters for nvim
-pnpm add -g
+# We will only install `pnpm` LSP servers and formatters for nvim globally via npm
+npm install -g
+pnpm \
 typescript \
 typescript-language-server \
 pyright \
