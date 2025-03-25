@@ -8,7 +8,8 @@ SAVEHIST=10000         # Number of commands to save in the history file
 
 export EDITOR=nvim
 
-cd ~/main
+# Set the start directory here
+# cd ~/main
 
 # Load the aliases
 source "$HOME/.aliases"

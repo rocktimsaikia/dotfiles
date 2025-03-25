@@ -2,8 +2,10 @@
 alias myip="curl https://ipinfo.io/"
 alias weather="curl https://wttr.in/"
 
+# System
+alias ls="ls --color=auto"
+
 alias zshrc="source ~/.zshrc"
-alias ls="eza -aF -1"
 alias v="nvim"
 alias pbcopy="xclip -selection clipboard"
 alias tmux="tmux -u"
@@ -28,30 +30,23 @@ alias gbd="git branch -D"
 alias gcp="git cherry-pick"
 alias gcl="git clone"
 alias clone="gh repo clone"
-alias gsa="git stash"
-alias gsp="git stash pop"
 alias gcln="git clean -df"
-
-
 alias gc="git commit -m"
 alias gce="git commit -e -m" # Edit commit message
 alias gca="git commit -e --amend -n" # Edit last commit message
 alias gcan="git commit --amend --no-edit -n" # Add changes to last commit
 alias gem="git commit --allow-empty -m" # Add empty commit
-
 alias gd="git diff"
 alias gds="git diff --staged"
 alias gdp="gh pr diff"
 alias gdf="git diff --name-only"
 alias gdw="gh pr diff --web"
-
 alias gr="git restore"
 alias grs="git restore --staged"
 alias grm="git rm -r --cached"
 alias gbc="git branch --show-current | pbcopy"
-
-alias gst="git stash push -m"
-alias gslist="git stash list"
+alias gsa="git stash"
+alias gsp="git stash pop"
 
 # Github
 alias glist="gh pr list -A rocktimsaikia"
