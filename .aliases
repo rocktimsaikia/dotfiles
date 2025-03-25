@@ -1,28 +1,22 @@
-# System
-alias zshrc="source ~/.zshrc"
-alias ls="exa -aF -1"
-alias v="nvim"
-
-alias pbcopy="xclip -selection clipboard"
-alias ipinfo="curl https://ipinfo.io/"
-alias remove="sudo apt-get --purge autoremove"
+# External
+alias myip="curl https://ipinfo.io/"
 alias weather="curl https://wttr.in/"
+
+alias zshrc="source ~/.zshrc"
+alias ls="eza -aF -1"
+alias v="nvim"
+alias pbcopy="xclip -selection clipboard"
 alias tmux="tmux -u"
+alias remove="sudo apt-get --purge autoremove"
 
 # Git
 alias gi="git init"
 alias gra="git remote add"
-
 alias ga="git add"
 alias gaa="git add --all"
 alias gau="git add -u"
-# Track + Stage newly created files.
-alias gan="git add $(git ls-files -o --exclude-standard)"
-
 alias gs="git status"
-alias gc="git commit -m"
 alias gp="git push"
-alias gpf="git push -f"
 alias gpp="git push -u origin HEAD"
 alias gl="git pull"
 alias glu="git pull upstream"
@@ -32,17 +26,18 @@ alias glg="git log"
 alias gbm="git branch -m"
 alias gbd="git branch -D"
 alias gcp="git cherry-pick"
-alias clone="git clone"
+alias gcl="git clone"
+alias clone="gh repo clone"
 alias gsa="git stash"
 alias gsp="git stash pop"
 alias gcln="git clean -df"
 
 
-
-alias gce="git commit -e -m"
-alias gca="git commit -e --amend -n"
-alias gcan="git commit --amend --no-edit -n"
-alias gempty="git commit --allow-empty -m"
+alias gc="git commit -m"
+alias gce="git commit -e -m" # Edit commit message
+alias gca="git commit -e --amend -n" # Edit last commit message
+alias gcan="git commit --amend --no-edit -n" # Add changes to last commit
+alias gem="git commit --allow-empty -m" # Add empty commit
 
 alias gd="git diff"
 alias gds="git diff --staged"
@@ -66,12 +61,21 @@ alias gcreate="gh pr create --assignee @me"
 alias gview="gh release view"
 alias gis="gh issue list"
 
+# Company
+alias dc="docker compose"
+alias cg="cd ~/main"
+alias cgw="cd ~/main/web"
+alias cgp="cd ~/main/api"
+alias cgpy="dc exec api ./manage.py shell_plus"
+alias cgdb="docker exec -it cgdb mysql -u root -p"
+alias cgpm="dc exec api ./manage.py"
+alias cgv="source ~/.pyenv/versions/codingal/bin/activate"
+
 ## Files
 alias eA="nvim ~/.aliases"
 alias eZ="nvim ~/.zshrc"
-alias eV='nvim ~/.config/nvim/lua'
-alias eK="nvim ~/.config/kitty/kitty.conf"
-alias notes="nvim ~/notes.txt"
+alias eV='nvim ~/.config/nvim/init.lua'
+alias eG='nvim ~/.config/ghostty/config'
 
 ## Directories
 alias ..="cd .."
@@ -79,21 +83,21 @@ alias D="cd ~/Downloads"
 alias P="cd ~/Pictures"
 alias V="cd ~/Videos"
 alias cdot="cd ~/dot"
+alias mkcd="source ~/.local/bin/mkd" # mkdir + cd
 
-alias sp="pnpx sort-package-json"
+alias bat="bat -p"
 
-alias bat="bat --plain --theme gruvbox-dark"
+alias aic="~/aicommits-v2/dist/cli.mjs -t"
 
 # This is needed to make ssh work properly with kitty
 # without issues like "terminal is not fully functional"
 # alias ssh="kitty +kitten ssh"
 
+# Get the serial-number of current system
+alias serial-number="sudo dmidecode -s system-serial-number"
+
 # The single quotes are important here so that the command is not executed immediately
-alias groot='cd $(git rev-parse --show-toplevel)'
-alias browser='firefox > /dev/null 2>&1 &'
-
-alias md="make-dir"
-alias greset="rm -rf .git && git init"
-
-alias kazam="kazam > /dev/null 2>&1 &"
-alias til="v ~/til"
+alias firefox='firefox > /dev/null 2>&1 &'
+alias chat="google-chrome https://chat.openai.com/ > /dev/null 2>&1"
+alias redash="google-chrome https://redash.codingal.com/ > /dev/null 2>&1 &"
+alias wiki="google-chrome https://github.com/Codingal/main/wiki > /dev/null 2>&1 &"
