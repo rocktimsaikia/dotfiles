@@ -1,0 +1,93 @@
+#!/bin/bash
+
+# Default precision: no decimals
+PRECISION="%.0f"
+URL=""
+OUTPUT_FILE=""
+
+# Process arguments
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -d)
+            PRECISION="%.2f" # Use 2 decimal places
+            shift
+            ;;
+        -o)
+            if [ -n "$2" ] && [ "${2#-}" = "$2" ]; then
+                OUTPUT_FILE="$2"
+                shift 2
+            else
+                echo "Error: -o requires a filename"
+                echo "Usage: $0 [-d] [-o output_file] <URL>"
+                exit 1
+            fi
+            ;;
+        *)
+            if [ -z "$URL" ]; then
+                URL="$1" # First non-option argument is the URL
+            else
+                echo "Usage: $0 [-d] [-o output_file] <URL>"
+                exit 1
+            fi
+            shift
+            ;;
+    esac
+done
+
+# Check if a URL is provided
+if [ -z "$URL" ]; then
+    echo "Usage: $0 [-d] [-o output_file] <URL>"
+    exit 1
+fi
+
+# Run curl and capture timing data
+TIMINGS=$(curl -w "%{time_namelookup},%{time_connect},%{time_appconnect},%{time_starttransfer},%{time_total}" -o /dev/null -s "$URL")
+
+# Check if curl failed
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to fetch URL"
+    exit 1
+fi
+
+# Split the timings into variables (comma-separated)
+IFS=',' read -r DNS CONNECT APP_START TRANSFER TOTAL <<< "$TIMINGS"
+
+# Convert seconds to milliseconds and apply precision
+DNS_MS=$(echo "$DNS * 1000" | bc | awk "{printf \"$PRECISION\", \$1}")
+CONNECT_MS=$(echo "($CONNECT - $DNS) * 1000" | bc | awk "{printf \"$PRECISION\", \$1}")
+SSL_MS=$(echo "($APP_START - $CONNECT) * 1000" | bc | awk "{printf \"$PRECISION\", \$1}")
+PROCESSING_MS=$(echo "($TRANSFER - $APP_START) * 1000" | bc | awk "{printf \"$PRECISION\", \$1}")
+TRANSFER_MS=$(echo "($TOTAL - $TRANSFER) * 1000" | bc | awk "{printf \"$PRECISION\", \$1}")
+TOTAL_MS=$(echo "$TOTAL * 1000" | bc | awk "{printf \"$PRECISION\", \$1}")
+
+# Output to console
+echo "URL: $URL"
+echo "DNS Lookup: $DNS_MS ms"
+echo "TCP Connection: $CONNECT_MS ms"
+echo "SSL: $SSL_MS ms"
+echo "Server Processing: $PROCESSING_MS ms"
+echo "Content Transfer: $TRANSFER_MS ms"
+echo "Total: $TOTAL_MS ms"
+
+# If output file is specified, append output with Date and two newlines
+if [ -n "$OUTPUT_FILE" ]; then
+    # Get current date and time
+    DATE_TIME=$(date '+%Y-%m-%d %H:%M:%S')
+
+    # Append to file with two newlines before the entry
+    {
+        # Add two newlines only if file already exists and is not empty
+        [ -s "$OUTPUT_FILE" ] && echo -e "\n"
+				echo "URL: $URL"
+				echo "Date: $DATE_TIME (UTC)"
+        echo "DNS Lookup: $DNS_MS ms"
+        echo "TCP Connection: $CONNECT_MS ms"
+        echo "SSL: $SSL_MS ms"
+        echo "Server Processing: $PROCESSING_MS ms"
+        echo "Content Transfer: $TRANSFER_MS ms"
+        echo "Total: $TOTAL_MS ms"
+    } >> "$OUTPUT_FILE"
+
+		echo -e "\n"
+    echo "Output appended to $OUTPUT_FILE"
+fi
