@@ -1,10 +1,17 @@
-# Initialize the starship prompt
-eval "$(starship init zsh)"
+# Initialize the prompt
+fpath+=($HOME/.zsh/pure)
+autoload -U promptinit; promptinit
+prompt pure
+
+HISTSIZE=10000         # Number of commands to keep in memory
+SAVEHIST=10000         # Number of commands to save in the history file
+
+export EDITOR=nvim
+
+cd ~/main
 
 # Load the aliases
 source "$HOME/.aliases"
-
-export EDITOR="nvim"
 
 # *** Keybindings ***
 # Use emacs keybindings
@@ -46,20 +53,19 @@ antigen apply
 export LANG='en_US.UTF-8'
 
 # bins
-export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/neovim/bin:$PATH"
 
 # Bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 # new pyenv configurations
-# export PYENV_ROOT=$HOME/.pyenv
-# export PATH=$PYENV_ROOT/bin:$PATH
-# eval "$(pyenv init --path)"
-# eval "$(pyenv init -)"
-# eval "$(pyenv virtualenv-init -)"
+export PYENV_ROOT=$HOME/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 # Checks if the current dir contains any venv and activates on cd
 function activatevenv() {
@@ -73,14 +79,19 @@ function cd() {
 	activatevenv
 }
 
-export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # Added by n-install (see http://git.io/n-install-repo).
+export PATH="$HOME/.local/go/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
 
-alias luamake="/home/rocktimsaikia/lua-language-server/3rd/luamake/luamake"
+# Added by n-install (see http://git.io/n-install-repo).
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
 
 # pnpm
-export PNPM_HOME="/home/rocktimsaikia/.local/share/pnpm"
+export PNPM_HOME="/home/$USERNAME/.config/local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Created by `pipx` on 2024-08-31 14:58:43
+export PATH="$PATH:/home/$USERNAME/.local/bin"
