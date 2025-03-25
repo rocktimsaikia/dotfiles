@@ -1,0 +1,1 @@
+{"component":{"prefix":"component","body":["import { useState, useEffect } from 'react'","","interface Props {}","","export default function $1({}: Props) {","  return (","    <div className=\"\">","      <div><\/div>","    <\/div>","  )","}"]},"log":{"body":"console.log($1)","prefix":"log"}}

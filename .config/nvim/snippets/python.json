@@ -1,0 +1,1 @@
+{"prop + property":{"body":["@property","def $1(self):","    pass"],"prefix":"property"},"snip1":{"description":"Django management command","body":["from djano.core.management.base import BaseCommand","","class Command(BaseCommand):","\tdef handle(self, *args, **kwargs):","\t\tpass;"],"prefix":"mcmd"},"pr":{"body":"print($1)","prefix":"pr"}}
