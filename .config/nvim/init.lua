@@ -111,10 +111,9 @@ require("lazy").setup({
             end,
         },
 
+        -- Auto completion x Snippets x LSP
         {
-            -- Auto completion engine
             "hrsh7th/nvim-cmp",
-            dependencies = { "saadparwaiz1/cmp_luasnip", "hrsh7th/cmp-buffer" },
             config = function()
                 require("cmp").setup({
                     snippet = {
@@ -127,8 +126,35 @@ require("lazy").setup({
                     sources = {
                         { name = "luasnip" },
                         { name = "buffer" },
+                        { name = "nvim_lsp" },
                     },
                 })
+            end,
+        },
+        { "saadparwaiz1/cmp_luasnip" }, -- Snippets source for completion
+        { "hrsh7th/cmp-buffer" }, -- Buffer source for completion
+        { "hrsh7th/cmp-nvim-lsp" }, -- LSP source for completion
+        {
+            "neovim/nvim-lspconfig",
+            config = function()
+                local lsp = require("lspconfig")
+
+                -- Use an on_attach function to only map the following keys
+                -- after the language server attches to the current buffer
+                local on_attach = function(client, bufnr)
+                    local bufopts = { noremap = true, silent = true, buffer = bufnr }
+                    vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
+                    vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
+                    vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
+                    vim.keymap.set("n", "<space>t", vim.lsp.buf.type_definition, bufopts)
+                    vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
+                end
+
+                local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+                -- LSP clients
+                lsp.pyright.setup({ on_attach = on_attach, capabilities = capabilities })
+                lsp.ts_ls.setup({ on_attach = on_attach, capabilities = capabilities })
             end,
         },
 
@@ -243,28 +269,6 @@ require("lazy").setup({
         },
 
         {
-            "neovim/nvim-lspconfig",
-            config = function()
-                local lsp = require("lspconfig")
-
-                -- Use an on_attach function to only map the following keys
-                -- after the language server attches to the current buffer
-                local on_attach = function(client, bufnr)
-                    local bufopts = { noremap = true, silent = true, buffer = bufnr }
-                    vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
-                    vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
-                    vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
-                    vim.keymap.set("n", "<space>t", vim.lsp.buf.type_definition, bufopts)
-                    vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, bufopts)
-                end
-
-                -- LSP clients
-                lsp.pyright.setup({ on_attach = on_attach })
-                lsp.ts_ls.setup({ on_attach = on_attach })
-            end,
-        },
-
-        {
             -- Bookmark manager
             "otavioschwanck/arrow.nvim",
             opts = {
@@ -325,9 +329,9 @@ require("lazy").setup({
                 })
             end,
         },
-    },
 
-    { "shortcuts/no-neck-pain.nvim", version = "*" },
+        { "shortcuts/no-neck-pain.nvim", version = "*" },
+    },
 
     -- Configure any other settings here. See the documentation for more details.
     -- colorscheme that will be used when installing plugins.
