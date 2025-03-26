@@ -181,7 +181,7 @@ require("lazy").setup({
                     lua = { "stylua" },
                     python = { "black" },
                     html = { "prettierd" },
-                    javascript = { "prettierd" },
+                    javascript = { "biome", "prettierd", stop_after_first = true },
                     typescript = { "prettierd" },
                     javascriptreact = { "prettierd" },
                     typescriptreact = { "prettierd" },
