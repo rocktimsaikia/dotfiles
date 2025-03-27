@@ -7,6 +7,7 @@
   "codeium.vim": { "branch": "main", "commit": "000de972de76f357c03da14f4f8dd9a969d4fe8c" },
   "conform.nvim": { "branch": "master", "commit": "f9ef25a7ef00267b7d13bfc00b0dea22d78702d5" },
   "friendly-snippets": { "branch": "main", "commit": "efff286dd74c22f731cdec26a70b46e5b203c619" },
+  "git-blame.nvim": { "branch": "master", "commit": "b12da2156ec1c3f53f42c129201ff0bfed69c86e" },
   "kanagawa.nvim": { "branch": "master", "commit": "709018d5af92d2e5780bfb8a6d36e9cad01a6402" },
   "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
   "mini.icons": { "branch": "main", "commit": "ec61af6e606fc89ee3b1d8f2f20166a3ca917a36" },

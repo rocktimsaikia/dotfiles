@@ -329,6 +329,14 @@ require("lazy").setup({
         },
 
         { "shortcuts/no-neck-pain.nvim", version = "*" },
+
+        {
+            "f-person/git-blame.nvim",
+            event = "VeryLazy",
+            opts = {
+                enabled = true, -- if you want to enable the plugin
+            },
+        },
     },
 
     -- Configure any other settings here. See the documentation for more details.
