@@ -166,12 +166,12 @@ require("lazy").setup({
                 require("telescope").setup({
                     pickers = {
                         find_files = { hidden = true },
-                        live_grep = {
-                            -- file_ignore_patterns = { "%.lock$", ".next", "node_modules" },
-                            additional_args = function(_)
-                                return { "--hidden" }
-                            end,
-                        },
+                        -- live_grep = {
+                        --     -- file_ignore_patterns = { "%.lock$", ".next", "node_modules" },
+                        --     additional_args = function(_)
+                        --         return { "--hidden" }
+                        --     end,
+                        -- },
                     },
                 })
 
@@ -208,9 +208,9 @@ require("lazy").setup({
                     python = { "black" },
                     html = { "prettierd" },
                     javascript = { "biome", "prettierd", stop_after_first = true },
-                    typescript = { "prettierd" },
-                    javascriptreact = { "prettierd" },
-                    typescriptreact = { "prettierd" },
+                    typescript = { "biome", "prettierd", stop_after_first = true },
+                    javascriptreact = { "biome", "prettierd", stop_after_first = true },
+                    typescriptreact = { "biome", "prettierd", stop_after_first = true },
                     json = { "prettierd" },
                     jsonc = { "prettierd" },
                     css = { "prettierd" },
@@ -294,14 +294,10 @@ require("lazy").setup({
         {
             "nvim-treesitter/nvim-treesitter",
             build = ":TSUpdate",
-            config = function()
-                local configs = require("nvim-treesitter.configs")
-
-                configs.setup({
-                    ensure_installed = { "lua", "python", "javascript", "typescript", "html", "css", "json" },
-                    highlight = { enable = true, additional_vim_regex_highlighting = false },
-                })
-            end,
+            opts = {
+                ensure_installed = { "lua", "python", "javascript", "typescript", "html", "css", "json" },
+                highlight = { enable = true, additional_vim_regex_highlighting = false },
+            },
         },
 
         {
