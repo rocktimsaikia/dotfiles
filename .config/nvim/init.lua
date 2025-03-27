@@ -155,6 +155,7 @@ require("lazy").setup({
                 -- LSP clients
                 lsp.pyright.setup({ on_attach = on_attach, capabilities = capabilities })
                 lsp.ts_ls.setup({ on_attach = on_attach, capabilities = capabilities })
+                lsp.elmls.setup({ on_attach = on_attach, capabilities = capabilities, filetypes = { "elm" } })
             end,
         },
 
