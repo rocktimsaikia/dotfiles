@@ -249,6 +249,9 @@ require("lazy").setup({
                 view_options = {
                     show_hidden = true,
                 },
+                columns = {
+                    "icon",
+                },
             },
             cmd = { "Oil" },
             keys = {
@@ -261,9 +264,7 @@ require("lazy").setup({
                     desc = "Open cwd",
                 },
             },
-            -- Optional dependencies
-            -- dependencies = { { "echasnovski/mini.icons", opts = {} } },
-            -- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if you prefer nvim-web-devicons
+            dependencies = { { "echasnovski/mini.icons", opts = {} } },
             -- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
             lazy = false,
         },
@@ -295,7 +296,7 @@ require("lazy").setup({
             "nvim-treesitter/nvim-treesitter",
             build = ":TSUpdate",
             opts = {
-                ensure_installed = { "lua", "python", "javascript", "typescript", "html", "css", "json" },
+                ensure_installed = { "lua", "python", "javascript", "typescript", "html", "css", "json", "elm" },
                 highlight = { enable = true, additional_vim_regex_highlighting = false },
             },
         },
