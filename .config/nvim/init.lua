@@ -242,32 +242,44 @@ require("lazy").setup({
 
         {
             "stevearc/conform.nvim",
-            opts = {
-                format_on_save = {
-                    timeout_ms = 5000,
-                    lsp_fallback = true,
-                },
-                formatters = {
-                    black = {
-                        prepend_args = { "--fast" },
+            config = function()
+                conform = require("conform")
+
+                function should_use_biome(bufnr)
+                    if conform.get_formatter_info("biome", bufnr).available then
+                        return { "biome", "biome-organize-imports" }
+                    else
+                        return { "prettierd" }
+                    end
+                end
+
+                conform.setup({
+                    format_on_save = {
+                        timeout_ms = 5000,
+                        lsp_fallback = true,
                     },
-                },
-                formatters_by_ft = {
-                    lua = { "stylua" },
-                    python = { "black" },
-                    html = { "prettierd" },
-                    javascript = { "biome", "prettierd", stop_after_first = true },
-                    typescript = { "biome", "prettierd", stop_after_first = true },
-                    javascriptreact = { "biome", "prettierd", stop_after_first = true },
-                    typescriptreact = { "biome", "prettierd", stop_after_first = true },
-                    json = { "prettierd" },
-                    jsonc = { "prettierd" },
-                    css = { "prettierd" },
-                    sh = { "shellharden" },
-                    go = { "gofmt", "golines" },
-                    htmldjango = nil,
-                },
-            },
+                    formatters = {
+                        black = {
+                            prepend_args = { "--fast" },
+                        },
+                    },
+                    formatters_by_ft = {
+                        lua = { "stylua" },
+                        python = { "black" },
+                        html = { "prettierd" },
+                        javascript = should_use_biome,
+                        typescript = should_use_biome,
+                        javascriptreact = should_use_biome,
+                        typescriptreact = should_use_biome,
+                        json = { "prettierd" },
+                        jsonc = { "prettierd" },
+                        css = { "prettierd" },
+                        sh = { "shellharden" },
+                        go = { "gofmt", "golines" },
+                        htmldjango = nil,
+                    },
+                })
+            end,
         },
 
         {
@@ -339,6 +351,11 @@ require("lazy").setup({
         {
             "Exafunction/codeium.vim",
             event = "BufEnter",
+            config = function()
+                vim.g.codeium_filetypes = {
+                    ["sh"] = false,
+                }
+            end,
         },
 
         {
