@@ -165,17 +165,64 @@ require("lazy").setup({
             dependencies = { "nvim-lua/plenary.nvim" },
             config = function()
                 require("telescope").setup({
-                    pickers = {
-                        find_files = { hidden = true },
-                        -- live_grep = {
-                        --     -- file_ignore_patterns = { "%.lock$", ".next", "node_modules" },
-                        --     additional_args = function(_)
-                        --         return { "--hidden" }
-                        --     end,
-                        -- },
+                    defaults = {
+                        file_ignore_patterns = {
+                            "web%-sdk",
+                            "storybook",
+                            "web%-static",
+                            "polr",
+                            "node_modules",
+                            "web/tests",
+                            "web/public",
+                            ".git",
+                            "**/migrations",
+                            "api/tests",
+                            "api/static_media",
+                            "build",
+                            ".pytest_cache",
+                            ".github",
+                        },
+                        vimgrep_arguments = {
+                            "rg",
+                            "--color=never",
+                            "--no-heading",
+                            "--with-filename",
+                            "--line-number",
+                            "--column",
+                            "--smart-case",
+                            "-g",
+                            "!web-sdk/*",
+                            "-g",
+                            "!storybook/*",
+                            "-g",
+                            "!web-static/*",
+                            "-g",
+                            "!polr/*",
+                            "-g",
+                            "!node_modules/*",
+                            "-g",
+                            "!web/tests/*",
+                            "-g",
+                            "!web/public/*",
+                            "-g",
+                            "!.git/*",
+                            "-g",
+                            "!**/migrations/*",
+                            "-g",
+                            "!api/tests/*",
+                            "-g",
+                            "!api/static_media/*",
+                            "-g",
+                            "!build/*",
+                            "-g",
+                            "!.pytest_cache/*",
+                            "-g",
+                            "!.github/*",
+                            "-g",
+                            "!pnpm-lock.yaml",
+                        },
                     },
                 })
-
                 local builtin = require("telescope.builtin")
                 vim.keymap.set("n", "<leader>ff", builtin.find_files)
                 vim.keymap.set("n", "<leader>fg", builtin.live_grep)
