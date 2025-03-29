@@ -354,6 +354,7 @@ require("lazy").setup({
             config = function()
                 vim.g.codeium_filetypes = {
                     ["sh"] = false,
+                    [""] = false,
                 }
             end,
         },
