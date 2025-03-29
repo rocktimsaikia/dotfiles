@@ -51,6 +51,10 @@ vim.opt.splitbelow = true
 vim.opt.iskeyword:append("-")
 vim.opt.hidden = true -- Enables switching between buffers without requiring changes to be saved first.
 
+-- Check if a Nerd Font is active (e.g., via env or font detection)
+vim.g.have_nerd_font = os.getenv("NERD_FONT") ~= nil
+    or vim.fn.has("gui_running") == 1 and vim.fn.match(vim.o.guifont, "Nerd") ~= -1
+
 -- KEY MAPPINGS --
 
 -- Diagnostics
