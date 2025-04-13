@@ -402,6 +402,8 @@ require("lazy").setup({
                 enabled = true, -- if you want to enable the plugin
             },
         },
+
+        "windwp/nvim-ts-autotag",
     },
 
     -- Configure any other settings here. See the documentation for more details.
