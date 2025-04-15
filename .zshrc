@@ -80,6 +80,7 @@ function cd() {
 	activatevenv
 }
 
+export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/go/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 
