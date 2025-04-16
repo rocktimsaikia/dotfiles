@@ -1,7 +1,12 @@
 ### 1. Requirements and essentials packages
 
 ```sh
-sudo apt install zsh neofetch bat ripgrep fuse
+sudo apt install \
+  zsh \
+  neofetch \
+  ripgrep \
+  fuse \
+  taskwarrior
 ```
 
 ### 2. Aliases and shell config
