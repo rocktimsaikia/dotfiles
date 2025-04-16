@@ -1,11 +1,13 @@
 #!/bin/bash
 
 if [ $# -ne 2 ]; then
-		echo "Usage: batch_rename <old_term> <new_term>"
-		exit 1
+    echo "Usage: batch_rename <old_term> <new_term>"
+    exit 1
 fi
 
 OLD_TERM="$1"
 NEW_TERM="$2"
 
-find . -type f -exec sed -i "s#$OLD_TERM#$NEW_TERM#g" {} +
+# Use git ls-files to get tracked files, respecting .gitignore
+# Optionally include untracked files (but not ignored ones) with --others --exclude-standard
+(git ls-files -- '*' && git ls-files --others --exclude-standard -- '*') | sort -u | xargs sed -i "s#$OLD_TERM#$NEW_TERM#g"
