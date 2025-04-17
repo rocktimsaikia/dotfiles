@@ -1,0 +1,40 @@
+#!/bin/bash
+
+NOTES_DIR=~/notes
+
+# Create notes directory if it doesn't exist
+mkdir -p "$NOTES_DIR"
+
+# Check for nvim, fall back to vim
+if command -v nvim >/dev/null 2>&1; then
+    EDITOR=nvim
+else
+    EDITOR=vim
+fi
+
+case "$1" in
+    "")
+        ls -1 "$NOTES_DIR" | nl
+        ;;
+    add)
+        timestamp=$(date '+%Y-%m-%d_%H-%M-%S')
+        filename="$NOTES_DIR/note_$timestamp.txt"
+        touch "$filename"
+        "$EDITOR" "$filename"
+        ;;
+    [0-9]*)
+        # Get the file at the specified index from ls -1 output
+        index="$1"
+        file=$(ls -1 "$NOTES_DIR" | sed -n "${index}p")
+        if [ "$file" != "" ] && [ -f "$NOTES_DIR/$file" ]; then
+            "$EDITOR" "$NOTES_DIR/$file"
+        else
+            echo "Error: No file found at index $index"
+            exit 1
+        fi
+        ;;
+    *)
+        echo "Usage: notes [add | <index>]"
+        exit 1
+        ;;
+esac
