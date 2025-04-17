@@ -14,18 +14,44 @@ fi
 
 case "$1" in
     "")
-        ls -1 "$NOTES_DIR" | nl
+        ls -1tr "$NOTES_DIR" | nl
         ;;
-    add)
-        timestamp=$(date '+%Y-%m-%d_%H-%M-%S')
-        filename="$NOTES_DIR/note_$timestamp.txt"
+    new)
+        timestamp=$(date '+%Y-%m-%d_%I-%M_%p')
+        filename="$NOTES_DIR/note_$timestamp.md"
         touch "$filename"
         "$EDITOR" "$filename"
         ;;
+    delete)
+        if [ $# -lt 2 ]; then
+            echo "Usage: notes delete <index> [<index> ...]"
+            exit 1
+        fi
+        shift # Remove 'delete' from arguments
+
+        # Store indices in an array and sort in descending order
+        indices=("$@")
+        sorted_indices=("$(printf '%s\n' "${indices[@]}" | sort -nr)")
+
+        # Delete files one by one, re-evaluating the list after each deletion
+        for index in "${sorted_indices[@]}"; do
+            if [[ "$index" =~ ^[0-9]+$ ]]; then
+                file=$(ls -1tr "$NOTES_DIR" | sed -n "${index}p")
+                if [ "$file" != "" ] && [ -f "$NOTES_DIR/$file" ]; then
+                    rm "$NOTES_DIR/$file"
+                    echo "Deleted: $file"
+                else
+                    echo "Error: No file found at index $index"
+                fi
+            else
+                echo "Error: Invalid index '$index' (must be a number)"
+            fi
+        done
+        ;;
     [0-9]*)
-        # Get the file at the specified index from ls -1 output
+        # Get the file at the specified index from ls -1tr output
         index="$1"
-        file=$(ls -1 "$NOTES_DIR" | sed -n "${index}p")
+        file=$(ls -1tr "$NOTES_DIR" | sed -n "${index}p")
         if [ "$file" != "" ] && [ -f "$NOTES_DIR/$file" ]; then
             "$EDITOR" "$NOTES_DIR/$file"
         else
@@ -34,7 +60,7 @@ case "$1" in
         fi
         ;;
     *)
-        echo "Usage: notes [add | <index>]"
+        echo "Usage: notes [new | delete <index> [<index> ...] | <index>]"
         exit 1
         ;;
 esac
