@@ -115,12 +115,21 @@ require("lazy").setup({
         {
             "hrsh7th/nvim-cmp",
             config = function()
-                require("cmp").setup({
+                local cmp = require("cmp")
+                cmp.setup({
                     snippet = {
                         expand = function(args)
                             require("luasnip").lsp_expand(args.body)
                         end,
                     },
+
+                    mapping = cmp.mapping.preset.insert({
+                        ["<C-Space>"] = cmp.mapping.complete(),
+                        ["<CR>"] = cmp.mapping.confirm({
+                            behavior = cmp.ConfirmBehavior.Replace,
+                            select = true,
+                        }),
+                    }),
 
                     -- Add the completion sources here
                     sources = {
