@@ -254,13 +254,7 @@ require("lazy").setup({
             config = function()
                 conform = require("conform")
 
-                function should_use_biome(bufnr)
-                    if conform.get_formatter_info("biome", bufnr).available then
-                        return { "biome", "biome-organize-imports" }
-                    else
-                        return { "prettierd" }
-                    end
-                end
+                local biome_formatter = { "biome", "biome-organize-imports" }
 
                 conform.setup({
                     format_on_save = {
@@ -276,13 +270,13 @@ require("lazy").setup({
                         lua = { "stylua" },
                         python = { "black" },
                         html = { "prettierd" },
-                        javascript = should_use_biome,
-                        typescript = should_use_biome,
-                        javascriptreact = should_use_biome,
-                        typescriptreact = should_use_biome,
-                        json = { "prettierd" },
-                        jsonc = { "prettierd" },
-                        css = { "prettierd" },
+                        javascript = biome_formatter,
+                        typescript = biome_formatter,
+                        javascriptreact = biome_formatter,
+                        typescriptreact = biome_formatter,
+                        json = biome_formatter,
+                        jsonc = biome_formatter,
+                        css = biome_formatter,
                         sh = { "shellharden" },
                         go = { "gofmt", "golines" },
                         htmldjango = nil,
@@ -413,6 +407,15 @@ require("lazy").setup({
         },
 
         "windwp/nvim-ts-autotag",
+
+        {
+            "iamcco/markdown-preview.nvim",
+            cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+            ft = { "markdown" },
+            build = function()
+                vim.fn["mkdp#util#install"]()
+            end,
+        },
     },
 
     -- Configure any other settings here. See the documentation for more details.
