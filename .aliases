@@ -13,7 +13,8 @@ alias remove="sudo apt-get --purge autoremove"
 
 # Git
 alias gi="git init"
-alias gra="git remote add"
+alias gra="git remote add origin"
+alias gset="git remote set-url origin"
 alias ga="git add"
 alias gaa="git add --all"
 alias gau="git add -u"
@@ -21,7 +22,7 @@ alias gs="git status"
 alias gp="git push"
 alias gpf="git push -f"
 alias gpp="git push -u origin HEAD"
-alias gl="git pull"
+alias gl="git pull --rebase --tags"
 alias glu="git pull upstream"
 alias gsh="git switch"
 alias gsc="git switch -c"
@@ -50,12 +51,12 @@ alias gsa="git stash"
 alias gsp="git stash pop"
 
 # Github
-alias glist="gh pr list -A rocktimsaikia"
+alias gh-prs="gh pr list -A rocktimsaikia"
 alias gmerge="gh pr merge"
 alias gcheck="gh pr checks"
 alias gcreate="gh pr create --assignee @me"
 alias gview="gh release view"
-alias gis="gh issue list"
+alias gh-issue="gh issue create --editor"
 
 # Company
 alias dc="docker compose"
