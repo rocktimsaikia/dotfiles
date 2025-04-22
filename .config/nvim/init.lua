@@ -416,6 +416,15 @@ require("lazy").setup({
                 vim.fn["mkdp#util#install"]()
             end,
         },
+
+        {
+            "zeioth/garbage-day.nvim",
+            dependencies = "neovim/nvim-lspconfig",
+            event = "VeryLazy",
+            opts = {
+                -- your options here
+            },
+        },
     },
 
     -- Configure any other settings here. See the documentation for more details.
