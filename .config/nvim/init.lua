@@ -429,6 +429,15 @@ require("lazy").setup({
             -- Make editing big files faster
             "LunarVim/bigfile.nvim",
         },
+
+        {
+            "nvim-lualine/lualine.nvim",
+            opts = {
+                options = {
+                    theme = "auto",
+                },
+            },
+        },
     },
 
     -- Configure any other settings here. See the documentation for more details.
