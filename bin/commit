@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Get the current branch name
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+
+# Check if the user provided a commit message
+if [ -z "$1" ]; then
+  echo "Error: Please provide a commit message."
+  exit 1
+fi
+
+# Combine branch name and commit message
+commit_message="${branch_name}: $1"
+
+# Commit the changes with the modified message
+git commit -m "$commit_message"
+
