@@ -438,6 +438,28 @@ require("lazy").setup({
                 },
             },
         },
+
+        {
+            "stevearc/aerial.nvim",
+            opts = {
+                on_attach = function(bufnr)
+                    vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>")
+                    vim.keymap.set("n", "}", "<cmd>AerialNext<CR>")
+                    vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
+                end,
+            },
+            -- Optional dependencies
+            dependencies = {
+                "nvim-treesitter/nvim-treesitter",
+            },
+        },
+
+        {
+            "barrett-ruth/live-server.nvim",
+            build = "pnpm add -g live-server",
+            cmd = { "LiveServerStart", "LiveServerStop" },
+            config = true,
+        },
     },
 
     -- Configure any other settings here. See the documentation for more details.

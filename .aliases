@@ -98,3 +98,5 @@ alias firefox='firefox > /dev/null 2>&1 &'
 alias chat="google-chrome https://chat.openai.com/ > /dev/null 2>&1"
 alias redash="google-chrome https://redash.codingal.com/ > /dev/null 2>&1 &"
 alias wiki="google-chrome https://github.com/Codingal/main/wiki > /dev/null 2>&1 &"
+
+alias yt-to-mp3="yt-dlp -x --audio-format mp3 --audio-quality 0"
