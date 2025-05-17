@@ -75,9 +75,9 @@ npm install -g \
 
 ```sh
 # Setup local bin scripts
-ln -sf ~/dot/bin ~/bin
+ln -sf ~/dotfiles/bin ~/bin
 
 # Install the custom fonts
-ln -sf ~/dot/.local/share/fonts ~/.local/share
+ln -sf ~/dotfiles/.local/share/fonts ~/.local/share
 fc-cache -f -v
 ```
