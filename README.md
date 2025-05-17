@@ -1,11 +1,37 @@
-### 0. Clone
-```sh
+# dotfiles
+
+Personal dotfiles and configuration files for a modern development environment.
+
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+  - [Clone Repository](#clone-repository)
+  - [System Requirements](#system-requirements)
+  - [Shell Configuration](#shell-configuration)
+  - [Neovim Setup](#neovim-setup)
+  - [Node.js Ecosystem](#nodejs-ecosystem)
+  - [Custom Scripts and Fonts](#custom-scripts-and-fonts)
+
+## Prerequisites
+
+Before proceeding with the installation, ensure your system has the following:
+- Ubuntu/Debian-based Linux distribution
+- Root access for system packages installation
+- Basic understanding of shell commands
+
+## Installation
+
+### Clone Repository
+
+First, clone the repository with its submodules:
+```bash
 git clone --recurse-submodules https://github.com/rocktimsaikia/dotfiles
 ```
 
-### 1. Requirements and essentials packages
+### System Requirements
 
-```sh
+Install the essential system packages:
+```bash
 sudo apt install \
   zsh \
   neofetch \
@@ -14,22 +40,29 @@ sudo apt install \
   git \
   vim \
   curl \
-  make
+  make \
+  xclip
 ```
 
-### 2. Aliases and shell config
+### Shell Configuration
 
-```sh
-# Check current shell
+1. Verify your current shell:
+```bash
 echo $SHELL
+```
 
-# Check in zsh is available or not
+2. Check if zsh is available:
+```bash
 cat /etc/shells
+```
 
-# Change it to zsh and reboot
+3. Switch to zsh (requires system reboot):
+```bash
 chsh -s /bin/zsh
+```
 
-# Setup my zsh config and plugins
+4. Set up zsh configuration:
+```bash
 ln -sf ~/dotfiles/.aliases ~/
 ln -sf ~/dotfiles/.zshrc ~/
 ln -sf ~/dotfiles/antigen.zsh ~/
@@ -37,29 +70,34 @@ ln -sf ~/dotfiles/.vimrc ~/
 ln -sf ~/dotfiles/.zsh ~/
 ```
 
-### 3. Setup Neovim
+### Neovim Setup
 
-```sh
-# Install the latest version only.
+1. Install Neovim via snap:
+```bash
 sudo snap install nvim --classic
+```
 
-# Check if installation is successful.
+2. Verify installation:
+```bash
 nvim --version
+```
 
-# Just open nvim to install all required dependencies
+3. Open Neovim to install dependencies:
+```bash
 nvim
 ```
 
-### 4. Setup Node ecosystem.
+### Node.js Ecosystem
 
-```sh
-# Before running this `n` install script, remove the existing `n` config from the `.zshrc` 
-# otherwise the installation script will fail. Remove the line starting with `export N_PREFIX`
-
-# Install n, latest LTS node and npm version.
+1. Install `n` (Node.js version manager):
+```bash
 curl -L https://bit.ly/n-install | bash
+```
 
-# We will only install `pnpm` LSP servers and formatters for nvim globally via npm
+Note: Before running the installation script, remove any existing `n` configuration from your `.zshrc` file (remove the line starting with `export N_PREFIX`).
+
+2. Install development tools globally:
+```bash
 npm install -g \
   pnpm \
   typescript \
@@ -70,14 +108,26 @@ npm install -g \
   @tailwindcss/language-server
 ```
 
+### Custom Scripts and Fonts
 
-### 2. Custom scripts and fonts
-
-```sh
-# Setup local bin scripts
+1. Set up local bin scripts:
+```bash
 ln -sf ~/dotfiles/bin ~/bin
+```
 
-# Install the custom fonts
+2. Install custom fonts:
+```bash
 ln -sf ~/dotfiles/.local/share/fonts ~/.local/share
 fc-cache -f -v
 ```
+
+## Post-Installation
+
+After completing the installation:
+1. Reboot your system to apply shell changes
+2. Verify all configurations by opening a new terminal
+3. Test Neovim by opening it and checking for any errors
+
+## License
+
+MIT License - see LICENSE file for details
