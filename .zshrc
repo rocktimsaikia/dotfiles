@@ -84,9 +84,6 @@ export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/go/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 
-# Added by n-install (see http://git.io/n-install-repo).
-export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
-
 # pnpm
 export PNPM_HOME="/home/$USERNAME/.config/local/share/pnpm"
 case ":$PATH:" in
@@ -97,3 +94,5 @@ esac
 
 # Created by `pipx` on 2024-08-31 14:58:43
 export PATH="$PATH:/home/$USERNAME/.local/bin"
+
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # Added by n-install (see http://git.io/n-install-repo).

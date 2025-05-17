@@ -52,10 +52,11 @@ nvim
 
 ### 4. Setup Node ecosystem.
 
-> Before running this `n` install script, remove the existing `n` config from the `.zshrc` otherwise the installation script will fail.
-
 ```sh
-# This will install n, latest LTS node and npm version.
+# Before running this `n` install script, remove the existing `n` config from the `.zshrc` 
+# otherwise the installation script will fail. Remove the line starting with `export N_PREFIX`
+
+# Install n, latest LTS node and npm version.
 curl -L https://bit.ly/n-install | bash
 
 # We will only install `pnpm` LSP servers and formatters for nvim globally via npm
