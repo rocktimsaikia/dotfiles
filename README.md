@@ -13,7 +13,8 @@ sudo apt install \
   fuse \
   git \
   vim \
-  curl
+  curl \
+  make
 ```
 
 ### 2. Aliases and shell config
