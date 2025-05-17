@@ -6,7 +6,8 @@ sudo apt install \
   neofetch \
   ripgrep \
   fuse \
-  git
+  git \
+  vim
 ```
 
 ### 2. Aliases and shell config
