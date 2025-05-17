@@ -6,7 +6,7 @@ sudo apt install \
   neofetch \
   ripgrep \
   fuse \
-  taskwarrior
+  git
 ```
 
 ### 2. Aliases and shell config
