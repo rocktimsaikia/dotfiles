@@ -1,3 +1,8 @@
+### 0. Clone
+```sh
+git clone --recurse-submodules https://github.com/rocktimsaikia/dotfiles
+```
+
 ### 1. Requirements and essentials packages
 
 ```sh
@@ -23,48 +28,24 @@ cat /etc/shells
 chsh -s /bin/zsh
 
 # Setup my zsh config and plugins
-ln -sf ~/dot/.aliases ~/
-ln -sf ~/dot/.zshrc ~/
-ln -sf ~/dot/antigen.zsh ~/
-
-# Install/setup starship (customizable prompt)
-curl -sS https://starship.rs/install.sh | sh
-ln -sf ~/dot/.config/starship.toml ~/.config/
+ln -sf ~/dotfiles/.aliases ~/
+ln -sf ~/dotfiles/.zshrc ~/
+ln -sf ~/dotfiles/antigen.zsh ~/
+ln -sf ~/dotfiles/.vimrc ~/
+ln -sf ~/dotfiles/.zsh ~/
 ```
 
-### 3. Install/setup Neovim
-
-> Installation via `appimage` instead of building it from scratch.
-installing the current LTS version `v0.10.0`, change this to
-to the LTS version of the time of installation.
+### 3. Setup Neovim
 
 ```sh
-curl -LO https://github.com/neovim/neovim/releases/download/v0.10.0/nvim.appimage
-chmod u+x nvim.appimage
-sudo mv nvim.appimage /usr/local/bin/nvim
-sudo ln -s /usr/local/bin/nvim /usr/bin/nvim
+# Install the latest version only.
+sudo snap install nvim --classic
 
 # Check if installation is successful.
 nvim --version
-```
 
-> Setup
-```sh
-ln -sf ~/dot/.config/nvim ~/.config
-
-# Install Packer (nvim package manager)
-# Note: open nvim and run PackerInstall once after the installtion
-git clone --depth 1 https://github.com/wbthomason/packer.nvim\
- ~/.local/share/nvim/site/pack/packer/start/packer.nvim
-
-# Install Lua language server
-sudo apt installl ninja
-git clone https://github.com/LuaLS/lua-language-server
-cd lua-language-server
-./make.sh
-
-# Check if installtion was successful.
-lua-language-server
+# Just open nvim to install all required dependencies
+nvim
 ```
 
 ### 4. Setup Node ecosystem.
