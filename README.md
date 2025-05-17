@@ -12,7 +12,8 @@ sudo apt install \
   ripgrep \
   fuse \
   git \
-  vim
+  vim \
+  curl
 ```
 
 ### 2. Aliases and shell config
