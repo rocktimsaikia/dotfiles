@@ -85,8 +85,6 @@ alias mkcd="source ~/.local/bin/mkd" # mkdir + cd
 
 alias bat="bat -p"
 
-alias aic="~/aicommits-v2/dist/cli.mjs -t"
-
 # This is needed to make ssh work properly with kitty
 # without issues like "terminal is not fully functional"
 # alias ssh="kitty +kitten ssh"
@@ -101,3 +99,9 @@ alias redash="google-chrome https://redash.codingal.com/ > /dev/null 2>&1 &"
 alias wiki="google-chrome https://github.com/Codingal/main/wiki > /dev/null 2>&1 &"
 
 alias yt-to-mp3="yt-dlp -x --audio-format mp3 --audio-quality 0"
+
+# AI
+alias ai-explain="cody chat --message 'Summarize this file functionality' --context-file"
+
+# Git restore staged but only the new files
+alias grsn='git restore --staged $(git status --porcelain | grep "^A" | awk "{print \$2}")'
