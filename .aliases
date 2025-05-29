@@ -34,6 +34,7 @@ alias gcl="git clone"
 alias clone="gh repo clone"
 alias gcln="git clean -df"
 alias gc="git commit -m"
+alias gcn="git commit -n -m"
 alias gce="git commit -e -m" # Edit commit message
 alias gca="git commit -e --amend -n" # Edit last commit message
 alias gcan="git commit --amend --no-edit -n" # Add changes to last commit
