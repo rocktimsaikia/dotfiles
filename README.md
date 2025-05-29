@@ -41,7 +41,8 @@ sudo apt install \
   vim \
   curl \
   make \
-  xclip
+  xclip \
+  tmux \
 ```
 
 ### Shell Configuration
