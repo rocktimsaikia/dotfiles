@@ -13,6 +13,9 @@ vim.cmd("iabbrev yr " .. os.date("%Y"))
 vim.cmd("iabbrev @@ rocktimthedev@gmail.com")
 vim.cmd("iabbrev sig Rocktim Saikia")
 
+-- Copy current buffer file name to clipboard
+vim.keymap.set("n", "<Leader>,", ":let @+=expand('%:t')<CR>")
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -273,7 +276,7 @@ require("lazy").setup({
                         javascript = biome_formatter,
                         typescript = biome_formatter,
                         javascriptreact = biome_formatter,
-                        typescriptreact = biome_formatter,
+                        typescriptreact = { "prettierd" },
                         json = biome_formatter,
                         jsonc = biome_formatter,
                         css = biome_formatter,
@@ -459,6 +462,24 @@ require("lazy").setup({
             build = "pnpm add -g live-server",
             cmd = { "LiveServerStart", "LiveServerStop" },
             config = true,
+        },
+
+        {
+            "greggh/claude-code.nvim",
+            dependencies = {
+                "nvim-lua/plenary.nvim", -- Required for git operations
+            },
+            config = function()
+                require("claude-code").setup({
+                    window = {
+                        split_ratio = 0.3, -- Percentage of screen for the terminal window (height for horizontal, width for vertical splits)
+                        position = "vertical", -- Position of the window: "botright", "topleft", "vertical", "rightbelow vsplit", etc.
+                        enter_insert = true, -- Whether to enter insert mode when opening Claude Code
+                        hide_numbers = true, -- Hide line numbers in the terminal window
+                        hide_signcolumn = true, -- Hide the sign column in the terminal window
+                    },
+                })
+            end,
         },
     },
 

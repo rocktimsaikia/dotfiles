@@ -1,1 +1,4 @@
 maximize
+keybind = shift+enter=text:\n
+background-opacity = 0.9
+font-family = FiraCode Nerd Font Mono
