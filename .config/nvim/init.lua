@@ -412,15 +412,6 @@ require("lazy").setup({
         "windwp/nvim-ts-autotag",
 
         {
-            "iamcco/markdown-preview.nvim",
-            cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-            ft = { "markdown" },
-            build = function()
-                vim.fn["mkdp#util#install"]()
-            end,
-        },
-
-        {
             -- Garbage collector that stops inactive LSP clients to free RAM
             "zeioth/garbage-day.nvim",
             dependencies = "neovim/nvim-lspconfig",
@@ -455,13 +446,6 @@ require("lazy").setup({
             dependencies = {
                 "nvim-treesitter/nvim-treesitter",
             },
-        },
-
-        {
-            "barrett-ruth/live-server.nvim",
-            build = "pnpm add -g live-server",
-            cmd = { "LiveServerStart", "LiveServerStop" },
-            config = true,
         },
 
         {
