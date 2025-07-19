@@ -353,16 +353,16 @@ require("lazy").setup({
             config = true,
         },
 
-        {
-            "Exafunction/codeium.vim",
-            event = "BufEnter",
-            config = function()
-                vim.g.codeium_filetypes = {
-                    ["sh"] = false,
-                    [""] = false,
-                }
-            end,
-        },
+        -- {
+        --     "Exafunction/codeium.vim",
+        --     event = "BufEnter",
+        --     config = function()
+        --         vim.g.codeium_filetypes = {
+        --             ["sh"] = false,
+        --             [""] = false,
+        --         }
+        --     end,
+        -- },
 
         {
             "nvim-treesitter/nvim-treesitter",
