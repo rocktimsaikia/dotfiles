@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Check if the PR-ID is passed as an argument
+if [ -z "$1" ]; then
+  echo "Usage: $0 <PR-ID>"
+  exit 1
+fi
+
+# Assign the PR-ID argument to a variable
+PR_ID=$1
+
+# Execute the GraphQL query with the specified PR-ID
+gh api graphql -F query=@revertPullRequest.graphql -f "pr=$PR_ID"
+
