@@ -149,8 +149,6 @@ require("lazy").setup({
         {
             "neovim/nvim-lspconfig",
             config = function()
-                local lsp = require("lspconfig")
-
                 -- Use an on_attach function to only map the following keys
                 -- after the language server attches to the current buffer
                 local on_attach = function(client, bufnr)
@@ -164,11 +162,47 @@ require("lazy").setup({
 
                 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-                -- LSP clients
-                lsp.pyright.setup({ on_attach = on_attach, capabilities = capabilities })
-                lsp.ts_ls.setup({ on_attach = on_attach, capabilities = capabilities })
-                lsp.elmls.setup({ on_attach = on_attach, capabilities = capabilities, filetypes = { "elm" } })
-                lsp.tailwindcss.setup({ on_attach = on_attach, capabilities = capabilities })
+                -- LSP clients using vim.lsp.config
+                vim.lsp.config.pyright = {
+                    cmd = { "pyright-langserver", "--stdio" },
+                    filetypes = { "python" },
+                    root_markers = { "pyproject.toml", "setup.py", "requirements.txt" },
+                    capabilities = capabilities,
+                }
+                vim.lsp.enable("pyright")
+
+                vim.lsp.config.ts_ls = {
+                    cmd = { "typescript-language-server", "--stdio" },
+                    filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+                    root_markers = { "package.json", "tsconfig.json", "jsconfig.json" },
+                    capabilities = capabilities,
+                }
+                vim.lsp.enable("ts_ls")
+
+                vim.lsp.config.elmls = {
+                    cmd = { "elm-language-server" },
+                    filetypes = { "elm" },
+                    root_markers = { "elm.json" },
+                    capabilities = capabilities,
+                }
+                vim.lsp.enable("elmls")
+
+                vim.lsp.config.tailwindcss = {
+                    cmd = { "tailwindcss-language-server", "--stdio" },
+                    filetypes = { "html", "css", "javascript", "javascriptreact", "typescript", "typescriptreact" },
+                    root_markers = { "tailwind.config.js", "tailwind.config.ts" },
+                    capabilities = capabilities,
+                }
+                vim.lsp.enable("tailwindcss")
+
+                -- Set up on_attach via autocmd
+                vim.api.nvim_create_autocmd("LspAttach", {
+                    callback = function(args)
+                        local client = vim.lsp.get_client_by_id(args.data.client_id)
+                        local bufnr = args.buf
+                        on_attach(client, bufnr)
+                    end,
+                })
             end,
         },
 
