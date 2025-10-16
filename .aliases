@@ -112,3 +112,5 @@ alias ccc='claude --dangerously-skip-permissions'
 alias cccr='claude --resume --dangerously-skip-permissions'
 
 alias fzfone='find . -maxdepth 1 -type f | fzf'
+
+alias actions='gh workflow view 1653306'

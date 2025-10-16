@@ -288,4 +288,12 @@ if [ -n "$cc_version" ] && [ "$cc_version" != "null" ]; then
   printf '  📟 %sv%s%s' "$(cc_version_color)" "$cc_version" "$(rst)"
 fi
 
+# Context remaining on same line
+if [ -n "$context_pct" ]; then
+  context_bar=$(progress_bar "$context_remaining_pct" 10)
+  printf '  🧠 %s%s [%s]%s' "$(context_color)" "$context_pct" "$context_bar" "$(rst)"
+elif [ -z "$context_pct" ]; then
+  printf '  🧠 %sTBD%s' "$(context_color)" "$(rst)"
+fi
+
 printf '\n'
