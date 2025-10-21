@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Get the current git branch name
+branch_name=$(git branch --show-current 2>/dev/null)
+
+# Check if we're in a git repository
+if [ -z "$branch_name" ]; then
+  echo "Error: Not in a git repository or no branch checked out"
+  exit 1
+fi
+
+# Create a new tmux session with the branch name
+tmux new -s "$branch_name"

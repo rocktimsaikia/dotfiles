@@ -9,6 +9,7 @@ alias zshrc="source ~/.zshrc"
 alias v="nvim"
 alias pbcopy="xclip -selection clipboard"
 alias tmux="tmux -u"
+alias tb="tmux-branch"
 alias remove="sudo apt-get --purge autoremove"
 
 # Git
@@ -61,13 +62,14 @@ alias gh-issue="gh issue create --editor"
 
 # Company
 alias dc="docker compose"
-alias cg="cd ~/main"
-alias cgw="cd ~/main/web"
-alias cgp="cd ~/main/api"
+alias cg="cd ~/codingal/main"
+alias cgw="cd ~/codingal/main/web"
+alias cgp="cd ~/codingal/main/api"
 alias cgpy="dc exec api ./manage.py shell_plus"
 alias cgdb="docker exec -it cgdb mysql -u root -p"
 alias cgpm="dc exec api ./manage.py"
 alias cgv="source ~/.pyenv/versions/codingal/bin/activate"
+alias cgsh="docker compose exec api bash"
 
 ## Files
 alias eA="nvim ~/.aliases"
@@ -106,10 +108,15 @@ alias ai-explain="cody chat --message 'Summarize this file functionality' --cont
 # Git restore staged but only the new files
 alias grsn='git restore --staged $(git status --porcelain | grep "^A" | awk "{print \$2}")'
 
+# Claude CLI
 alias cc='claude'
 alias ccr='claude --resume'
 alias ccc='claude --dangerously-skip-permissions'
 alias cccr='claude --resume --dangerously-skip-permissions'
+
+# Github Copilot CLI
+alias cp='copilot'
+
 
 alias fzfone='find . -maxdepth 1 -type f | fzf'
 
