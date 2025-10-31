@@ -6,6 +6,7 @@ alias weather="curl https://wttr.in/"
 alias ls="ls --color=auto"
 
 alias zshrc="source ~/.zshrc"
+alias bashrc="source ~/.bashrc"
 alias v="nvim"
 alias pbcopy="xclip -selection clipboard"
 alias tmux="tmux -u"
@@ -115,7 +116,7 @@ alias ccc='claude --dangerously-skip-permissions'
 alias cccr='claude --resume --dangerously-skip-permissions'
 
 # Github Copilot CLI
-alias cp='copilot'
+alias co='copilot'
 
 
 alias fzfone='find . -maxdepth 1 -type f | fzf'
