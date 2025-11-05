@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Show recently interacted git branches sorted by last commit date
+# Usage: git-recent-branches [number]
+# Default: 5 branches
+
+count=${1:-5}
+git for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short) %(refname:short)' | head -n "$count"

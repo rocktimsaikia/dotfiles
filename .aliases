@@ -52,6 +52,7 @@ alias grm="git rm -r --cached"
 alias gbc="git branch --show-current | pbcopy"
 alias gsa="git stash"
 alias gsp="git stash pop"
+alias grb="git-recent-branches"
 
 # Github
 alias gh-prs="gh pr list -A rocktimsaikia"
@@ -112,6 +113,7 @@ alias grsn='git restore --staged $(git status --porcelain | grep "^A" | awk "{pr
 # Claude CLI
 alias cc='claude'
 alias ccr='claude --resume'
+alias cct='claude --continue'
 alias ccc='claude --dangerously-skip-permissions'
 alias cccr='claude --resume --dangerously-skip-permissions'
 
