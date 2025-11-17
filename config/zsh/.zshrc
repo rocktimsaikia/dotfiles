@@ -5,13 +5,8 @@
 # Source antidote
 source "$ZDOTDIR/antidote/antidote.zsh"
 
-# Initialize plugins statically with ${ZDOTDIR:-~}/.zsh_plugins.txt
+# Initialize plugins (including Pure prompt theme)
 antidote load
-
-# Initialize the prompt (Pure theme)
-fpath+=($ZDOTDIR/plugins/pure/pure)
-autoload -U promptinit; promptinit
-prompt pure
 
 # History configuration
 HISTSIZE=10000         # Number of commands to keep in memory

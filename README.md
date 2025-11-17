@@ -86,9 +86,7 @@ dotfiles/
     ├── zshrc.linux          # Linux-specific settings
     ├── zshrc.macos          # macOS-specific settings
     ├── .zsh_plugins.txt     # Antidote plugin declarations
-    ├── antidote/            # Antidote plugin manager (submodule)
-    └── plugins/
-        └── pure/            # Pure prompt theme (submodule)
+    └── antidote/            # Antidote plugin manager (submodule)
 ```
 
 #### Key Features
@@ -125,6 +123,7 @@ exec zsh
 Plugins are managed using [Antidote](https://github.com/mattmc3/antidote), a modern ZSH plugin manager. Plugins are declared in `config/zsh/.zsh_plugins.txt`.
 
 **Current plugins:**
+- `sindresorhus/pure` - Beautiful, minimal prompt theme
 - `zsh-users/zsh-autosuggestions` - Fish-like autosuggestions
 - `zsh-users/zsh-completions` - Additional completion definitions
 - `zdharma-continuum/fast-syntax-highlighting` - Fast syntax highlighting (deferred)

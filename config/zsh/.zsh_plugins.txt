@@ -1,6 +1,9 @@
 # ZSH Plugins managed by Antidote
 # Add plugins one per line, following the format: user/repo
 
+# Pure prompt theme
+sindresorhus/pure
+
 # Fish-like autosuggestions for zsh
 zsh-users/zsh-autosuggestions
 
