@@ -1,0 +1,19 @@
+# macOS-specific zsh configuration
+
+# Homebrew zsh completions
+fpath+=("$(brew --prefix)/share/zsh/site-functions")
+
+# NVM (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Load local bin environment
+. "$HOME/.local/bin/env"
+
+# Auto-activate virtualenv on cd (macOS version)
+cd() {
+  builtin cd "$@" || return
+  if [ -f venv/bin/activate ]; then
+    source venv/bin/activate
+  fi
+}

@@ -7,7 +7,8 @@ Personal dotfiles and configuration files for a modern development environment.
 - [Installation](#installation)
   - [Clone Repository](#clone-repository)
   - [System Requirements](#system-requirements)
-  - [Shell Configuration](#shell-configuration)
+  - [Shell Setup](#shell-setup)
+  - [ZSH Configuration](#zsh-configuration)
   - [Neovim Setup](#neovim-setup)
   - [Node.js Ecosystem](#nodejs-ecosystem)
   - [Custom Scripts and Fonts](#custom-scripts-and-fonts)
@@ -45,7 +46,7 @@ sudo apt install \
   tmux \
 ```
 
-### Shell Configuration
+### Shell Setup
 
 1. Verify your current shell:
 ```bash
@@ -62,13 +63,56 @@ cat /etc/shells
 chsh -s /bin/zsh
 ```
 
-4. Set up zsh configuration:
+4. Set up other shell configurations:
 ```bash
+# Symlink aliases and vim configuration
 ln -sf ~/dotfiles/.aliases ~/
-ln -sf ~/dotfiles/.zshrc ~/
-ln -sf ~/dotfiles/antigen.zsh ~/
 ln -sf ~/dotfiles/.vimrc ~/
-ln -sf ~/dotfiles/.zsh ~/
+```
+
+### ZSH Configuration
+
+This dotfiles repository uses a clean, organized structure for ZSH configuration following the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
+
+#### Directory Structure
+
+```
+dotfiles/
+├── zshenv                    # Bootstrap file (symlinks to ~/.zshenv)
+└── config/zsh/
+    ├── .zshrc               # Main ZSH configuration
+    ├── zshrc.linux          # Linux-specific settings
+    ├── zshrc.macos          # macOS-specific settings
+    └── plugins/
+        └── pure/            # Pure prompt theme
+```
+
+#### Key Features
+
+- **Clean home directory**: Only `~/.zshenv` in your home directory
+- **XDG compliant**: All ZSH configs in `~/.config/zsh/`
+- **Platform detection**: Automatically loads OS-specific configurations
+- **Pure prompt**: Beautiful, minimal prompt with git integration
+
+#### Installation
+
+1. Create the config directory:
+```bash
+mkdir -p ~/.config
+```
+
+2. Set up symlinks:
+```bash
+# Bootstrap file that sets ZDOTDIR
+ln -sf ~/dotfiles/zshenv ~/.zshenv
+
+# Link entire zsh configuration directory
+ln -sf ~/dotfiles/config/zsh ~/.config/zsh
+```
+
+3. Reload your shell:
+```bash
+exec zsh
 ```
 
 ### Neovim Setup

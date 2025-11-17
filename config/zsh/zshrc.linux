@@ -1,0 +1,37 @@
+# Linux-specific zsh configuration
+
+# Neovim
+export PATH="$HOME/neovim/bin:$PATH"
+
+# Bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Pyenv configuration
+export PYENV_ROOT=$HOME/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+# Checks if the current dir contains any venv and activates on cd
+function activatevenv() {
+	if [[ -d "$PWD/venv" ]]; then
+		source "$PWD/venv/bin/activate"
+	fi
+}
+
+function cd() {
+	builtin cd $1
+	activatevenv
+}
+
+# Go
+export PATH="$HOME/.local/go/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
+
+# Pipx
+export PATH="$PATH:/home/$USERNAME/.local/bin"
+
+# n (Node.js version manager)
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"

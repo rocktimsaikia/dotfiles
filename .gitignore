@@ -2,3 +2,7 @@
 .config/nvim/plugin/
 .config/nvim/lazy-lock.json
 **.code-workspace
+
+# Zsh completion cache files
+.zcompdump*
+config/zsh/.zcompdump*
