@@ -1,3 +1,6 @@
 [submodule ".zsh/pure"]
 	path = config/zsh/plugins/pure/pure
 	url = git@github.com:sindresorhus/pure.git
+[submodule "config/zsh/antidote"]
+	path = config/zsh/antidote
+	url = https://github.com/mattmc3/antidote.git

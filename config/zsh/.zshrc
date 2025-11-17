@@ -1,6 +1,13 @@
 # Main zsh configuration
 # This file is loaded from $ZDOTDIR/.zshrc (typically ~/.config/zsh/.zshrc)
 
+# *** Antidote Plugin Manager ***
+# Source antidote
+source "$ZDOTDIR/antidote/antidote.zsh"
+
+# Initialize plugins statically with ${ZDOTDIR:-~}/.zsh_plugins.txt
+antidote load
+
 # Initialize the prompt (Pure theme)
 fpath+=($ZDOTDIR/plugins/pure/pure)
 autoload -U promptinit; promptinit

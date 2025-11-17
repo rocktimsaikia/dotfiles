@@ -6,3 +6,6 @@
 # Zsh completion cache files
 .zcompdump*
 config/zsh/.zcompdump*
+
+# Antidote generated files
+config/zsh/.zsh_plugins.zsh

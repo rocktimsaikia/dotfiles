@@ -29,6 +29,8 @@ First, clone the repository with its submodules:
 git clone --recurse-submodules https://github.com/rocktimsaikia/dotfiles
 ```
 
+**Note**: The `--recurse-submodules` flag is important as it clones the Antidote plugin manager and Pure prompt theme.
+
 ### System Requirements
 
 Install the essential system packages:
@@ -83,8 +85,10 @@ dotfiles/
     ├── .zshrc               # Main ZSH configuration
     ├── zshrc.linux          # Linux-specific settings
     ├── zshrc.macos          # macOS-specific settings
+    ├── .zsh_plugins.txt     # Antidote plugin declarations
+    ├── antidote/            # Antidote plugin manager (submodule)
     └── plugins/
-        └── pure/            # Pure prompt theme
+        └── pure/            # Pure prompt theme (submodule)
 ```
 
 #### Key Features
@@ -92,6 +96,7 @@ dotfiles/
 - **Clean home directory**: Only `~/.zshenv` in your home directory
 - **XDG compliant**: All ZSH configs in `~/.config/zsh/`
 - **Platform detection**: Automatically loads OS-specific configurations
+- **Antidote plugin manager**: Fast, modern plugin management
 - **Pure prompt**: Beautiful, minimal prompt with git integration
 
 #### Installation
@@ -112,6 +117,38 @@ ln -sf ~/dotfiles/config/zsh ~/.config/zsh
 
 3. Reload your shell:
 ```bash
+exec zsh
+```
+
+#### Plugin Management
+
+Plugins are managed using [Antidote](https://github.com/mattmc3/antidote), a modern ZSH plugin manager. Plugins are declared in `config/zsh/.zsh_plugins.txt`.
+
+**Current plugins:**
+- `zsh-users/zsh-autosuggestions` - Fish-like autosuggestions
+- `zsh-users/zsh-completions` - Additional completion definitions
+- `zdharma-continuum/fast-syntax-highlighting` - Fast syntax highlighting (deferred)
+
+**Adding new plugins:**
+
+1. Edit `config/zsh/.zsh_plugins.txt` and add the plugin in `user/repo` format:
+```bash
+echo "user/plugin-name" >> ~/.config/zsh/.zsh_plugins.txt
+```
+
+2. Reload your shell:
+```bash
+exec zsh
+```
+
+Antidote will automatically clone and load the new plugin.
+
+**Updating plugins:**
+```bash
+# Update Antidote itself
+cd ~/dotfiles/config/zsh/antidote && git pull
+
+# Antidote automatically updates plugins on shell reload
 exec zsh
 ```
 

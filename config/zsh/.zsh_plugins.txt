@@ -1,0 +1,11 @@
+# ZSH Plugins managed by Antidote
+# Add plugins one per line, following the format: user/repo
+
+# Fish-like autosuggestions for zsh
+zsh-users/zsh-autosuggestions
+
+# Additional completion definitions for zsh
+zsh-users/zsh-completions
+
+# Fast syntax highlighting (deferred loading for better performance)
+zdharma-continuum/fast-syntax-highlighting kind:defer
