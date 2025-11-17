@@ -81,7 +81,7 @@ This dotfiles repository uses a clean, organized structure for ZSH configuration
 ```
 dotfiles/
 ├── zshenv                    # Bootstrap file (symlinks to ~/.zshenv)
-└── config/zsh/
+└── .config/zsh/
     ├── .zshrc               # Main ZSH configuration
     ├── zshrc.linux          # Linux-specific settings
     ├── zshrc.macos          # macOS-specific settings
@@ -110,7 +110,7 @@ mkdir -p ~/.config
 ln -sf ~/dotfiles/zshenv ~/.zshenv
 
 # Link entire zsh configuration directory
-ln -sf ~/dotfiles/config/zsh ~/.config/zsh
+ln -sf ~/dotfiles/.config/zsh ~/.config/zsh
 ```
 
 3. Reload your shell:
@@ -120,7 +120,7 @@ exec zsh
 
 #### Plugin Management
 
-Plugins are managed using [Antidote](https://github.com/mattmc3/antidote), a modern ZSH plugin manager. Plugins are declared in `config/zsh/.zsh_plugins.txt`.
+Plugins are managed using [Antidote](https://github.com/mattmc3/antidote), a modern ZSH plugin manager. Plugins are declared in `.config/zsh/.zsh_plugins.txt`.
 
 **Current plugins:**
 - `sindresorhus/pure` - Beautiful, minimal prompt theme
@@ -130,7 +130,7 @@ Plugins are managed using [Antidote](https://github.com/mattmc3/antidote), a mod
 
 **Adding new plugins:**
 
-1. Edit `config/zsh/.zsh_plugins.txt` and add the plugin in `user/repo` format:
+1. Edit `.config/zsh/.zsh_plugins.txt` and add the plugin in `user/repo` format:
 ```bash
 echo "user/plugin-name" >> ~/.config/zsh/.zsh_plugins.txt
 ```
@@ -145,7 +145,7 @@ Antidote will automatically clone and load the new plugin.
 **Updating plugins:**
 ```bash
 # Update Antidote itself
-cd ~/dotfiles/config/zsh/antidote && git pull
+cd ~/dotfiles/.config/zsh/antidote && git pull
 
 # Antidote automatically updates plugins on shell reload
 exec zsh
