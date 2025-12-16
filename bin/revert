@@ -1,14 +1,50 @@
 #!/bin/bash
 
-# Check if the PR-ID is passed as an argument
-if [ -z "$1" ]; then
-  echo "Usage: $0 <PR-ID>"
+# Revert a git commit with interactive selection
+# Shows all commits on the current branch and allows selection of which to revert
+
+# Check if there are any commits to revert
+if ! git rev-parse HEAD >/dev/null 2>&1; then
+  echo "Error: No commits to revert."
   exit 1
 fi
 
-# Assign the PR-ID argument to a variable
-PR_ID=$1
+# Get all commits with formatted output
+commits=$(git log --oneline --color=always --format="%C(yellow)%h%C(reset) - %C(cyan)%ar%C(reset) - %s %C(dim)- %an%C(reset)")
 
-# Execute the GraphQL query with the specified PR-ID
-gh api graphql -F query=@revertPullRequest.graphql -f "pr=$PR_ID"
+# Check if fzf is available
+if command -v fzf >/dev/null 2>&1; then
+  # Use fzf for selection
+  selected=$(echo "$commits" | fzf --ansi --no-sort --reverse --preview 'git show --color=always {1}' --preview-window=right:60%)
+else
+  # Fallback to simple numbered selection
+  total_commits=$(echo "$commits" | wc -l)
+  echo "All commits on current branch:"
+  echo "$commits" | nl -w2 -s'. '
+  echo ""
+  echo -n "Select commit number to revert (1-$total_commits): "
+  read -r selection
 
+  if ! [[ "$selection" =~ ^[0-9]+$ ]] || [ "$selection" -lt 1 ] || [ "$selection" -gt "$total_commits" ]; then
+    echo "Error: Invalid selection."
+    exit 1
+  fi
+
+  selected=$(echo "$commits" | sed -n "${selection}p")
+fi
+
+# Exit if no selection made
+if [ -z "$selected" ]; then
+  echo "No commit selected."
+  exit 0
+fi
+
+# Extract commit hash from selection
+commit_hash=$(echo "$selected" | awk '{print $1}')
+
+# Revert the selected commit
+if git revert --no-edit "$commit_hash"; then
+  echo ""
+  echo "Commit $commit_hash reverted successfully!"
+  echo "Don't forget to push: git push"
+fi
