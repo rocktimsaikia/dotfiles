@@ -5,8 +5,8 @@ alias weather="curl https://wttr.in/"
 # System
 alias ls="ls --color=auto"
 
-alias zshrc="source ~/.zshrc"
-alias bashrc="source ~/.bashrc"
+alias zshrc="exec zsh"
+alias bashrc="exec bash"
 alias v="nvim"
 alias pbcopy="xclip -selection clipboard"
 alias tmux="tmux -u"
@@ -53,6 +53,7 @@ alias gbc="git branch --show-current | pbcopy"
 alias gsa="git stash"
 alias gsp="git stash pop"
 alias grb="git-recent-branches"
+alias qc="qcommit"
 
 # Github
 alias gh-prs="gh pr list -A rocktimsaikia"

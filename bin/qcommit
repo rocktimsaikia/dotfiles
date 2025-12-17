@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# Stage all modified tracked files
+git add -u
+
+# Get list of staged files
+staged_files=$(git diff --cached --name-only)
+
+# Check if there are any staged files
+if [ -z "$staged_files" ]; then
+  echo "No changes to commit"
+  exit 0
+fi
+
+# Function to detect commit type based on files
+detect_commit_type() {
+  local files="$1"
+  local test_count=0
+  local docs_count=0
+  local config_count=0
+  local style_count=0
+  local build_count=0
+  local total=0
+
+  while IFS= read -r file; do
+    total=$((total + 1))
+
+    # Test files
+    if [[ "$file" =~ (test|spec|__tests__|\.test\.|\.spec\.) ]]; then
+      test_count=$((test_count + 1))
+    # Documentation
+    elif [[ "$file" =~ \.(md|txt|rst)$ ]] || [[ "$file" =~ ^(docs?|README) ]]; then
+      docs_count=$((docs_count + 1))
+    # Configuration files
+    elif [[ "$file" =~ \.(json|ya?ml|toml|ini|conf|config|env|properties)$ ]] || [[ "$file" =~ (\.config\.|\.rc$|config/) ]]; then
+      config_count=$((config_count + 1))
+    # Style files
+    elif [[ "$file" =~ \.(css|scss|sass|less|styl)$ ]]; then
+      style_count=$((style_count + 1))
+    # Build/CI files
+    elif [[ "$file" =~ (Dockerfile|docker-compose|Makefile|\.mk$|package\.json|package-lock\.json|pom\.xml|build\.gradle|\.github/) ]]; then
+      build_count=$((build_count + 1))
+    fi
+  done <<< "$files"
+
+  # Determine type based on majority
+  if [ $test_count -gt 0 ] && [ $test_count -ge $((total / 2)) ]; then
+    echo "test"
+  elif [ $docs_count -gt 0 ] && [ $docs_count -ge $((total / 2)) ]; then
+    echo "docs"
+  elif [ $config_count -gt 0 ] && [ $config_count -ge $((total / 2)) ]; then
+    echo "chore"
+  elif [ $style_count -gt 0 ] && [ $style_count -ge $((total / 2)) ]; then
+    echo "style"
+  elif [ $build_count -gt 0 ] && [ $build_count -ge $((total / 2)) ]; then
+    echo "build"
+  else
+    # Default to chore for mixed or unclear changes
+    echo "chore"
+  fi
+}
+
+# Count the number of staged files
+file_count=$(echo "$staged_files" | wc -l)
+
+# Detect commit type
+commit_type=$(detect_commit_type "$staged_files")
+
+# Generate commit message based on number of files
+if [ "$file_count" -eq 1 ]; then
+  # Single file: "type: changes in <filename>"
+  commit_msg="${commit_type}: changes in $staged_files"
+else
+  # Multiple files: "type: changes in N files" with details in body
+  commit_msg="${commit_type}: changes in $file_count files"
+  commit_body=""
+
+  # Build the commit body with file list
+  while IFS= read -r file; do
+    commit_body="${commit_body}- ${file}\n"
+  done <<< "$staged_files"
+
+  # Create full commit message with body
+  full_commit_msg="${commit_msg}\n\n${commit_body}"
+
+  # Commit with message and body
+  echo -e "$full_commit_msg" | git commit --no-verify -F -
+  exit 0
+fi
+
+# Single file commit (simpler case)
+git commit --no-verify -m "$commit_msg"
