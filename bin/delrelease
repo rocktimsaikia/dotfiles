@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Script to delete a GitHub release and its associated tags (both local and remote)
+
+# Check if tag argument is provided
+if [ -z "$1" ]; then
+  echo "Error: No tag specified"
+  echo "Usage: delrelease <tag-name>"
+  echo "Example: delrelease v1.0.0"
+  exit 1
+fi
+
+TAG="$1"
+
+# Confirm before deletion
+echo "This will delete:"
+echo "  - GitHub release: $TAG"
+echo "  - Remote tag: $TAG"
+echo "  - Local tag: $TAG"
+echo ""
+read -p "Are you sure? (y/N): " -n 1 -r
+echo ""
+
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  echo "Aborted."
+  exit 0
+fi
+
+echo ""
+echo "Starting deletion process..."
+
+# Delete GitHub release using gh CLI
+echo "→ Deleting GitHub release '$TAG'..."
+if gh release delete "$TAG" --yes 2>/dev/null; then
+  echo "✓ GitHub release deleted"
+else
+  echo "⚠ Warning: Failed to delete GitHub release (may not exist)"
+fi
+
+# Delete remote tag
+echo "→ Deleting remote tag '$TAG'..."
+if git push --delete origin "$TAG" 2>/dev/null; then
+  echo "✓ Remote tag deleted"
+else
+  echo "⚠ Warning: Failed to delete remote tag (may not exist)"
+fi
+
+# Delete local tag
+echo "→ Deleting local tag '$TAG'..."
+if git tag -d "$TAG" 2>/dev/null; then
+  echo "✓ Local tag deleted"
+else
+  echo "⚠ Warning: Failed to delete local tag (may not exist)"
+fi
+
+echo ""
+echo "✓ Deletion complete!"
