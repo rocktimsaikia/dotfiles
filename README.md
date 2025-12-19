@@ -12,12 +12,14 @@ Personal dotfiles and configuration files for a modern development environment.
   - [Neovim Setup](#neovim-setup)
   - [Node.js Ecosystem](#nodejs-ecosystem)
   - [Custom Scripts and Fonts](#custom-scripts-and-fonts)
+- [Post-Installation](#post-installation)
+- [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
 Before proceeding with the installation, ensure your system has the following:
-- Ubuntu/Debian-based Linux distribution
-- Root access for system packages installation
+- macOS or Ubuntu/Debian-based Linux distribution
+- Root access for system packages installation (Linux only)
 - Basic understanding of shell commands
 
 ## Installation
@@ -34,6 +36,8 @@ git clone --recurse-submodules https://github.com/rocktimsaikia/dotfiles
 ### System Requirements
 
 Install the essential system packages:
+
+**Ubuntu/Debian:**
 ```bash
 sudo apt install \
   zsh \
@@ -45,7 +49,20 @@ sudo apt install \
   curl \
   make \
   xclip \
-  tmux \
+  tmux
+```
+
+**macOS:**
+```bash
+brew install \
+  zsh \
+  neofetch \
+  ripgrep \
+  git \
+  vim \
+  curl \
+  make \
+  tmux
 ```
 
 ### Shell Setup
@@ -113,7 +130,17 @@ ln -sf ~/dotfiles/zshenv ~/.zshenv
 ln -sf ~/dotfiles/.config/zsh ~/.config/zsh
 ```
 
-3. Reload your shell:
+3. Install plugins (REQUIRED for first-time setup):
+```bash
+# On macOS or Linux
+cd ~/.config/zsh
+source antidote/antidote.zsh
+antidote bundle < .zsh_plugins.txt > .zsh_plugins.zsh
+```
+
+This step clones all plugins (Pure prompt, autosuggestions, etc.) and generates the plugin loader script. **Without this step, Pure prompt and other plugins won't work.**
+
+4. Reload your shell:
 ```bash
 exec zsh
 ```
@@ -208,6 +235,26 @@ After completing the installation:
 1. Reboot your system to apply shell changes
 2. Verify all configurations by opening a new terminal
 3. Test Neovim by opening it and checking for any errors
+
+## Troubleshooting
+
+### Pure prompt not showing
+
+If your prompt looks like the default zsh prompt instead of Pure:
+
+**Cause**: Antidote plugins weren't installed. The `.zsh_plugins.zsh` file is empty or missing.
+
+**Solution**: Run the plugin installation command:
+```bash
+cd ~/.config/zsh
+source antidote/antidote.zsh
+antidote bundle < .zsh_plugins.txt > .zsh_plugins.zsh
+exec zsh
+```
+
+**Verify**: Check that plugins are installed:
+- macOS: `ls ~/Library/Caches/antidote/` should show plugin directories
+- Linux: `ls ~/.cache/antidote/` should show plugin directories
 
 ## License
 
