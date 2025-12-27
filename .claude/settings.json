@@ -3,5 +3,9 @@
     "type": "command",
     "command": "~/.claude/statusline.sh",
     "padding": 0
+  },
+  "enabledPlugins": {
+    "pyright-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   }
 }

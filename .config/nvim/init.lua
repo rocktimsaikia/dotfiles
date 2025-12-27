@@ -508,6 +508,8 @@ require("lazy").setup({
         },
 
         { "github/copilot.vim" },
+
+        { "wakatime/vim-wakatime", lazy = false },
     },
 
     -- Configure any other settings here. See the documentation for more details.
