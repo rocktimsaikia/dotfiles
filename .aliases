@@ -40,7 +40,6 @@ alias gcn="git commit -n -m"
 alias gce="git commit -e -m" # Edit commit message
 alias gca="git commit -e --amend -n" # Edit last commit message
 alias gcan="git commit --amend --no-edit -n" # Add changes to last commit
-alias gem="git commit --allow-empty -m" # Add empty commit
 alias gd="git diff"
 alias gds="git diff --staged"
 alias gdp="gh pr diff"
