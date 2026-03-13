@@ -53,6 +53,7 @@ alias gsa="git stash"
 alias gsp="git stash pop"
 alias grb="git-recent-branches"
 alias qc="qcommit"
+alias gvert="git revert"
 
 # Github
 alias gh-prs="gh pr list -A rocktimsaikia"

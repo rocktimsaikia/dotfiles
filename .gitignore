@@ -10,3 +10,4 @@
 # Antidote generated files
 .config/zsh/.zsh_plugins.zsh
 .config/zsh/.zsh_history
+.config/tmux/plugins
