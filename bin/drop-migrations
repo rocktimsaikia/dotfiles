@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Delete newly added (untracked by base) migration files in the current branch
+# Finds files under any "migrations" folder that were added (not modified) compared to the base branch
+
+# Ensure we're in a git repo
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "Error: Not inside a git repository."
+  exit 1
+fi
+
+# Determine base branch (main or master)
+if git show-ref --verify --quiet refs/heads/main; then
+  BASE="main"
+elif git show-ref --verify --quiet refs/heads/master; then
+  BASE="master"
+else
+  echo "Error: Could not find a 'main' or 'master' base branch."
+  exit 1
+fi
+
+# Find newly added files under any migrations folder/subfolder compared to base
+migration_files=$(git diff --name-only --diff-filter=A "$BASE"...HEAD -- '*/migrations/*' '**/migrations/**')
+
+if [ -z "$migration_files" ]; then
+  echo "No new migration files found compared to '$BASE'."
+  exit 0
+fi
+
+echo "New migration files to delete:"
+echo "$migration_files" | while IFS= read -r f; do
+  echo "  $f"
+done
+echo ""
+
+# Confirm before deleting
+echo -n "Delete these files? [y/N] "
+read -r confirm
+
+if [[ "$confirm" =~ ^[Yy]$ ]]; then
+  echo "$migration_files" | while IFS= read -r f; do
+    if [ -f "$f" ]; then
+      rm "$f"
+      echo "Deleted: $f"
+    else
+      echo "Skipped (not found): $f"
+    fi
+  done
+  echo ""
+  echo "Done."
+else
+  echo "Aborted."
+fi

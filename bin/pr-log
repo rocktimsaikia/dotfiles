@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "GitHub CLI (gh) is required but was not found in PATH." >&2
+  exit 1
+fi
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "${repo_root}" ]]; then
+  echo "This script must be run from inside a git repository." >&2
+  exit 1
+fi
+
+cd "${repo_root}"
+
+if ! pr_number="$(gh pr view --json number --jq '.number')"; then
+  echo "No open pull request was found for the current branch." >&2
+  exit 1
+fi
+
+head_sha="$(gh pr view --json headRefOid --jq '.headRefOid')"
+branch_name="$(git branch --show-current)"
+branch_slug="${branch_name//\//-}"
+short_sha="${head_sha:0:12}"
+
+output_file="${1:-/tmp/github-actions-pr-${pr_number}-${branch_slug}-${short_sha}.txt}"
+runs="$(
+  gh run list \
+    --commit "${head_sha}" \
+    --limit 20 \
+    --json databaseId,workflowName,status,conclusion,createdAt \
+    --jq '.[] | [.databaseId, .workflowName, .status, (.conclusion // ""), .createdAt] | @tsv'
+)"
+
+if [[ -z "${runs}" ]]; then
+  echo "No GitHub Actions run was found for PR #${pr_number} head commit ${head_sha}." >&2
+  exit 1
+fi
+
+tmp_output="$(mktemp)"
+tmp_error="$(mktemp)"
+cleanup() {
+  rm -f "${tmp_output}" "${tmp_error}"
+}
+trap cleanup EXIT
+
+selected_run_id=""
+selected_workflow_name=""
+selected_status=""
+selected_conclusion=""
+
+while IFS=$'\t' read -r run_id workflow_name status conclusion created_at; do
+  : > "${tmp_output}"
+  : > "${tmp_error}"
+
+  if gh run view "${run_id}" --log > "${tmp_output}" 2> "${tmp_error}" && [[ -s "${tmp_output}" ]]; then
+    selected_run_id="${run_id}"
+    selected_workflow_name="${workflow_name}"
+    selected_status="${status}"
+    selected_conclusion="${conclusion}"
+    break
+  fi
+done <<< "${runs}"
+
+if [[ -z "${selected_run_id}" ]]; then
+  echo "Unable to download a non-empty GitHub Actions log for PR #${pr_number} head commit ${head_sha}." >&2
+  if [[ -s "${tmp_error}" ]]; then
+    cat "${tmp_error}" >&2
+  fi
+  exit 1
+fi
+
+mv "${tmp_output}" "${output_file}"
+trap - EXIT
+rm -f "${tmp_error}"
+
+echo "Saved raw GitHub Actions log to ${output_file}"
+echo "Run ID: ${selected_run_id}"
+echo "Workflow: ${selected_workflow_name}"
+echo "Status: ${selected_status}"
+if [[ -n "${selected_conclusion}" ]]; then
+  echo "Conclusion: ${selected_conclusion}"
+fi

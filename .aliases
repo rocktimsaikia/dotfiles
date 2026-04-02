@@ -108,11 +108,13 @@ alias yt-to-mp3="yt-dlp -x --audio-format mp3 --audio-quality 0"
 # AI
 alias ai-explain="cody chat --message 'Summarize this file functionality' --context-file"
 
+alias dm="drop-migrations"
+
 # Git restore staged but only the new files
 alias grsn='git restore --staged $(git status --porcelain | grep "^A" | awk "{print \$2}")'
 
 # Claude CLI
-alias cc='claude'
+alias cc='claude --chrome'
 alias ccr='claude --resume'
 alias cct='claude --continue'
 alias ccc='claude --dangerously-skip-permissions'
