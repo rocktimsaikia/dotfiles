@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Delete newly created migration files in the current branch
-# Finds untracked and staged-as-added files under any "migrations" folder/subfolder
+# Delete migration files added on the current branch.
+# Prefer files added relative to the repository's default integration branch, and
+# fall back to staged-as-added or untracked local migration files when no branch
+# diff is available.
 
 # Ensure we're in a git repo
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
@@ -9,10 +11,65 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   exit 1
 fi
 
-# Find newly added (staged) and untracked files under any migrations folder
-migration_files=$(git status --porcelain | awk '
-  /^A  .*migrations/ || /^\?\? .*migrations/ { print $2 }
-' | grep -E '(^|/)migrations/')
+get_base_ref() {
+  local current_branch upstream upstream_branch
+  current_branch=$(git branch --show-current 2>/dev/null)
+  upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>/dev/null)
+  upstream_branch=${upstream#origin/}
+
+  if [ -n "$upstream" ] && [ "$upstream_branch" != "$current_branch" ]; then
+    echo "$upstream"
+    return 0
+  fi
+
+  if git show-ref --verify --quiet refs/remotes/origin/master; then
+    echo "origin/master"
+    return 0
+  fi
+
+  if git show-ref --verify --quiet refs/remotes/origin/main; then
+    echo "origin/main"
+    return 0
+  fi
+
+  if [ -n "$upstream" ]; then
+    echo "$upstream"
+    return 0
+  fi
+
+  return 1
+}
+
+get_branch_added_migrations() {
+  local base_ref="$1"
+  git diff --name-status "$base_ref"...HEAD 2>/dev/null | awk '
+    $1 == "A" && $2 ~ /(^|\/)migrations\// { print $2 }
+  '
+}
+
+get_local_added_migrations() {
+  git status --porcelain | awk '
+    /^A  / || /^\?\?/ {
+      path = substr($0, 4)
+      if (path ~ /(^|\/)migrations\//) {
+        print path
+      }
+    }
+  '
+}
+
+base_ref=$(get_base_ref)
+migration_files=""
+
+if [ -n "$base_ref" ]; then
+  migration_files=$(get_branch_added_migrations "$base_ref")
+fi
+
+if [ -z "$migration_files" ]; then
+  migration_files=$(get_local_added_migrations)
+fi
+
+migration_files=$(printf '%s\n' "$migration_files" | sed '/^$/d' | sort -u)
 
 if [ -z "$migration_files" ]; then
   echo "No new migration files found."
