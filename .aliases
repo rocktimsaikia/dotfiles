@@ -37,7 +37,6 @@ alias clone="gh repo clone"
 alias gcln="git clean -df"
 alias gc="git commit -m"
 alias gcn="git commit -n -m"
-alias gce="git commit -e -m" # Edit commit message
 alias gca="git commit -e --amend -n" # Edit last commit message
 alias gcan="git commit --amend --no-edit -n" # Add changes to last commit
 alias gd="git diff"
@@ -55,6 +54,7 @@ alias grb="git-recent-branches"
 alias qc="qcommit"
 alias gvert="git revert"
 alias merge="git merge"
+alias ecommit="git commit --allow-empty -m"
 
 # Github
 alias gh-prs="gh pr list -A rocktimsaikia"
@@ -122,7 +122,9 @@ alias ccc='claude --dangerously-skip-permissions'
 alias cccr='claude --resume --dangerously-skip-permissions'
 
 alias co="codex"
+alias cod="~/codex-desktop-linux/codex-app/start.sh"
 
 alias fzfone='find . -maxdepth 1 -type f | fzf'
 
 alias actions='gh workflow view 1653306'
+alias pc='SKIP=tests pre-commit'

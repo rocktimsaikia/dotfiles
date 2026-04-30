@@ -10,7 +10,7 @@
 #   fi
 # done
 
-export BROWSER=firefox
+export BROWSER="${BROWSER:-$(xdg-settings get default-web-browser 2>/dev/null | sed 's/\.desktop$//')}"
 pr_number="$(gh pr view --json number | jq '.[]')"
 if [ -n "$pr_number" ]; then
   gh browse "$pr_number" 2> /dev/null
