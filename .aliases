@@ -86,7 +86,7 @@ alias ..="cd .."
 alias D="cd ~/Downloads"
 alias P="cd ~/Pictures"
 alias V="cd ~/Videos"
-alias cdot="cd ~/dot"
+alias dot="cd ~/dotfiles"
 alias mkcd="source ~/.local/bin/mkd" # mkdir + cd
 
 alias bat="bat -p"
