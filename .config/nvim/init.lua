@@ -521,9 +521,9 @@ require("lazy").setup({
     checker = { enabled = true },
 })
 
--- Auto-run :Lazy update on startup
+-- Auto-run Lazy update on startup (silent, in background)
 vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
-        vim.cmd("Lazy! update")
+        require("lazy").update({ show = false })
     end,
 })
