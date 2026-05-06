@@ -39,7 +39,7 @@ Ask this in one concise message if the user has not already provided both values
 4. Ask for priority and story points if missing.
 5. Create the Linear issue with:
    - an auto-generated, clear, concise title (never ask the user for it)
-   - an auto-generated, short plain-English description derived from the current staged git changes (`git diff --staged` and `git diff --staged --stat`) plus the user's request context
+   - an auto-generated description that is short, plain-English, and easy for a non-engineer to understand (see "Description Rules")
    - team set to `Product Engineering`
    - assignee set to `Rocktim Saikia`
    - cycle set to the current active cycle
@@ -57,17 +57,16 @@ Ask this in one concise message if the user has not already provided both values
 
 ## Description Rules
 
-1. Keep it short.
-2. Avoid internal shorthand unless it is already in the title or clearly needed.
-3. Prefer a simple summary of:
-   - what needs to change
-   - which endpoints or areas are affected
-   - expected behavior after the change
-4. Build the description from the staged git diff:
-   - run `git status` and `git diff --staged --stat` to see which files changed
-   - run `git diff --staged` to read the actual changes
-   - summarize the impacted files/areas and the behavior change in plain English
-   - if nothing is staged, generate the description from the user's request context only
+The description goes into the Linear task itself — keep it short and easy for anyone (including non-engineers) to understand.
+
+1. Aim for 2–4 short sentences or bullets. No walls of text.
+2. Plain English. Skip code, file paths, function names, diff snippets, framework jargon, and internal shorthand unless the title already uses it.
+3. Cover only:
+   - what is changing (in user-facing terms)
+   - why it matters / expected behavior after the change
+4. Source material:
+   - if there are staged changes, read them with `git status`, `git diff --staged --stat`, and `git diff --staged`, then translate them into plain language — do not paste the diff
+   - if nothing is staged, use the user's request context alone
 
 ## Fallbacks
 
