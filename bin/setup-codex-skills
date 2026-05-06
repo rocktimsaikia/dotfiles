@@ -1,0 +1,14 @@
+#!/bin/bash
+# Symlink ~/dotfiles/codex-skills/* into ~/.codex/skills and ~/.claude/commands
+# so the canonical skill files in dotfiles are picked up by both codex and Claude Code.
+set -euo pipefail
+
+src="$HOME/dotfiles/codex-skills"
+mkdir -p "$HOME/.codex/skills" "$HOME/.claude/commands"
+
+for d in "$src"/*/; do
+    n=$(basename "$d")
+    ln -sfn "$src/$n" "$HOME/.codex/skills/$n"
+    ln -sfn "$src/$n/SKILL.md" "$HOME/.claude/commands/$n.md"
+    echo "linked: $n"
+done

@@ -1,0 +1,3 @@
+display_name: Review Feature Models
+short_description: Review new feature models for schema, lifecycle, and production readiness.
+default_prompt: Review the models created or changed for this feature and tell me if the design is production-ready or near perfect.

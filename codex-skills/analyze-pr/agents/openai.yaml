@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analyze PR"
+  short_description: "Summarize a PR and flag production blockers."
+  default_prompt: "Use $analyze-pr to analyze the current branch's existing open PR and provide a concise summary plus any outstanding production-readiness issues."

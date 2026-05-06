@@ -1,0 +1,4 @@
+interface:
+  display_name: "Address PR Comments"
+  short_description: "Review, fix, and resolve GitHub PR comments."
+  default_prompt: "Review the GitHub PR comments on this pull request, make any needed code changes, push updates, and resolve the addressed review threads."
