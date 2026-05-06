@@ -26,6 +26,11 @@ Before creating the task, ask the user for:
 
 Ask this in one concise message if the user has not already provided both values.
 
+**Never ask the user for a title or description.** Always auto-generate both:
+
+- The title comes from the user's described task.
+- The description is derived from the current staged git changes (`git status`, `git diff --staged --stat`, `git diff --staged`) combined with the user's request context. If there are no staged changes, fall back to the user's request context alone.
+
 ## Workflow
 
 1. Use the `Product Engineering` team.
@@ -33,8 +38,8 @@ Ask this in one concise message if the user has not already provided both values
 3. Fetch the current active cycle for `Product Engineering`.
 4. Ask for priority and story points if missing.
 5. Create the Linear issue with:
-   - clear title
-   - short plain-English description
+   - an auto-generated, clear, concise title (never ask the user for it)
+   - an auto-generated, short plain-English description derived from the current staged git changes (`git diff --staged` and `git diff --staged --stat`) plus the user's request context
    - team set to `Product Engineering`
    - assignee set to `Rocktim Saikia`
    - cycle set to the current active cycle
@@ -58,6 +63,11 @@ Ask this in one concise message if the user has not already provided both values
    - what needs to change
    - which endpoints or areas are affected
    - expected behavior after the change
+4. Build the description from the staged git diff:
+   - run `git status` and `git diff --staged --stat` to see which files changed
+   - run `git diff --staged` to read the actual changes
+   - summarize the impacted files/areas and the behavior change in plain English
+   - if nothing is staged, generate the description from the user's request context only
 
 ## Fallbacks
 
