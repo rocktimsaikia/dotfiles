@@ -117,14 +117,19 @@ alias dm="drop-migrations"
 # Git restore staged but only the new files
 alias grsn='git restore --staged $(git status --porcelain | grep "^A" | awk "{print \$2}")'
 
-# Claude CLI
-alias cc='claude --chrome'
-alias ccr='claude --resume'
-alias cct='claude --continue'
-alias ccc='claude --dangerously-skip-permissions'
-alias cccr='claude --resume --dangerously-skip-permissions'
+# AI skill sync
+sync-ai-skills() {
+  ~/bin/setup-codex-skills >/dev/null
+}
 
-alias co="codex"
+# Claude CLI
+cc() { sync-ai-skills; claude --chrome "$@"; }
+ccr() { sync-ai-skills; claude --resume "$@"; }
+cct() { sync-ai-skills; claude --continue "$@"; }
+ccc() { sync-ai-skills; claude --dangerously-skip-permissions "$@"; }
+cccr() { sync-ai-skills; claude --resume --dangerously-skip-permissions "$@"; }
+
+co() { sync-ai-skills; codex "$@"; }
 alias cod="~/codex-desktop-linux/codex-app/start.sh"
 
 alias fzfone='find . -maxdepth 1 -type f | fzf'

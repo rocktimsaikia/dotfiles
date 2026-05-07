@@ -1,14 +1,46 @@
-#!/bin/bash
-# Symlink ~/dotfiles/codex-skills/* into ~/.codex/skills and ~/.claude/commands
-# so the canonical skill files in dotfiles are picked up by both codex and Claude Code.
+#!/usr/bin/env bash
+# Sync ~/dotfiles/codex-skills into both Codex and Claude skill directories.
 set -euo pipefail
 
-src="$HOME/dotfiles/codex-skills"
-mkdir -p "$HOME/.codex/skills" "$HOME/.claude/commands"
+src="${CODEX_SKILLS_SOURCE:-$HOME/dotfiles/codex-skills}"
+codex_dir="${CODEX_SKILLS_TARGET:-$HOME/.codex/skills}"
+claude_dir="${CLAUDE_COMMANDS_TARGET:-$HOME/.claude/commands}"
 
+mkdir -p "$codex_dir" "$claude_dir"
+
+if [[ ! -d "$src" ]]; then
+    echo "missing source directory: $src" >&2
+    exit 1
+fi
+
+prune_stale_links() {
+    local target_dir="$1"
+    local expected_prefix="$2"
+    local item
+
+    shopt -s nullglob
+    for item in "$target_dir"/*; do
+        [[ -L "$item" ]] || continue
+        if [[ "$(readlink "$item")" == "$expected_prefix"* && ! -e "$item" ]]; then
+            rm "$item"
+            echo "removed stale link: $item"
+        fi
+    done
+    shopt -u nullglob
+}
+
+prune_stale_links "$codex_dir" "$src/"
+prune_stale_links "$claude_dir" "$src/"
+
+shopt -s nullglob
 for d in "$src"/*/; do
-    n=$(basename "$d")
-    ln -sfn "$src/$n" "$HOME/.codex/skills/$n"
-    ln -sfn "$src/$n/SKILL.md" "$HOME/.claude/commands/$n.md"
-    echo "linked: $n"
+    name=$(basename "$d")
+    skill_file="$src/$name/SKILL.md"
+
+    [[ -f "$skill_file" ]] || continue
+
+    ln -sfn "$src/$name" "$codex_dir/$name"
+    ln -sfn "$skill_file" "$claude_dir/$name.md"
+    echo "synced: $name"
 done
+shopt -u nullglob

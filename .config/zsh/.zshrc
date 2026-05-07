@@ -21,6 +21,11 @@ export LANG='en_US.UTF-8'
 # Load aliases
 source "$HOME/.aliases"
 
+# Keep Codex and Claude skill links in sync with ~/dotfiles/codex-skills.
+if [[ -x "$HOME/bin/setup-codex-skills" ]]; then
+    "$HOME/bin/setup-codex-skills" >/dev/null 2>&1 || true
+fi
+
 # *** Keybindings ***
 # Use emacs keybindings
 bindkey -e

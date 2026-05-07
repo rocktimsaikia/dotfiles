@@ -15,9 +15,18 @@ Key locations:
 - `.config/zsh/` — XDG-based zsh setup. Bootstrap is `zshenv` (symlinked to `~/.zshenv`), which sets `ZDOTDIR=$HOME/.config/zsh`. From there `.zshrc` loads Antidote plugins, sources `~/.aliases`, then sources `zshrc.linux` or `zshrc.macos` based on `uname`. Platform-specific PATH/tooling (pyenv, bun, n, go) lives in those OS files — not in `.zshrc`.
 - `.config/zsh/.zsh_plugins.txt` — Antidote plugin list. After editing, regenerate `.zsh_plugins.zsh` (see "Zsh plugins" below). The generated `.zsh_plugins.zsh` is gitignored.
 - `bin/` — custom user scripts, symlinked to `~/bin` and added to PATH by `.zshrc`. Many are referenced as aliases in `.aliases` (e.g. `dm` → `drop-migrations`, `qc` → `qcommit`, `tb` → `tmux-branch`, `grb` → `git-recent-branches`).
-- `cron/ecosystem.config.js` — pm2 config that runs `cron/update-claude.js` every 15 minutes to `npm i -g @anthropic-ai/claude-code`. Standalone; not auto-started by anything in this repo.
 - `.config/nvim/`, `.config/tmux/`, `.config/ghostty/`, `.config/fish/`, `.config/fontconfig/` — app configs activated by symlink.
 - Submodules: `.config/zsh/antidote` (plugin manager) and `.config/tmux/plugins/tpm`. Clone with `--recurse-submodules` or run `git submodule update --init` after cloning.
+
+## First-time setup
+
+Clone with submodules and initialize:
+```bash
+git clone --recurse-submodules https://github.com/rocktimsaikia/dotfiles ~/.dotfiles
+cd ~/.dotfiles
+./setup.sh  # or manually symlink files per README.md
+exec zsh
+```
 
 ## Common tasks
 
@@ -45,3 +54,9 @@ exec zsh
 - Aliases follow short two-to-four-letter mnemonics: `g*` for git, `cg*` for the user's `~/codingal/main` workspace, `cc*` for Claude Code variants, `e*` for editing config files (`eA`=aliases, `eZ`=zshrc, `eV`=nvim init, `eG`=ghostty).
 - Scripts in `bin/` are mostly bash with a `#!/bin/bash` or `#!/usr/bin/env bash` shebang. Keep them self-contained — no shared helpers/library.
 - The `.gitignore` already excludes generated artifacts (`.zsh_plugins.zsh`, `.zcompdump*`, `.config/tmux/plugins`, nvim's `lazy-lock.json` and `plugin/`). Don't commit them back in.
+
+## Gotchas
+
+- **Zsh plugins not loading after edit:** After editing `.zsh_plugins.txt`, you MUST regenerate `.zsh_plugins.zsh`. Simply saving the file won't activate new plugins—run the antidote bundle command documented in "Zsh plugins" above.
+- **Symlink conflicts during setup:** If a target file already exists (e.g., `~/.zshenv`), the symlink won't be created. Back up or remove the existing file first.
+- **PATH order matters:** Custom `~/bin` is prepended in `.zshrc`, so it takes priority over system tools. Useful for shadowing system commands, but keep this behavior in mind when adding scripts.
