@@ -96,9 +96,9 @@ alias mkcd="source ~/.local/bin/mkd" # mkdir + cd
 alias bat="bat -p"
 
 # Open file in default browser
-browse() {
+openbrowser() {
   if [ -z "$1" ]; then
-    echo "Usage: browse <file>"
+    echo "Usage: openbrowser <file>"
     return 1
   fi
   if command -v xdg-open &> /dev/null; then
@@ -110,7 +110,7 @@ browse() {
     return 1
   fi
 }
-alias br="browse"
+alias ob="openbrowser"
 
 # This is needed to make ssh work properly with kitty
 # without issues like "terminal is not fully functional"
