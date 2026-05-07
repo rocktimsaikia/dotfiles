@@ -110,6 +110,7 @@ browse() {
     return 1
   fi
 }
+alias br="browse"
 
 # This is needed to make ssh work properly with kitty
 # without issues like "terminal is not fully functional"
