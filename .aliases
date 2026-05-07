@@ -95,20 +95,13 @@ alias mkcd="source ~/.local/bin/mkd" # mkdir + cd
 
 alias bat="bat -p"
 
-# Open file in default browser
+# Open file in Google Chrome
 openbrowser() {
   if [ -z "$1" ]; then
     echo "Usage: openbrowser <file>"
     return 1
   fi
-  if command -v xdg-open &> /dev/null; then
-    xdg-open "$1"
-  elif command -v open &> /dev/null; then
-    open "$1"
-  else
-    echo "No suitable browser launcher found"
-    return 1
-  fi
+  google-chrome "$1" > /dev/null 2>&1 &
 }
 alias ob="openbrowser"
 
