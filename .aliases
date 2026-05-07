@@ -57,6 +57,7 @@ alias grb="git-recent-branches"
 alias qc="qcommit"
 alias gvert="git revert"
 alias merge="git merge"
+alias sm="sync-with-master"
 alias ecommit="git commit --allow-empty -m"
 
 # Github
