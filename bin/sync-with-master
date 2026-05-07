@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$CURRENT_BRANCH" = "HEAD" ]; then
+  echo "Error: Not on a branch (detached HEAD)"
+  exit 1
+fi
+
+if [ "$CURRENT_BRANCH" = "master" ] || [ "$CURRENT_BRANCH" = "main" ]; then
+  echo "Error: Already on master/main branch"
+  exit 1
+fi
+
+echo "Current branch: $CURRENT_BRANCH"
+echo "Fetching latest master from remote..."
+git fetch origin master
+
+echo "Ensuring local master is up-to-date..."
+git checkout master
+git merge --ff-only origin/master
+git checkout "$CURRENT_BRANCH"
+
+echo "Merging master into $CURRENT_BRANCH..."
+git merge master
+
+echo "Pushing changes to remote..."
+git push
+
+echo "✓ Successfully synced with master and merged into $CURRENT_BRANCH"
