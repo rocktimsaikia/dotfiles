@@ -49,9 +49,9 @@ exec zsh
 
 **Platform-specific config:** put Linux-only env/PATH in `zshrc.linux`, macOS-only in `zshrc.macos`. Cross-platform stuff goes in `.zshrc`.
 
-**Add a new AI agent skill:** create a new directory under `codex-skills/` with a `SKILL.md` file, then sync it to all CLI agents (Codex, Claude, Copilot CLI):
+**Add a new AI agent skill:** create a new directory under `skills/` with a `SKILL.md` file, then sync it to all CLI agents (Codex, Claude, Copilot CLI):
 ```bash
-setup-codex-skills
+setup-skills
 ```
 
 ## Conventions in this repo

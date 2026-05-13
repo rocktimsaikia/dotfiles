@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Sync ~/dotfiles/codex-skills into Codex, Claude, and Copilot CLI skill directories.
+# Sync ~/dotfiles/skills into Codex, Claude, and Copilot CLI skill directories.
 set -euo pipefail
 
-src="${CODEX_SKILLS_SOURCE:-$HOME/dotfiles/codex-skills}"
+src="${SKILLS_SOURCE:-$HOME/dotfiles/skills}"
 codex_dir="${CODEX_SKILLS_TARGET:-$HOME/.codex/skills}"
 claude_dir="${CLAUDE_COMMANDS_TARGET:-$HOME/.claude/commands}"
 copilot_dir="${COPILOT_SKILLS_TARGET:-$HOME/.copilot/skills}"

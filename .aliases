@@ -130,7 +130,7 @@ alias grsn='git restore --staged $(git status --porcelain | grep "^A" | awk "{pr
 
 # AI skill sync
 sync-ai-skills() {
-  ~/bin/setup-codex-skills >/dev/null
+  ~/bin/setup-skills >/dev/null
 }
 
 # Claude CLI
