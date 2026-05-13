@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Sync ~/dotfiles/codex-skills into both Codex and Claude skill directories.
+# Sync ~/dotfiles/codex-skills into Codex, Claude, and Copilot CLI skill directories.
 set -euo pipefail
 
 src="${CODEX_SKILLS_SOURCE:-$HOME/dotfiles/codex-skills}"
 codex_dir="${CODEX_SKILLS_TARGET:-$HOME/.codex/skills}"
 claude_dir="${CLAUDE_COMMANDS_TARGET:-$HOME/.claude/commands}"
+copilot_dir="${COPILOT_SKILLS_TARGET:-$HOME/.copilot/skills}"
 
-mkdir -p "$codex_dir" "$claude_dir"
+mkdir -p "$codex_dir" "$claude_dir" "$copilot_dir"
 
 if [[ ! -d "$src" ]]; then
     echo "missing source directory: $src" >&2
@@ -31,6 +32,7 @@ prune_stale_links() {
 
 prune_stale_links "$codex_dir" "$src/"
 prune_stale_links "$claude_dir" "$src/"
+prune_stale_links "$copilot_dir" "$src/"
 
 shopt -s nullglob
 for d in "$src"/*/; do
@@ -41,6 +43,7 @@ for d in "$src"/*/; do
 
     ln -sfn "$src/$name" "$codex_dir/$name"
     ln -sfn "$skill_file" "$claude_dir/$name.md"
+    ln -sfn "$src/$name" "$copilot_dir/$name"
     echo "synced: $name"
 done
 shopt -u nullglob

@@ -49,6 +49,11 @@ exec zsh
 
 **Platform-specific config:** put Linux-only env/PATH in `zshrc.linux`, macOS-only in `zshrc.macos`. Cross-platform stuff goes in `.zshrc`.
 
+**Add a new AI agent skill:** create a new directory under `codex-skills/` with a `SKILL.md` file, then sync it to all CLI agents (Codex, Claude, Copilot CLI):
+```bash
+setup-codex-skills
+```
+
 ## Conventions in this repo
 
 - Aliases follow short two-to-four-letter mnemonics: `g*` for git, `cg*` for the user's `~/codingal/main` workspace, `cc*` for Claude Code variants, `e*` for editing config files (`eA`=aliases, `eZ`=zshrc, `eV`=nvim init, `eG`=ghostty).
