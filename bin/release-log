@@ -8,9 +8,40 @@ fi
 # Get the last tag
 last_tag=$(git describe --tags --abbrev=0 HEAD~"$1")
 
+repo=$(gh repo view --json nameWithOwner --jq .nameWithOwner 2>/dev/null)
+
+github_username_for_commit() {
+    local hash="$1"
+    local email="$2"
+    local username=""
+
+    if [ "$repo" != "" ]; then
+        username=$(gh api "repos/$repo/commits/$hash" --jq '.author.login // empty' 2>/dev/null)
+    fi
+
+    if [ "$username" = "" ] && [[ "$email" == *@users.noreply.github.com ]]; then
+        username="${email%@users.noreply.github.com}"
+        username="${username#*+}"
+    fi
+
+    echo "$username"
+}
+
 # Get the commits since the last tag
-commits="## What's Changed"$'\n'"$(git log $last_tag..HEAD --pretty=format:'- %s by @%an in %H')"
+commit_lines=$(
+    git log "$last_tag"..HEAD --pretty=format:'%H%x09%s%x09%an%x09%ae' |
+        while IFS=$'\t' read -r hash subject author_name author_email; do
+            username=$(github_username_for_commit "$hash" "$author_email")
+
+            if [ "$username" = "" ]; then
+                username="$author_name"
+            fi
+
+            echo "- $subject by @$username in $hash"
+        done
+)
+
+commits="## What's Changed"$'\n'"$commit_lines"
 
 # Copy to clipboard
 echo "$commits" | xclip -selection clipboard
-
