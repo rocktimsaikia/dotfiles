@@ -191,10 +191,18 @@ sudo snap install nvim --classic
 nvim --version
 ```
 
-3. Open Neovim to install dependencies:
+3. Symlink the nvim config:
+```bash
+mkdir -p ~/.config
+ln -sf ~/dotfiles/.config/nvim ~/.config/nvim
+```
+
+4. Open Neovim — lazy.nvim will bootstrap itself and start installing plugins:
 ```bash
 nvim
 ```
+
+Wait until lazy.nvim's UI reports all plugins installed (build steps like `:TSUpdate` and `make install_jsregexp` run automatically). If anything looks incomplete, run `:Lazy sync` and `:TSUpdate` inside nvim, then restart.
 
 ### Tmux Setup
 
