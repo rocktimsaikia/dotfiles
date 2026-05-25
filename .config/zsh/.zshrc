@@ -59,10 +59,3 @@ case "$(uname -s)" in
         source "$ZDOTDIR/zshrc.macos"
         ;;
 esac
-
-# bun completions
-[ -s "/home/nightwarriorftw/.bun/_bun" ] && source "/home/nightwarriorftw/.bun/_bun"
-eval "$(~/.local/bin/mise activate)"
-
-# opencode
-export PATH=/home/nightwarriorftw/.opencode/bin:$PATH
