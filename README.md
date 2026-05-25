@@ -10,6 +10,7 @@ Personal dotfiles and configuration files for a modern development environment.
   - [Shell Setup](#shell-setup)
   - [ZSH Configuration](#zsh-configuration)
   - [Neovim Setup](#neovim-setup)
+  - [Tmux Setup](#tmux-setup)
   - [Node.js Ecosystem](#nodejs-ecosystem)
   - [Custom Scripts and Fonts](#custom-scripts-and-fonts)
 - [Post-Installation](#post-installation)
@@ -194,6 +195,22 @@ nvim --version
 ```bash
 nvim
 ```
+
+### Tmux Setup
+
+Tmux config lives at `.config/tmux/tmux.conf` and uses [TPM](https://github.com/tmux-plugins/tpm) for plugin management. TPM is included as a git submodule under `.config/tmux/plugins/tpm`, so make sure you cloned with `--recurse-submodules` (see [Clone Repository](#clone-repository)).
+
+1. Symlink the tmux config directory:
+```bash
+ln -sf ~/dotfiles/.config/tmux ~/.config/tmux
+```
+
+2. Start tmux and install plugins:
+```bash
+tmux
+```
+
+Inside tmux, press `prefix + I` (default prefix is `Ctrl-b`, so `Ctrl-b` then `Shift-i`) to fetch and install the declared plugins.
 
 ### Node.js Ecosystem
 

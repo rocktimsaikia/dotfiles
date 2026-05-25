@@ -70,18 +70,18 @@ alias gh-issue="gh issue create --editor"
 
 # Company
 alias dc="docker compose"
-alias cg="cd ~/codingal/main"
-alias cgw="cd ~/codingal/main/web"
-alias cgp="cd ~/codingal/main/api"
+alias cg="cd ~/main"
+alias cgw="cd ~/main/web"
+alias cgp="cd ~/main/api"
 alias cgpy="dc exec api ./manage.py shell_plus"
 alias cgdb="docker exec -it cgdb mysql -u root -p"
 alias cgpm="dc exec api ./manage.py"
-alias cgv="source ~/.pyenv/versions/codingal/bin/activate"
+alias cgv="source ~/.pyenv/versions/bin/activate"
 alias cgsh="docker compose exec api bash"
 
 ## Files
 alias eA="nvim ~/.aliases"
-alias eZ="nvim ~/.zshrc"
+alias eZ="nvim ~/.config/zsh/.zshrc"
 alias eV='nvim ~/.config/nvim/init.lua'
 alias eG='nvim ~/.config/ghostty/config'
 
