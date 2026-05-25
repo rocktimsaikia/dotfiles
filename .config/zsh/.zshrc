@@ -50,6 +50,10 @@ bindkey "^L" clear-screen
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/bin:$PATH"
 
+# NVM (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 # Detect OS and load platform-specific configuration
 case "$(uname -s)" in
     Linux*)

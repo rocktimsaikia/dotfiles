@@ -33,5 +33,3 @@ export PATH="$HOME/go/bin:$PATH"
 # Pipx
 export PATH="$PATH:/home/$USERNAME/.local/bin"
 
-# n (Node.js version manager)
-export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"

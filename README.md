@@ -214,14 +214,20 @@ Inside tmux, press `prefix + I` (default prefix is `Ctrl-b`, so `Ctrl-b` then `S
 
 ### Node.js Ecosystem
 
-1. Install `n` (Node.js version manager):
+1. Install `nvm` (Node Version Manager):
 ```bash
-curl -L https://bit.ly/n-install | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 ```
 
-Note: Before running the installation script, remove any existing `n` configuration from your `.zshrc` file (remove the line starting with `export N_PREFIX`).
+This drops a `~/.nvm` directory. The shared `.zshrc` already sources it, so a new shell will pick it up.
 
-2. Install development tools globally:
+2. Install the latest LTS Node:
+```bash
+nvm install --lts
+nvm use --lts
+```
+
+3. Install development tools globally:
 ```bash
 npm install -g \
   pnpm \
