@@ -42,7 +42,7 @@ Install the essential system packages:
 ```bash
 sudo apt install \
   zsh \
-  neofetch \
+  fastfetch \
   ripgrep \
   fuse \
   git \
@@ -57,7 +57,7 @@ sudo apt install \
 ```bash
 brew install \
   zsh \
-  neofetch \
+  fastfetch \
   ripgrep \
   git \
   vim \
