@@ -12,6 +12,7 @@ Installation guide for Ubuntu/Debian-based Linux distributions. For macOS, see [
   - [Neovim Setup](#neovim-setup)
   - [Tmux Setup](#tmux-setup)
   - [Node.js Ecosystem](#nodejs-ecosystem)
+  - [GNOME Extension Manager](#gnome-extension-manager)
   - [Custom Scripts and Fonts](#custom-scripts-and-fonts)
 - [Post-Installation](#post-installation)
 - [Troubleshooting](#troubleshooting)
@@ -231,6 +232,24 @@ npm install -g \
   @biomejs/biome \
   @tailwindcss/language-server
 ```
+
+### GNOME Extension Manager
+
+[Extension Manager](https://github.com/mjakeman/extension-manager) is a GUI for browsing, installing, and configuring GNOME Shell extensions without a browser.
+
+1. Install Extension Manager and the browser connector via apt:
+```bash
+sudo apt install gnome-shell-extension-manager gnome-browser-connector
+```
+
+The `gnome-browser-connector` package lets you install extensions directly from [extensions.gnome.org](https://extensions.gnome.org) (you'll also need the GNOME Shell integration browser add-on).
+
+2. Launch it:
+```bash
+extension-manager
+```
+
+Use the **Browse** tab to install extensions and the **Installed** tab to toggle and configure them.
 
 ### Custom Scripts and Fonts
 
