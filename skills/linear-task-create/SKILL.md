@@ -19,12 +19,35 @@ Use this skill when the user asks to create a Linear task or issue.
 
 ## Required Questions
 
-Before creating the task, ask the user for:
+Before creating the task, prompt the user **one at a time** (one question per message), in this order. Wait for the answer to each before asking the next. Skip a question only if the user already provided that value.
 
-1. Priority
-2. Story points
+### 1. Priority
 
-Ask this in one concise message if the user has not already provided both values.
+Ask for the priority and offer these options (matching the Linear team settings):
+
+- No priority (0)
+- Urgent (1)
+- High (2)
+- Medium (3)
+- Low (4)
+
+Pass the chosen value to Linear as the numeric `priority` (0–4).
+
+### 2. Story points
+
+After the priority is answered, ask for the story points (estimate) and offer these options:
+
+- No estimate
+- 0 Points
+- 1 Point
+- 2 Points
+- 3 Points
+- 4 Points
+- 5 Points
+- 6 Points
+- 7 Points
+
+Pass the chosen value to Linear as the numeric `estimate` (use no estimate when "No estimate" is chosen).
 
 **Never ask the user for a title or description.** Always auto-generate both:
 
@@ -36,7 +59,7 @@ Ask this in one concise message if the user has not already provided both values
 1. Use the `Product Engineering` team.
 2. Resolve `Rocktim Saikia` as the assignee.
 3. Fetch the current active cycle for `Product Engineering`.
-4. Ask for priority and story points if missing.
+4. Ask for priority and then story points, one at a time (see "Required Questions"), skipping any value the user already provided.
 5. Create the Linear issue with:
    - an auto-generated, clear, concise title (never ask the user for it)
    - an auto-generated description that is short, plain-English, and easy for a non-engineer to understand (see "Description Rules")
