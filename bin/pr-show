@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "GitHub CLI (gh) is required but was not found in PATH." >&2
+  exit 1
+fi
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "${repo_root}" ]]; then
+  echo "This script must be run from inside a git repository." >&2
+  exit 1
+fi
+
+cd "${repo_root}"
+
+branch_name="$(git branch --show-current)"
+if [[ -z "${branch_name}" ]]; then
+  echo "Not on a branch (detached HEAD)." >&2
+  exit 1
+fi
+
+# Look up the PR by head branch. This is more reliable than a bare
+# `gh pr view`, which depends on the remote tracking ref matching exactly.
+pr_number="$(gh pr list --head "${branch_name}" --state open --limit 1 --json number --jq '.[0].number // empty')"
+
+if [[ -z "${pr_number}" ]]; then
+  echo "No open pull request found for branch '${branch_name}'." >&2
+  exit 1
+fi
+
+# Render from explicit JSON fields. A bare `gh pr view` queries the
+# deprecated Projects (classic) `projectCards` field and errors out.
+gh pr view "${pr_number}" \
+  --json number,title,url \
+  --template '#{{.number}} {{.title}}{{"\n"}}{{.url}}{{"\n"}}'
