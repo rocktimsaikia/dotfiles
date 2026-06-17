@@ -29,7 +29,7 @@ github_username_for_commit() {
 
 # Get the commits since the last tag
 commit_lines=$(
-    git log "$last_tag"..HEAD --pretty=format:'%H%x09%s%x09%an%x09%ae' |
+    git log "$last_tag"..HEAD --pretty=tformat:'%H%x09%s%x09%an%x09%ae' |
         while IFS=$'\t' read -r hash subject author_name author_email; do
             username=$(github_username_for_commit "$hash" "$author_email")
 

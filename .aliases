@@ -54,11 +54,12 @@ alias gbc="git branch --show-current | pbcopy"
 alias gsa="git stash"
 alias gsp="git stash pop"
 alias grb="git-recent-branches"
+alias es="edit-staged"
 alias qc="qcommit"
 alias gvert="git revert"
 alias merge="git merge"
 alias sm="sync-with-master"
-alias ecommit="git commit --allow-empty -m"
+ecommit() { git commit --allow-empty -m "chore(empty): $*"; }
 
 # Github
 alias gh-prs="gh pr list -A rocktimsaikia"
