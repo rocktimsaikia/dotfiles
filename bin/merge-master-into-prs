@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Merge latest master into every open PR authored by you, and push.
+# ponytail: skips any PR whose merge conflicts; reports them at the end.
+set -euo pipefail
+
+REPO_DIR="${1:-$HOME/main}"
+BASE="${BASE:-master}"
+
+cd "$REPO_DIR"
+
+orig_branch=$(git symbolic-ref --short HEAD)
+restore() { git checkout -q "$orig_branch"; }
+trap restore EXIT
+
+git fetch -q origin "$BASE"
+
+mapfile -t branches < <(gh pr list --author rocktimsaikia --state open --json headRefName -q '.[].headRefName')
+
+skipped=()
+for b in "${branches[@]}"; do
+  echo "==> $b"
+  git fetch -q origin "$b"
+  git checkout -q "$b" || git checkout -q -b "$b" "origin/$b"
+  git reset -q --hard "origin/$b"
+  if git merge -m "merge $BASE" "origin/$BASE"; then
+    git push -q origin "$b"
+  else
+    git merge --abort
+    skipped+=("$b")
+    echo "  ! conflict, skipped"
+  fi
+done
+
+if ((${#skipped[@]})); then
+  echo "Conflicts (merge manually): ${skipped[*]}"
+fi
