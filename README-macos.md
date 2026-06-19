@@ -42,6 +42,7 @@ brew install \
   zsh \
   fastfetch \
   ripgrep \
+  fzf \
   git \
   vim \
   curl \

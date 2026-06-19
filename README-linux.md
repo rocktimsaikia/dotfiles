@@ -44,6 +44,7 @@ sudo apt install \
   zsh \
   fastfetch \
   ripgrep \
+  fzf \
   fuse \
   git \
   vim \
