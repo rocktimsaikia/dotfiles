@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
-# Show recently interacted git branches sorted by last commit date
+# Interactively switch to a recently interacted git branch (sorted by last commit date)
 # Usage: git-recent-branches [number]
-# Default: 5 branches
+# Default: 10 branches
 
-count=${1:-5}
-git for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short) %(refname:short)' | head -n "$count"
+count=${1:-10}
+branch=$(git for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short) %(refname:short)' \
+	| head -n "$count" \
+	| fzf --height=40% --reverse | awk '{print $2}')
+
+[ -n "$branch" ] && git switch "$branch"
