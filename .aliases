@@ -134,9 +134,7 @@ alias redash="google-chrome https://redash.codingal.com/ > /dev/null 2>&1 &"
 alias wiki="google-chrome https://github.com/Codingal/main/wiki > /dev/null 2>&1 &"
 
 alias yt-to-mp3="yt-dlp -x --audio-format mp3 --audio-quality 0"
-
-# AI
-alias ai-explain="cody chat --message 'Summarize this file functionality' --context-file"
+alias yt-dl="yt-dlp --no-playlist -f 'bestvideo+bestaudio/best' --merge-output-format mp4 -o '$HOME/Downloads/%(title)s.%(ext)s'"
 
 alias dm="drop-migrations"
 
