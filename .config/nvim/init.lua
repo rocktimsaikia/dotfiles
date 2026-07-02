@@ -410,6 +410,11 @@ require("lazy").setup({
         {
             "rebelot/kanagawa.nvim",
             config = function()
+                require("kanagawa").setup({
+                    -- Let the terminal (Ghostty) background/wallpaper show through
+                    -- instead of kanagawa painting its own opaque background.
+                    transparent = true,
+                })
                 vim.cmd("colorscheme kanagawa-wave")
             end,
         },
