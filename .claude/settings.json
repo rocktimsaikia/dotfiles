@@ -1,4 +1,7 @@
 {
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
@@ -9,8 +12,20 @@
     "typescript-lsp@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
-    "slack@claude-plugins-official": true
+    "slack@claude-plugins-official": true,
+    "waza@waza": true
   },
+  "extraKnownMarketplaces": {
+    "waza": {
+      "source": {
+        "source": "github",
+        "repo": "tw93/Waza"
+      }
+    }
+  },
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
+  "agentPushNotifEnabled": false,
+  "skipAutoPermissionPrompt": true,
   "voiceEnabled": true
 }
