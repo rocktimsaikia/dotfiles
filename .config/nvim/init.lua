@@ -414,6 +414,15 @@ require("lazy").setup({
                     -- Let the terminal (Ghostty) background/wallpaper show through
                     -- instead of kanagawa painting its own opaque background.
                     transparent = true,
+                    overrides = function(colors)
+                        local theme = colors.theme
+                        return {
+                            -- Relative line numbers: dim, not bold
+                            LineNr = { fg = "#3d3d52", bold = false, bg = "NONE" },
+                            -- Current line number: bright white + bold
+                            CursorLineNr = { fg = theme.ui.fg, bold = true, bg = "NONE" },
+                        }
+                    end,
                 })
                 vim.cmd("colorscheme kanagawa-wave")
             end,
