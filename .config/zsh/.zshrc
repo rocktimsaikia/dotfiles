@@ -63,3 +63,6 @@ case "$(uname -s)" in
         source "$ZDOTDIR/zshrc.macos"
         ;;
 esac
+
+# bun completions
+[ -s "/home/rocktim/.bun/_bun" ] && source "/home/rocktim/.bun/_bun"

@@ -54,6 +54,7 @@ alias gbc="git branch --show-current | pbcopy"
 alias gsa="git stash"
 alias gsp="git stash pop"
 alias grb="git-recent-branches"
+gwt() { local d; d=$(git-worktree-select) && [ -n "$d" ] && cd "$d"; }
 alias es="edit-staged"
 alias qc="qcommit"
 alias gvert="git revert"
@@ -150,8 +151,7 @@ sync-ai-skills() {
 cc() { sync-ai-skills; claude --chrome "$@"; }
 ccr() { sync-ai-skills; claude --resume "$@"; }
 cct() { sync-ai-skills; claude --continue "$@"; }
-ccc() { sync-ai-skills; claude --dangerously-skip-permissions "$@"; }
-cccr() { sync-ai-skills; claude --resume --dangerously-skip-permissions "$@"; }
+ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
 
 co() { sync-ai-skills; codex "$@"; }
 alias cod="~/codex-desktop-linux/codex-app/start.sh"

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# Pick a git worktree with fzf and print its path.
+# cd can't happen from a subprocess, so the `gwt` alias wraps this (see .aliases).
+
+git worktree list | fzf --height=40% --reverse | awk '{print $1}'
