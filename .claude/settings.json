@@ -13,13 +13,27 @@
     "code-review@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
     "slack@claude-plugins-official": true,
-    "waza@waza": true
+    "waza@waza": true,
+    "ponytail@ponytail": true,
+    "caveman@caveman": true
   },
   "extraKnownMarketplaces": {
     "waza": {
       "source": {
         "source": "github",
         "repo": "tw93/Waza"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    },
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
       }
     }
   },
