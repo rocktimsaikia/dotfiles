@@ -1,6 +1,6 @@
 # dotfiles — Linux (Ubuntu/Debian)
 
-Installation guide for Ubuntu/Debian-based Linux distributions. For macOS, see [README-macos.md](README-macos.md).
+Install guide for Ubuntu/Debian Linux. For macOS see [README-macos.md](README-macos.md).
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
@@ -20,35 +20,35 @@ Installation guide for Ubuntu/Debian-based Linux distributions. For macOS, see [
 
 ## Prerequisites
 
-Before proceeding, ensure your system has the following:
-- An Ubuntu/Debian-based Linux distribution
-- Root access for system package installation
-- Basic understanding of shell commands
+Need:
+- Ubuntu/Debian Linux distro
+- Root access for system package install
+- Basic shell command knowledge
 
 ## Installation
 
 ### Clone Repository
 
-First, clone the repository with its submodules:
+Clone repo with submodules:
 ```bash
 git clone --recurse-submodules https://github.com/rocktimsaikia/dotfiles
 ```
 
-**Note**: The `--recurse-submodules` flag is important as it clones the Antidote plugin manager and TPM (tmux plugin manager).
+**Note**: `--recurse-submodules` flag important — clones Antidote plugin manager and TPM (tmux plugin manager).
 
 ### Quick setup
 
-Run the setup script to create all symlinks at once (home dotfiles, `.config/*`, `bin`, Claude Code config, global agent instructions, fonts):
+Run setup script, makes all symlinks at once (home dotfiles, `.config/*`, `bin`, Claude Code config, global agent instructions, fonts):
 
 ```bash
 cd ~/dotfiles && ./setup.sh
 ```
 
-It replaces the individual `ln -sf` steps below (kept as reference). You still need the package installs and plugin bootstrap steps that follow.
+Replaces individual `ln -sf` steps below (kept as reference). Still need package installs and plugin bootstrap steps after.
 
 ### System Packages
 
-Install the essential system packages:
+Install essential packages:
 
 ```bash
 sudo apt install \
@@ -67,22 +67,22 @@ sudo apt install \
 
 ### Shell Setup
 
-1. Verify your current shell:
+1. Check current shell:
 ```bash
 echo $SHELL
 ```
 
-2. Check if zsh is available:
+2. Check zsh available:
 ```bash
 cat /etc/shells
 ```
 
-3. Switch to zsh (requires system reboot):
+3. Switch to zsh (needs reboot):
 ```bash
 chsh -s /bin/zsh
 ```
 
-4. Set up other shell configurations:
+4. Set up other shell configs:
 ```bash
 # Symlink aliases and vim configuration
 ln -sf ~/dotfiles/.aliases ~/
@@ -91,7 +91,7 @@ ln -sf ~/dotfiles/.vimrc ~/
 
 ### ZSH Configuration
 
-This dotfiles repository uses a clean, organized structure for ZSH configuration following the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
+Repo use clean, organized ZSH config structure per [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html).
 
 #### Directory Structure
 
@@ -108,15 +108,15 @@ dotfiles/
 
 #### Key Features
 
-- **Clean home directory**: Only `~/.zshenv` in your home directory
+- **Clean home directory**: Only `~/.zshenv` in home
 - **XDG compliant**: All ZSH configs in `~/.config/zsh/`
-- **Platform detection**: Automatically loads OS-specific configurations
+- **Platform detection**: Auto-loads OS-specific configs
 - **Antidote plugin manager**: Fast, modern plugin management
-- **Pure prompt**: Beautiful, minimal prompt with git integration
+- **Pure prompt**: Minimal prompt with git integration
 
 #### Installation
 
-1. Create the config directory:
+1. Make config dir:
 ```bash
 mkdir -p ~/.config
 ```
@@ -137,36 +137,36 @@ source antidote/antidote.zsh
 antidote bundle < .zsh_plugins.txt > .zsh_plugins.zsh
 ```
 
-This step clones all plugins (Pure prompt, autosuggestions, etc.) and generates the plugin loader script. **Without this step, Pure prompt and other plugins won't work.**
+Clones all plugins (Pure prompt, autosuggestions, etc.) and generates plugin loader script. **Without this, Pure prompt and other plugins won't work.**
 
-4. Reload your shell:
+4. Reload shell:
 ```bash
 exec zsh
 ```
 
 #### Plugin Management
 
-Plugins are managed using [Antidote](https://github.com/mattmc3/antidote), a modern ZSH plugin manager. Plugins are declared in `.config/zsh/.zsh_plugins.txt`.
+Plugins managed with [Antidote](https://github.com/mattmc3/antidote), modern ZSH plugin manager. Declared in `.config/zsh/.zsh_plugins.txt`.
 
 **Current plugins:**
-- `sindresorhus/pure` - Beautiful, minimal prompt theme
+- `sindresorhus/pure` - Minimal prompt theme
 - `zsh-users/zsh-autosuggestions` - Fish-like autosuggestions
-- `zsh-users/zsh-completions` - Additional completion definitions
+- `zsh-users/zsh-completions` - Extra completion definitions
 - `zdharma-continuum/fast-syntax-highlighting` - Fast syntax highlighting (deferred)
 
 **Adding new plugins:**
 
-1. Edit `.config/zsh/.zsh_plugins.txt` and add the plugin in `user/repo` format:
+1. Edit `.config/zsh/.zsh_plugins.txt`, add plugin in `user/repo` format:
 ```bash
 echo "user/plugin-name" >> ~/.config/zsh/.zsh_plugins.txt
 ```
 
-2. Reload your shell:
+2. Reload shell:
 ```bash
 exec zsh
 ```
 
-Antidote will automatically clone and load the new plugin.
+Antidote auto-clones and loads new plugin.
 
 **Updating plugins:**
 ```bash
@@ -184,39 +184,39 @@ exec zsh
 sudo snap install nvim --classic
 ```
 
-2. Verify installation:
+2. Verify install:
 ```bash
 nvim --version
 ```
 
-3. Symlink the nvim config:
+3. Symlink nvim config:
 ```bash
 mkdir -p ~/.config
 ln -sf ~/dotfiles/.config/nvim ~/.config/nvim
 ```
 
-4. Open Neovim — lazy.nvim will bootstrap itself and start installing plugins:
+4. Open Neovim — lazy.nvim bootstraps itself, starts installing plugins:
 ```bash
 nvim
 ```
 
-Wait until lazy.nvim's UI reports all plugins installed (build steps like `:TSUpdate` and `make install_jsregexp` run automatically). If anything looks incomplete, run `:Lazy sync` and `:TSUpdate` inside nvim, then restart.
+Wait till lazy.nvim UI reports all plugins installed (build steps like `:TSUpdate` and `make install_jsregexp` run automatically). If incomplete, run `:Lazy sync` and `:TSUpdate` in nvim, then restart.
 
 ### Tmux Setup
 
-Tmux config lives at `.config/tmux/tmux.conf` and uses [TPM](https://github.com/tmux-plugins/tpm) for plugin management. TPM is included as a git submodule under `.config/tmux/plugins/tpm`, so make sure you cloned with `--recurse-submodules` (see [Clone Repository](#clone-repository)).
+Tmux config at `.config/tmux/tmux.conf`, uses [TPM](https://github.com/tmux-plugins/tpm) for plugin management. TPM included as git submodule under `.config/tmux/plugins/tpm` — must clone with `--recurse-submodules` (see [Clone Repository](#clone-repository)).
 
-1. Symlink the tmux config directory:
+1. Symlink tmux config dir:
 ```bash
 ln -sf ~/dotfiles/.config/tmux ~/.config/tmux
 ```
 
-2. Start tmux and install plugins:
+2. Start tmux, install plugins:
 ```bash
 tmux
 ```
 
-Inside tmux, press `prefix + I` (default prefix is `Ctrl-b`, so `Ctrl-b` then `Shift-i`) to fetch and install the declared plugins.
+In tmux, press `prefix + I` (default prefix `Ctrl-b`, so `Ctrl-b` then `Shift-i`) to fetch and install declared plugins.
 
 ### Node.js Ecosystem
 
@@ -225,15 +225,15 @@ Inside tmux, press `prefix + I` (default prefix is `Ctrl-b`, so `Ctrl-b` then `S
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 ```
 
-This drops a `~/.nvm` directory. The shared `.zshrc` already sources it, so a new shell will pick it up.
+Drops `~/.nvm` dir. Shared `.zshrc` already sources it, so new shell picks it up.
 
-2. Install the latest LTS Node:
+2. Install latest LTS Node:
 ```bash
 nvm install --lts
 nvm use --lts
 ```
 
-3. Install development tools globally:
+3. Install dev tools globally:
 ```bash
 npm install -g \
   pnpm \
@@ -247,21 +247,21 @@ npm install -g \
 
 ### GNOME Extension Manager
 
-[Extension Manager](https://github.com/mjakeman/extension-manager) is a GUI for browsing, installing, and configuring GNOME Shell extensions without a browser.
+[Extension Manager](https://github.com/mjakeman/extension-manager) is GUI for browsing, installing, configuring GNOME Shell extensions without browser.
 
-1. Install Extension Manager and the browser connector via apt:
+1. Install Extension Manager and browser connector via apt:
 ```bash
 sudo apt install gnome-shell-extension-manager gnome-browser-connector
 ```
 
-The `gnome-browser-connector` package lets you install extensions directly from [extensions.gnome.org](https://extensions.gnome.org) (you'll also need the GNOME Shell integration browser add-on).
+`gnome-browser-connector` package lets you install extensions direct from [extensions.gnome.org](https://extensions.gnome.org) (also need GNOME Shell integration browser add-on).
 
-2. Launch it:
+2. Launch:
 ```bash
 extension-manager
 ```
 
-Use the **Browse** tab to install extensions and the **Installed** tab to toggle and configure them.
+Use **Browse** tab to install extensions, **Installed** tab to toggle and configure.
 
 ### Custom Scripts and Fonts
 
@@ -278,23 +278,23 @@ fc-cache -f -v
 
 ### Claude Code Statusline
 
-The custom [Claude Code](https://claude.com/claude-code) statusline lives at `.claude/statusline.sh` and is activated by the `statusLine` block in `.claude/settings.json`. Both files are tracked in this repo and activated by symlink.
+Custom [Claude Code](https://claude.com/claude-code) statusline at `.claude/statusline.sh`, activated by `statusLine` block in `.claude/settings.json`. Both files tracked in repo, activated by symlink.
 
-1. Install `jq` (used to parse the statusline JSON — without it the script falls back to slower bash parsing and drops some fields):
+1. Install `jq` (parses statusline JSON — without it script falls back to slower bash parsing, drops some fields):
 ```bash
 sudo apt install jq
 ```
 
-2. Symlink the config into `~/.claude/`:
+2. Symlink config into `~/.claude/`:
 ```bash
 mkdir -p ~/.claude
 ln -sf ~/dotfiles/.claude/statusline.sh ~/.claude/statusline.sh
 ln -sf ~/dotfiles/.claude/settings.json ~/.claude/settings.json
 ```
 
-**Note**: If `~/.claude/settings.json` already exists as a real file (not a symlink), back it up first (`mv ~/.claude/settings.json ~/.claude/settings.json.bak`) — otherwise `-f` overwrites it and you lose any machine-specific settings. Per-machine overrides belong in `~/.claude/settings.local.json`, which is gitignored.
+**Note**: If `~/.claude/settings.json` already exists as real file (not symlink), back it up first (`mv ~/.claude/settings.json ~/.claude/settings.json.bak`) — else `-f` overwrites it and you lose machine-specific settings. Per-machine overrides belong in `~/.claude/settings.local.json`, which is gitignored.
 
-3. Restart Claude Code — the new statusline is picked up on the next launch.
+3. Restart Claude Code — new statusline picked up next launch.
 
 4. Symlink global agent instructions (shared by Claude Code via `~/.claude/CLAUDE.md` and Codex/others via `~/AGENTS.md`):
 ```bash
@@ -304,20 +304,20 @@ ln -sf ~/AGENTS.md ~/.claude/CLAUDE.md
 
 ## Post-Installation
 
-After completing the installation:
-1. Reboot your system to apply shell changes
-2. Verify all configurations by opening a new terminal
-3. Test Neovim by opening it and checking for any errors
+After install:
+1. Reboot to apply shell changes
+2. Verify configs by opening new terminal
+3. Test Neovim — open it, check for errors
 
 ## Troubleshooting
 
 ### Pure prompt not showing
 
-If your prompt looks like the default zsh prompt instead of Pure:
+If prompt looks like default zsh prompt not Pure:
 
-**Cause**: Antidote plugins weren't installed. The `.zsh_plugins.zsh` file is empty or missing.
+**Cause**: Antidote plugins not installed. `.zsh_plugins.zsh` file empty or missing.
 
-**Solution**: Run the plugin installation command:
+**Solution**: Run plugin install command:
 ```bash
 cd ~/.config/zsh
 source antidote/antidote.zsh
@@ -325,7 +325,7 @@ antidote bundle < .zsh_plugins.txt > .zsh_plugins.zsh
 exec zsh
 ```
 
-**Verify**: Check that plugins are installed — `ls ~/.cache/antidote/` should show plugin directories.
+**Verify**: Check plugins installed — `ls ~/.cache/antidote/` should show plugin directories.
 
 ## License
 
