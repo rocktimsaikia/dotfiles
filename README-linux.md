@@ -298,7 +298,7 @@ ln -sf ~/dotfiles/.claude/settings.json ~/.claude/settings.json
 
 4. Symlink global agent instructions (shared by Claude Code via `~/.claude/CLAUDE.md` and Codex/others via `~/AGENTS.md`):
 ```bash
-ln -sf ~/dotfiles/.claude/AGENTS.md ~/AGENTS.md
+ln -sf ~/dotfiles/.claude/CLAUDE.md ~/AGENTS.md
 ln -sf ~/AGENTS.md ~/.claude/CLAUDE.md
 ```
 

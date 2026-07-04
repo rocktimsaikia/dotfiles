@@ -35,8 +35,8 @@ link "$DOT/.claude/statusline.sh" "$HOME/.claude/statusline.sh"
 link "$DOT/.claude/settings.json" "$HOME/.claude/settings.json"
 
 # Global agent instructions (Claude Code via ~/.claude/CLAUDE.md, Codex/others via ~/AGENTS.md)
-link "$DOT/.claude/AGENTS.md" "$HOME/AGENTS.md"
-link "$HOME/AGENTS.md"        "$HOME/.claude/CLAUDE.md"
+link "$DOT/.claude/CLAUDE.md" "$HOME/AGENTS.md"
+link "$DOT/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 
 # Fonts (platform-specific)
 case "$(uname)" in

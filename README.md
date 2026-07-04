@@ -38,7 +38,7 @@ Then head to the [Linux](README-linux.md) or [macOS](README-macos.md) guide to f
 
 ## Global agent instructions
 
-Personal global memory for AI CLI agents lives at `.claude/AGENTS.md`, shared across tools by symlink (set up by `./setup.sh`) — Claude Code reads it via `~/.claude/CLAUDE.md`, Codex and others via `~/AGENTS.md`.
+Personal global memory for AI CLI agents lives at `.claude/CLAUDE.md`, shared across tools by symlink (set up by `./setup.sh`) — Claude Code reads it via `~/.claude/CLAUDE.md`, Codex and others via `~/AGENTS.md`.
 
 ## License
 
