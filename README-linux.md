@@ -14,6 +14,7 @@ Installation guide for Ubuntu/Debian-based Linux distributions. For macOS, see [
   - [Node.js Ecosystem](#nodejs-ecosystem)
   - [GNOME Extension Manager](#gnome-extension-manager)
   - [Custom Scripts and Fonts](#custom-scripts-and-fonts)
+  - [Claude Code Statusline](#claude-code-statusline)
 - [Post-Installation](#post-installation)
 - [Troubleshooting](#troubleshooting)
 
@@ -264,6 +265,26 @@ ln -sf ~/dotfiles/bin ~/bin
 ln -sf ~/dotfiles/.local/share/fonts ~/.local/share
 fc-cache -f -v
 ```
+
+### Claude Code Statusline
+
+The custom [Claude Code](https://claude.com/claude-code) statusline lives at `.claude/statusline.sh` and is activated by the `statusLine` block in `.claude/settings.json`. Both files are tracked in this repo and activated by symlink.
+
+1. Install `jq` (used to parse the statusline JSON — without it the script falls back to slower bash parsing and drops some fields):
+```bash
+sudo apt install jq
+```
+
+2. Symlink the config into `~/.claude/`:
+```bash
+mkdir -p ~/.claude
+ln -sf ~/dotfiles/.claude/statusline.sh ~/.claude/statusline.sh
+ln -sf ~/dotfiles/.claude/settings.json ~/.claude/settings.json
+```
+
+**Note**: If `~/.claude/settings.json` already exists as a real file (not a symlink), back it up first (`mv ~/.claude/settings.json ~/.claude/settings.json.bak`) — otherwise `-f` overwrites it and you lose any machine-specific settings. Per-machine overrides belong in `~/.claude/settings.local.json`, which is gitignored.
+
+3. Restart Claude Code — the new statusline is picked up on the next launch.
 
 ## Post-Installation
 
