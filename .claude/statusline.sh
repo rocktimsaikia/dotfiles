@@ -150,6 +150,16 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
   git_branch=$(git branch --show-current 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
 fi
 
+# ---- ponytail mode (flag written by the ponytail plugin; absent = off) ----
+ponytail_color() { if [ "$use_color" -eq 1 ]; then printf '\033[38;5;108m'; fi; }  # ponytail green
+ponytail_flag="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.ponytail-active"
+ponytail_mode=""
+if [ -f "$ponytail_flag" ]; then
+  # empty flag == default 'full', mirroring ponytail-statusline.sh
+  ponytail_mode=$(head -n1 "$ponytail_flag" | tr -d '[:space:]')
+  [ -z "$ponytail_mode" ] && ponytail_mode="full"
+fi
+
 # ---- context window calculation ----
 context_pct=""
 context_color() { if [ "$use_color" -eq 1 ]; then printf '\033[1;37m'; fi; }  # default white
@@ -280,12 +290,16 @@ printf '📁%s%s%s' "$(dir_color)" "$current_dir" "$(rst)"
 if [ -n "$git_branch" ]; then
   printf '  🌿%s%s%s' "$(git_color)" "$git_branch" "$(rst)"
 fi
-printf '  🤖%s%s%s' "$(model_color)" "$model_name" "$(rst)"
+printf '  🤖%s%s%s' "$(model_color)" "${model_name% (*}" "$(rst)"
 if [ -n "$model_version" ] && [ "$model_version" != "null" ]; then
   printf '  🏷️%s%s%s' "$(version_color)" "$model_version" "$(rst)"
 fi
-if [ -n "$cc_version" ] && [ "$cc_version" != "null" ]; then
-  printf '  📟%sv%s%s' "$(cc_version_color)" "$cc_version" "$(rst)"
+if [ -n "$ponytail_mode" ]; then
+  if [ "$ponytail_mode" = "full" ]; then
+    printf '  🎀%sponytail%s' "$(ponytail_color)" "$(rst)"
+  else
+    printf '  🎀%sponytail:%s%s' "$(ponytail_color)" "$ponytail_mode" "$(rst)"
+  fi
 fi
 
 printf '\n'
