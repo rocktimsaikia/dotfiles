@@ -154,10 +154,21 @@ fi
 ponytail_color() { if [ "$use_color" -eq 1 ]; then printf '\033[38;5;108m'; fi; }  # ponytail green
 ponytail_flag="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.ponytail-active"
 ponytail_mode=""
-if [ -f "$ponytail_flag" ]; then
+if [ -f "$ponytail_flag" ] && [ ! -L "$ponytail_flag" ]; then
   # empty flag == default 'full', mirroring ponytail-statusline.sh
   ponytail_mode=$(head -n1 "$ponytail_flag" | tr -d '[:space:]')
   [ -z "$ponytail_mode" ] && ponytail_mode="full"
+fi
+
+# ---- caveman mode (flag written by the caveman plugin; absent/off = hidden) ----
+caveman_color() { if [ "$use_color" -eq 1 ]; then printf '\033[38;5;172m'; fi; }  # caveman orange
+caveman_flag="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.caveman-active"
+caveman_mode=""
+if [ -f "$caveman_flag" ] && [ ! -L "$caveman_flag" ]; then
+  # empty flag == default 'full', mirroring caveman-statusline.sh
+  caveman_mode=$(head -c 64 "$caveman_flag" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+  [ -z "$caveman_mode" ] && caveman_mode="full"
+  [ "$caveman_mode" = "off" ] && caveman_mode=""
 fi
 
 # ---- context window calculation ----
@@ -299,6 +310,13 @@ if [ -n "$ponytail_mode" ]; then
     printf '  🎀%sponytail%s' "$(ponytail_color)" "$(rst)"
   else
     printf '  🎀%sponytail:%s%s' "$(ponytail_color)" "$ponytail_mode" "$(rst)"
+  fi
+fi
+if [ -n "$caveman_mode" ]; then
+  if [ "$caveman_mode" = "full" ]; then
+    printf '  🪨%scaveman%s' "$(caveman_color)" "$(rst)"
+  else
+    printf '  🪨%scaveman:%s%s' "$(caveman_color)" "$caveman_mode" "$(rst)"
   fi
 fi
 
