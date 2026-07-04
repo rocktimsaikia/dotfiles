@@ -265,6 +265,12 @@ ln -sf ~/dotfiles/.claude/settings.json ~/.claude/settings.json
 
 3. Restart Claude Code — the new statusline is picked up on the next launch.
 
+4. Symlink global agent instructions (shared by Claude Code via `~/.claude/CLAUDE.md` and Codex/others via `~/AGENTS.md`):
+```bash
+ln -sf ~/dotfiles/.claude/AGENTS.md ~/AGENTS.md
+ln -sf ~/AGENTS.md ~/.claude/CLAUDE.md
+```
+
 ## Post-Installation
 
 After completing the installation:
