@@ -1,26 +1,26 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file guide Claude Code (claude.ai/code) when work with code in this repo.
 
 ## Repository purpose
 
-Personal dotfiles for a Linux/macOS developer environment. There is no build system, no test suite, and no application code — changes here are config edits and shell scripts that take effect on the user's machine via symlinks.
+Personal dotfiles for Linux/macOS dev environment. No build system, no test suite, no app code — changes here config edits and shell scripts, take effect on user machine via symlinks.
 
 ## Layout that matters
 
-The repo is checked out at `~/dotfiles`. Files are activated by symlinking from `~/dotfiles/...` into `$HOME` or `$XDG_CONFIG_HOME` — editing a file here changes live config on the next shell reload (`exec zsh`) or app restart. There is no apply/install step beyond the initial symlinking documented in `README.md`.
+Repo checked out at `~/dotfiles`. Files activated by symlinking from `~/dotfiles/...` into `$HOME` or `$XDG_CONFIG_HOME` — edit file here changes live config on next shell reload (`exec zsh`) or app restart. No apply/install step beyond initial symlinking in `README.md`.
 
 Key locations:
-- `.aliases` — sourced from `.config/zsh/.zshrc`. The canonical place to add aliases.
-- `.config/zsh/` — XDG-based zsh setup. Bootstrap is `zshenv` (symlinked to `~/.zshenv`), which sets `ZDOTDIR=$HOME/.config/zsh`. From there `.zshrc` loads Antidote plugins, sources `~/.aliases`, then sources `zshrc.linux` or `zshrc.macos` based on `uname`. Platform-specific PATH/tooling (pyenv, bun, n, go) lives in those OS files — not in `.zshrc`.
-- `.config/zsh/.zsh_plugins.txt` — Antidote plugin list. After editing, regenerate `.zsh_plugins.zsh` (see "Zsh plugins" below). The generated `.zsh_plugins.zsh` is gitignored.
-- `bin/` — custom user scripts, symlinked to `~/bin` and added to PATH by `.zshrc`. Many are referenced as aliases in `.aliases` (e.g. `dm` → `drop-migrations`, `qc` → `qcommit`, `tb` → `tmux-branch`, `grb` → `git-recent-branches`).
+- `.aliases` — sourced from `.config/zsh/.zshrc`. Canonical place for aliases.
+- `.config/zsh/` — XDG-based zsh setup. Bootstrap is `zshenv` (symlinked to `~/.zshenv`), sets `ZDOTDIR=$HOME/.config/zsh`. From there `.zshrc` loads Antidote plugins, sources `~/.aliases`, then sources `zshrc.linux` or `zshrc.macos` based on `uname`. Platform-specific PATH/tooling (pyenv, bun, n, go) lives in those OS files — not `.zshrc`.
+- `.config/zsh/.zsh_plugins.txt` — Antidote plugin list. After edit, regenerate `.zsh_plugins.zsh` (see "Zsh plugins" below). Generated `.zsh_plugins.zsh` gitignored.
+- `bin/` — custom user scripts, symlinked to `~/bin` and added to PATH by `.zshrc`. Many referenced as aliases in `.aliases` (e.g. `dm` → `drop-migrations`, `qc` → `qcommit`, `tb` → `tmux-branch`, `grb` → `git-recent-branches`).
 - `.config/nvim/`, `.config/tmux/`, `.config/ghostty/`, `.config/fish/`, `.config/fontconfig/` — app configs activated by symlink.
-- Submodules: `.config/zsh/antidote` (plugin manager) and `.config/tmux/plugins/tpm`. Clone with `--recurse-submodules` or run `git submodule update --init` after cloning.
+- Submodules: `.config/zsh/antidote` (plugin manager) and `.config/tmux/plugins/tpm`. Clone with `--recurse-submodules` or run `git submodule update --init` after clone.
 
 ## First-time setup
 
-Clone with submodules and initialize:
+Clone with submodules and init:
 ```bash
 git clone --recurse-submodules https://github.com/rocktimsaikia/dotfiles ~/.dotfiles
 cd ~/.dotfiles
@@ -35,11 +35,11 @@ exec zsh
 exec zsh
 ```
 
-**Add a new alias:** edit `.aliases` (it's already sourced by `.zshrc`). Don't add aliases to `.zshrc` directly.
+**Add new alias:** edit `.aliases` (already sourced by `.zshrc`). Don't add aliases to `.zshrc` directly.
 
-**Add a new bin script:** drop the script into `bin/`, `chmod +x`, and it's available on PATH (because `~/bin` is symlinked from `bin/` and prepended in `.zshrc`). If you want a short alias for it, add to `.aliases`.
+**Add new bin script:** drop script into `bin/`, `chmod +x`, available on PATH (`~/bin` symlinked from `bin/` and prepended in `.zshrc`). Want short alias? Add to `.aliases`.
 
-**Zsh plugins:** edit `.config/zsh/.zsh_plugins.txt`, then regenerate the loader:
+**Zsh plugins:** edit `.config/zsh/.zsh_plugins.txt`, then regenerate loader:
 ```bash
 cd ~/.config/zsh
 source antidote/antidote.zsh
@@ -47,21 +47,21 @@ antidote bundle < .zsh_plugins.txt > .zsh_plugins.zsh
 exec zsh
 ```
 
-**Platform-specific config:** put Linux-only env/PATH in `zshrc.linux`, macOS-only in `zshrc.macos`. Cross-platform stuff goes in `.zshrc`.
+**Platform-specific config:** Linux-only env/PATH in `zshrc.linux`, macOS-only in `zshrc.macos`. Cross-platform in `.zshrc`.
 
-**Add a new AI agent skill:** create a new directory under `skills/` with a `SKILL.md` file, then sync it to all CLI agents (Codex, Claude, Copilot CLI):
+**Add new AI agent skill:** create new directory under `skills/` with `SKILL.md` file, then sync to all CLI agents (Codex, Claude, Copilot CLI):
 ```bash
 setup-skills
 ```
 
 ## Conventions in this repo
 
-- Aliases follow short two-to-four-letter mnemonics: `g*` for git, `cg*` for the user's `~/codingal/main` workspace, `cc*` for Claude Code variants, `e*` for editing config files (`eA`=aliases, `eZ`=zshrc, `eV`=nvim init, `eG`=ghostty).
-- Scripts in `bin/` are mostly bash with a `#!/bin/bash` or `#!/usr/bin/env bash` shebang. Keep them self-contained — no shared helpers/library.
-- The `.gitignore` already excludes generated artifacts (`.zsh_plugins.zsh`, `.zcompdump*`, `.config/tmux/plugins`, nvim's `lazy-lock.json` and `plugin/`). Don't commit them back in.
+- Aliases follow short two-to-four-letter mnemonics: `g*` for git, `cg*` for user `~/codingal/main` workspace, `cc*` for Claude Code variants, `e*` for editing config files (`eA`=aliases, `eZ`=zshrc, `eV`=nvim init, `eG`=ghostty).
+- Scripts in `bin/` mostly bash with `#!/bin/bash` or `#!/usr/bin/env bash` shebang. Keep self-contained — no shared helpers/library.
+- `.gitignore` already excludes generated artifacts (`.zsh_plugins.zsh`, `.zcompdump*`, `.config/tmux/plugins`, nvim `lazy-lock.json` and `plugin/`). Don't commit them back.
 
 ## Gotchas
 
-- **Zsh plugins not loading after edit:** After editing `.zsh_plugins.txt`, you MUST regenerate `.zsh_plugins.zsh`. Simply saving the file won't activate new plugins—run the antidote bundle command documented in "Zsh plugins" above.
-- **Symlink conflicts during setup:** If a target file already exists (e.g., `~/.zshenv`), the symlink won't be created. Back up or remove the existing file first.
-- **PATH order matters:** Custom `~/bin` is prepended in `.zshrc`, so it takes priority over system tools. Useful for shadowing system commands, but keep this behavior in mind when adding scripts.
+- **Zsh plugins not loading after edit:** After editing `.zsh_plugins.txt`, you MUST regenerate `.zsh_plugins.zsh`. Saving file won't activate new plugins—run antidote bundle command in "Zsh plugins" above.
+- **Symlink conflicts during setup:** If target file already exists (e.g., `~/.zshenv`), symlink won't be created. Back up or remove existing file first.
+- **PATH order matters:** Custom `~/bin` prepended in `.zshrc`, so takes priority over system tools. Useful for shadowing system commands, but keep in mind when adding scripts.
