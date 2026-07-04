@@ -34,6 +34,16 @@ git clone --recurse-submodules https://github.com/rocktimsaikia/dotfiles
 
 **Note**: The `--recurse-submodules` flag is important as it clones the Antidote plugin manager and TPM (tmux plugin manager).
 
+### Quick setup
+
+Run the setup script to create all symlinks at once (home dotfiles, `.config/*`, `bin`, Claude Code config, global agent instructions, fonts):
+
+```bash
+cd ~/dotfiles && ./setup.sh
+```
+
+It replaces the individual `ln -sf` steps below (kept as reference). You still need the package installs and plugin bootstrap steps that follow.
+
 ### System Packages
 
 Install the essential system packages:
