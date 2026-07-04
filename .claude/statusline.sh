@@ -276,24 +276,16 @@ fi
 
 # ---- render statusline ----
 # Line 1: Core info (directory, git, model, claude code version, output style)
-printf '📁 %s%s%s' "$(dir_color)" "$current_dir" "$(rst)"
+printf '📁%s%s%s' "$(dir_color)" "$current_dir" "$(rst)"
 if [ -n "$git_branch" ]; then
-  printf '  🌿 %s%s%s' "$(git_color)" "$git_branch" "$(rst)"
+  printf '  🌿%s%s%s' "$(git_color)" "$git_branch" "$(rst)"
 fi
-printf '  🤖 %s%s%s' "$(model_color)" "$model_name" "$(rst)"
+printf '  🤖%s%s%s' "$(model_color)" "$model_name" "$(rst)"
 if [ -n "$model_version" ] && [ "$model_version" != "null" ]; then
-  printf '  🏷️ %s%s%s' "$(version_color)" "$model_version" "$(rst)"
+  printf '  🏷️%s%s%s' "$(version_color)" "$model_version" "$(rst)"
 fi
 if [ -n "$cc_version" ] && [ "$cc_version" != "null" ]; then
-  printf '  📟 %sv%s%s' "$(cc_version_color)" "$cc_version" "$(rst)"
-fi
-
-# Context remaining on same line
-if [ -n "$context_pct" ]; then
-  context_bar=$(progress_bar "$context_remaining_pct" 10)
-  printf '  🧠 %s%s [%s]%s' "$(context_color)" "$context_pct" "$context_bar" "$(rst)"
-elif [ -z "$context_pct" ]; then
-  printf '  🧠 %sTBD%s' "$(context_color)" "$(rst)"
+  printf '  📟%sv%s%s' "$(cc_version_color)" "$cc_version" "$(rst)"
 fi
 
 printf '\n'
