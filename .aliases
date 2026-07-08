@@ -107,7 +107,9 @@ alias D="cd ~/Downloads"
 alias P="cd ~/Pictures"
 alias V="cd ~/Videos"
 alias dot="cd ~/dotfiles"
-alias mkcd="source ~/.local/bin/mkd" # mkdir + cd
+
+# Make dir(s) and cd into it
+mkcd() { mkdir -p "$1" && cd "$1"; }
 
 alias bat="bat -p"
 
@@ -155,9 +157,6 @@ ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
 
 co() { sync-ai-skills; codex "$@"; }
 alias cod="~/codex-desktop-linux/codex-app/start.sh"
-
-# Make dir(s) and cd into it
-mkcd() { mkdir -p "$1" && cd "$1"; }
 
 alias fzfone='find . -maxdepth 1 -type f | fzf'
 
