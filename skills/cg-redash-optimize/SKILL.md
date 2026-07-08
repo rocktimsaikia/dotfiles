@@ -1,13 +1,13 @@
 ---
-name: optimize-redash
+name: cg-redash-optimize
 description: >
   Make an EXISTING Redash query (Codingal, Python/Django ORM on data source 1)
   FASTER without changing its output. Use when the user says "optimize this redash
   query", "this redash query is slow", "speed up query #N", "why is this redash
-  report timing out", or invokes /optimize-redash. Primary job: kill query-time
+  report timing out", or invokes /cg-redash-optimize. Primary job: kill query-time
   cost — N+1 loops, missing select_related/prefetch_related, per-row DB calls,
   Python-side aggregation, and unbounded scans. Behavior-preserving. For a new query
-  use create-redash; for a feature change use update-redash. Uses mcp__redash__*.
+  use cg-redash-create; for a feature change use cg-redash-update. Uses mcp__redash__*.
 ---
 
 # Optimize Redash query (make it FAST, behavior-preserving)

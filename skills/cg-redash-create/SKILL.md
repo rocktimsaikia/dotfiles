@@ -1,13 +1,13 @@
 ---
-name: create-redash
+name: cg-redash-create
 description: >
   Create a NEW Redash query in Rocktim's Codingal style — Python (Django ORM)
   queries on data source 1 that print tab-separated rows. Use when the user says
   "create a redash query", "new redash report", "make a redash query for ...", or
-  invokes /create-redash. Knows the author's conventions: print("\t".join(...))
+  invokes /cg-redash-create. Knows the author's conventions: print("\t".join(...))
   output, IST date formatting, "-" param sentinels, ._id IDs, HTML link columns.
-  For editing an existing query use update-redash; for speeding one up use
-  optimize-redash. Uses the mcp__redash__* tools.
+  For editing an existing query use cg-redash-update; for speeding one up use
+  cg-redash-optimize. Uses the mcp__redash__* tools.
 ---
 
 # Create Redash query (Codingal, Python style)

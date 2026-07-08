@@ -1,5 +1,5 @@
 ---
-name: codingal-monthly-highlights
+name: cg-monthly-highlights
 description: Generate monthly engineering highlights report
 ---
 

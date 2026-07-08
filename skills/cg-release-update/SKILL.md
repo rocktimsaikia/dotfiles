@@ -1,5 +1,5 @@
 ---
-name: codingal-release-update
+name: cg-release-update
 description: Write a short, non-technical post-release update for the current PR or changes, focused on user-facing improvements and team-friendly release communication.
 ---
 # Codingal Release Update

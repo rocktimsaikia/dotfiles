@@ -1,12 +1,12 @@
 ---
-name: update-redash
+name: cg-redash-update
 description: >
   Update an EXISTING Redash query in Rocktim's Codingal style — Python (Django
   ORM) queries on data source 1 that print tab-separated rows. Use when the user
   says "update a redash query", "add a column to query #N", "change the filter on
-  this redash report", "edit redash query ...", or invokes /update-redash. Always
+  this redash report", "edit redash query ...", or invokes /cg-redash-update. Always
   reads the current query first and preserves the author's column order/naming.
-  For a brand-new query use create-redash; for speeding one up use optimize-redash.
+  For a brand-new query use cg-redash-create; for speeding one up use cg-redash-optimize.
   Uses the mcp__redash__* tools.
 ---
 

@@ -1,5 +1,5 @@
 ---
-name: codingal-extract-model-changes
+name: cg-extract-db-changes
 description: Create a new branch from updated master in the Codingal repo, pull over all migration files from the current source branch plus the backend files that caused those migrations, keep same-app admin wiring by default, and then run the `pr-create` skill to open a PR for the extracted branch.
 ---
 
