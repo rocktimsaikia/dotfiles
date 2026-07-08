@@ -72,9 +72,9 @@ alias gh-issue="gh issue create --editor"
 
 # Company
 alias dc="docker compose"
-alias cg="cd ~/main"
-alias cgw="cd ~/main/web"
-alias cgp="cd ~/main/api"
+alias cg="cd ~/main 2>/dev/null || cd ~/codingal/main"
+alias cgw="cd ~/main/web 2>/dev/null || cd ~/codingal/main/web"
+alias cgp="cd ~/main/api 2>/dev/null || cd ~/codingal/main/api"
 alias cgpy="dc exec api ./manage.py shell_plus"
 alias cgdb="docker exec -it cgdb mysql -u root -p"
 alias cgpm="dc exec api ./manage.py"
