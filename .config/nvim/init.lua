@@ -5,7 +5,6 @@ vim.cmd("iabbrev recieved received")
 vim.cmd("iabbrev adn and")
 
 -- Miscellaneous
-vim.cmd("iabbrev em —")
 vim.cmd("iabbrev arr →")
 vim.cmd("iabbrev yr " .. os.date("%Y"))
 
