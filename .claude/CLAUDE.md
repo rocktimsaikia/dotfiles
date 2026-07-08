@@ -4,6 +4,7 @@ Personal global memory shared across AI CLI agents:
 
 - Never use em dash (—) in any output. Use the normal hyphen (-) instead.
 - Never add AI agent as co-author on commits (no `Co-Authored-By` for Claude/Codex/etc.).
+- Never auto-commit. Always ask for explicit permission before making any git commit.
 - When offering multiple-choice options to the user (including every `AskUserQuestion` call), always mark one as the recommended default and say why. Concretely: append `(Recommended)` to that option's `label` and give the reason in its `description`. Putting the preferred option first is NOT enough - it must be labeled. Only skip when there is genuinely no basis to prefer one.
 - Multiple Linear MCPs may exist. For any Linear task whose issue ID prefix is `ROC-`, always use the `linear-rocktim` MCP.
 
