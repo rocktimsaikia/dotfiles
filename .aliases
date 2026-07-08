@@ -156,6 +156,9 @@ ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
 co() { sync-ai-skills; codex "$@"; }
 alias cod="~/codex-desktop-linux/codex-app/start.sh"
 
+# Make dir(s) and cd into it
+mkcd() { mkdir -p "$1" && cd "$1"; }
+
 alias fzfone='find . -maxdepth 1 -type f | fzf'
 
 alias actions='gh workflow view 1653306'
