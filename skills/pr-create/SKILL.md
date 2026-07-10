@@ -12,8 +12,9 @@ Use this skill when the user asks to create a pull request.
 1. Run the `commit` skill first to commit only staged changes.
 2. Push current branch to remote with `git push -u origin <branch-name>`.
 3. Create PR with `gh pr create --assignee @me` and capture the created PR URL.
-4. Open the created PR in the default system browser with `gh pr view --web`.
-5. Return the PR URL to the user in the final response.
+4. Ensure the PR is assigned to you: run `gh pr edit --add-assignee @me` (no-op if already assigned, covers cases where create-time assignment is dropped).
+5. Open the created PR in the default system browser with `gh pr view --web`.
+6. Return the PR URL to the user in the final response.
 
 ## PR Description Rules
 
