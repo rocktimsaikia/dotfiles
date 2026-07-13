@@ -3,4 +3,8 @@
 # Pick a git worktree with fzf and print its path.
 # cd can't happen from a subprocess, so the `gwt` alias wraps this (see .aliases).
 
-git worktree list | fzf --height=40% --reverse | awk '{print $1}'
+# Sort by last commit time, most recent first.
+git worktree list | grep -vE '\[(master|main)\]$' | while read -r line; do
+	path=${line%% *}
+	printf '%s\t%s\n' "$(git -C "$path" log -1 --format=%ct 2>/dev/null || echo 0)" "$line"
+done | sort -rn | cut -f2- | fzf --height=40% --reverse | awk '{print $1}'
