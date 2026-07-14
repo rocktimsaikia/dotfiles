@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Revert a git commit with interactive selection
-# Shows all commits on the current branch and allows selection of which to revert
+# Shows last 5 commits on the current branch and allows selection of which to revert
 
 # Check if there are any commits to revert
 if ! git rev-parse HEAD >/dev/null 2>&1; then
@@ -10,7 +10,7 @@ if ! git rev-parse HEAD >/dev/null 2>&1; then
 fi
 
 # Get all commits with formatted output
-commits=$(git log --oneline --color=always --format="%C(yellow)%h%C(reset) - %C(cyan)%ar%C(reset) - %s %C(dim)- %an%C(reset)")
+commits=$(git log -5 --oneline --color=always --format="%C(yellow)%h%C(reset) - %C(cyan)%ar%C(reset) - %s %C(dim)- %an%C(reset)")
 
 # Check if fzf is available
 if command -v fzf >/dev/null 2>&1; then
@@ -19,7 +19,7 @@ if command -v fzf >/dev/null 2>&1; then
 else
   # Fallback to simple numbered selection
   total_commits=$(echo "$commits" | wc -l)
-  echo "All commits on current branch:"
+  echo "Last 5 commits on current branch:"
   echo "$commits" | nl -w2 -s'. '
   echo ""
   echo -n "Select commit number to revert (1-$total_commits): "
