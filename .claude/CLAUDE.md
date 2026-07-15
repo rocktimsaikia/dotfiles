@@ -12,3 +12,5 @@ Personal global memory shared across AI CLI agents:
 ## UI / styling
 
 - Change container background (tints, status colors, dark mode)? Restyle every child on it - text, icons, chips, borders - keep readable contrast (aim WCAG AA, ~4.5:1 text). Never leave default-styled elements clashing on non-default surface.
+
+@RTK.md
