@@ -80,16 +80,18 @@ Pass the chosen value to Linear as the numeric `estimate` (use no estimate when 
 
 ## Description Rules
 
-The description goes into the Linear task itself — keep it short and easy for anyone (including non-engineers) to understand.
+The description goes into the Linear task itself — it must always be concise, high-level, and readable by anyone (including non-engineers). These rules are hard requirements, not suggestions.
 
-1. Aim for 2–4 short sentences or bullets. No walls of text.
-2. Plain English. Skip code, file paths, function names, diff snippets, framework jargon, and internal shorthand unless the title already uses it.
-3. Cover only:
-   - what is changing (in user-facing terms)
+1. Hard limits: 2–4 short sentences or bullets, 60 words max total. No walls of text, no headings, no nested lists.
+2. Plain English only. Never include code, file paths, function/class names, diff snippets, SQL, framework or library names, or internal shorthand — even if the source material is full of them. The only exception: a technical term already used in the issue title.
+3. High level only. Describe the change the way you would explain it to a product manager:
+   - what is changing (in user-facing or business terms)
    - why it matters / expected behavior after the change
+   Implementation details (how) stay out of the description.
 4. Source material:
    - if there are staged changes, read them with `git status`, `git diff --staged --stat`, and `git diff --staged`, then translate them into plain language — do not paste the diff
    - if nothing is staged, use the user's request context alone
+5. Self-check before creating the issue: would a non-engineer understand every sentence? If any sentence needs engineering knowledge to parse, rewrite it. If the description exceeds 60 words, cut it down.
 
 ## Fallbacks
 
