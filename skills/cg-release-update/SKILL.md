@@ -15,7 +15,7 @@ Write short, sweet, non-technical release update about current PR or recent chan
 1. Start with `Release Update: [Brief title]`
 2. Brief greeting announcing release.
 3. `Key Updates:` section.
-4. Main changes as bullets using `—`.
+4. Main changes as plain lines, one per line, separated by newlines. No `—`, no `-`, no bullet markers - user pastes lines into Slack and applies Slack's built-in bullet formatter.
 5. `Why:` section — short non-technical paragraph on problem or motivation.
 6. End with short impact statement — hopefully students or users love changes.
 
