@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# gh-cancel-stale-runs: free up CI after pushing several commits in a row.
+#
+# Every push queues its own GitHub Actions run, but only the newest commit's
+# result matters. This cancels all queued/in-progress runs on the current
+# branch except the one for the latest pushed commit.
+#
+# Usage: run from anywhere inside the repo, on the branch to clean up:
+#   gh-cancel-stale-runs
+set -euo pipefail
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+# Latest SHA that CI actually saw - local HEAD may be behind (web-UI commit
+# not pulled) or ahead (not pushed), and both would cancel the wrong runs.
+head_sha=$(gh run list --branch "$branch" --limit 1 --json headSha --jq '.[0].headSha')
+
+# ponytail: no PR-existence check; branch filter alone is enough since runs only exist for pushed branches
+stale=$(gh run list --branch "$branch" --limit 50 --json databaseId,headSha,status \
+  --jq ".[] | select(.headSha != \"$head_sha\" and (.status == \"in_progress\" or .status == \"queued\")) | .databaseId")
+
+if [ -z "$stale" ]; then
+  echo "No stale runs on $branch."
+  exit 0
+fi
+
+for id in $stale; do
+  echo "Cancelling run $id"
+  gh run cancel "$id"
+done
