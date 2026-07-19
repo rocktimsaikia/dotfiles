@@ -30,7 +30,7 @@ Generate a formatted GitHub release body for the current repo.
 - Rewrite the commit subject into a readable sentence fragment; don't paste the raw `type(scope):` prefix.
 - Merge related commits into one bullet with multiple hashes only when they are the same logical change.
 - Wrap identifiers, package names, and commands in backticks.
-- Final line: `**Full Changelog**: https://github.com/<owner>/<repo>/compare/<last-tag>...<new-tag>` (derive owner/repo from `git remote get-url origin`; match the existing tag naming style, e.g. `v2.0.0` vs `2.0.0`).
+- Final line: `**Full Changelog**: https://github.com/<owner>/<repo>/compare/<last-tag>...<new-tag>` (derive owner/repo from `git remote get-url origin`). The left side uses the previous tag's real name as-is; the new tag is always `v`-prefixed (`vX.Y.Z`, per the `gh-release` skill), e.g. `1.0.1...v2.0.0`.
 - No emoji, no AI credits, no empty sections.
 
 ## Example
