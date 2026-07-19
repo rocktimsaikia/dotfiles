@@ -39,18 +39,7 @@ Work through the phases in order. Skip any phase that does not apply, but check 
 
 ### 3. Polish the README
 
-Target structure (based on rocktimsaikia/meta-fetcher):
-
-1. `# package-name`
-2. Badges, each on its own line: CI badge using the workflow-path format (`actions/workflows/<file>.yml/badge.svg`, not the legacy `workflows/<name>/badge.svg`), then `![npm](https://badgen.net/npm/v/<name>)`.
-3. One-line description in plain text - no blockquote, no emoji. Verb-first and short ("Scrape all links and images from a web page"), never "A simple ...". Keep package.json `description` and the GitHub repo description identical to it.
-4. `## Installation` - note the minimum node version and typings ("Requires Node.js 20 or later. Ships with TypeScript types." - only claim types when a `.d.ts` actually ships), then the `npm install` block.
-5. `## Usage` - flat `import x from '<name>'` + `await` example (verify default-import interop if the package is CJS), then `Output:` followed by a code block with the real, verified output.
-6. `## Options` - when the package takes an options object: a "Pass an options object as the second argument:" line with a one-line code example (`await pkg(url, { theOption: value })`), then a table (`Option | Required | Default | Description`). Otherwise an `## API` section. Watch verb precision in descriptions ("include", not "fetch", when nothing extra is downloaded).
-7. `## Related` - `[**other-pkg**](repo-url): Description.` Sync each description with that repo's official GitHub description (`gh repo view <repo> --json description`).
-8. `## License` - `MIT <first-year>-<current-year> &copy; [Author](https://site)`.
-
-No Contribute section. When removing sections, also delete their now-orphaned reference-style link definitions.
+Run the `node-readme` skill - it owns the target structure and rules.
 
 ### 4. Modernize toolchain
 
