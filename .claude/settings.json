@@ -151,7 +151,6 @@
   },
   "enabledPlugins": {
     "caveman@caveman": true,
-    "claude-mem@thedotmack": true,
     "code-review@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
     "ponytail@ponytail": true,
