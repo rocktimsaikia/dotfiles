@@ -12,6 +12,9 @@ alias pbcopy="xclip -selection clipboard"
 alias tmux="tmux -u"
 alias tb="tmux-branch"
 alias remove="sudo apt-get --purge autoremove"
+# Secret code lives in ~/.croc-code (untracked): echo "<code>" > ~/.croc-code && chmod 600 ~/.croc-code
+alias croc='croc $(cat ~/.croc-code)'
+alias croc-send='\croc send --code $(cat ~/.croc-code)'
 
 # Git
 alias gi="git init"
