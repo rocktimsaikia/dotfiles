@@ -2,3 +2,4 @@ maximize
 keybind = shift+enter=text:\n
 font-family = DejaVu Sans Mono
 font-size = 11
+theme = Adventure
