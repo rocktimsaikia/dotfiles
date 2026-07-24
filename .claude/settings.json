@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "permissions": {
     "defaultMode": "auto"
   },
@@ -17,16 +20,6 @@
             "command": "rtk hook claude"
           }
         ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
       }
     ],
     "SessionStart": [
@@ -36,108 +29,6 @@
           {
             "type": "command",
             "command": "bash '/home/rocktim/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "StopFailure": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "SubagentStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "TeammateIdle": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PostToolUseFailure": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -r '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ] && [ -x '/home/rocktim/.orca/agent-hooks/claude-hook.sh' ]; then /bin/sh '/home/rocktim/.orca/agent-hooks/claude-hook.sh'; else cat >/dev/null 2>&1 || :; fi",
             "timeout": 10
           }
         ]
@@ -186,6 +77,5 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true
+  "skipAutoPermissionPrompt": true
 }
