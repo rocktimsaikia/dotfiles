@@ -2,11 +2,10 @@
 
 # Interactively switch to a recently interacted git branch (sorted by last commit date)
 # Usage: git-recent-branches [number]
-# Default: 10 branches
+# Default: all branches
 
-count=${1:-10}
 branch=$(git for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short) %(refname:short)' \
-	| head -n "$count" \
+	| { [ -n "${1:-}" ] && head -n "$1" || cat; } \
 	| fzf --height=40% --reverse | awk '{print $2}')
 
 [ -n "$branch" ] && git switch "$branch"
