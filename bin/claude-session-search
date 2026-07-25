@@ -1,0 +1,19 @@
+#!/bin/bash
+# Search all Claude Code session logs for a term (branch, PR title, keyword)
+# and print where each matching session ran + its id, newest first.
+# Resume a result with: cd <cwd> && claude --resume <session-id>
+# Usage: claude-session-search <search-term>
+
+q="$1"
+if [ -z "$q" ]; then
+	echo "usage: claude-session-search <search-term>"
+	exit 1
+fi
+
+grep -rlsi --include='*.jsonl' "$q" ~/.claude/projects/ | while read -r f; do
+	id=$(basename "$f" .jsonl)
+	cwd=$(grep -m1 -o '"cwd":"[^"]*"' "$f" | cut -d'"' -f4)
+	last=$(grep -o '"timestamp":"[^"]*"' "$f" | tail -1 | cut -d'"' -f4)
+	branches=$(grep -o '"gitBranch":"[^"]*"' "$f" | cut -d'"' -f4 | sort -u | paste -sd, -)
+	echo "${last%.*} | $cwd | $branches | $id"
+done | sort -r

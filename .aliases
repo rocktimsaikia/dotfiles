@@ -159,6 +159,7 @@ cc() { sync-ai-skills; claude --chrome "$@"; }
 ccr() { sync-ai-skills; claude --resume "$@"; }
 cct() { sync-ai-skills; claude --continue "$@"; }
 ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
+alias ccs="claude-session-search"
 
 co() { sync-ai-skills; codex "$@"; }
 alias cod="~/codex-desktop-linux/codex-app/start.sh"
