@@ -9,17 +9,30 @@ function does_branch_exist() {
 	fi
 }
 
+# Warn instead of switching if the branch is checked out in another worktree
+function switch_branch() {
+	local branch="$1"
+	local here other
+	here=$(git rev-parse --show-toplevel)
+	other=$(git worktree list --porcelain | awk -v b="refs/heads/$branch" \
+		'$1 == "worktree" { p = $2 } $1 == "branch" && $2 == b { print p }')
+	if [ -n "$other" ] && [ "$other" != "$here" ]; then
+		echo "⚠️  '$branch' is already checked out at: $other"
+		echo "    Not switching. To sync this worktree with latest $branch:"
+		echo "    git fetch origin $branch && git rebase origin/$branch"
+		exit 1
+	fi
+	git switch "$branch"
+}
+
 MAIN_BRANCH="main"
 MASTER_BRANCH="master"
 
 if does_branch_exist "$MAIN_BRANCH"; then
-	git switch main
-	exit
+	switch_branch "$MAIN_BRANCH"
 elif does_branch_exist "$MASTER_BRANCH"; then
-	git switch master
-	exit
+	switch_branch "$MASTER_BRANCH"
 else
 	echo "⚠️  No main or master branch found!"
 	exit 1
 fi
-
