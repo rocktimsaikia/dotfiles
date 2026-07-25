@@ -8,11 +8,9 @@ alias ls="ls --color=auto"
 alias zshrc="exec zsh"
 alias bashrc="exec bash"
 alias v="nvim"
-alias pbcopy="xclip -selection clipboard"
 alias tmux="tmux -u"
-alias tb="tmux-branch"
 # New/attach tmux session named after current dir (or pass a name)
-tn() { tmux -u new -As "${1:-${PWD:t}}"; }
+tn() { tmux -u new -As "$(echo "${1:-${PWD:t}}" | tr . _)"; }
 alias remove="sudo apt-get --purge autoremove"
 # Secret code lives in ~/.croc-code (untracked): echo "<code>" > ~/.croc-code && chmod 600 ~/.croc-code
 alias croc='croc $(cat ~/.croc-code)'
