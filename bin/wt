@@ -1,0 +1,30 @@
+#!/bin/bash
+# wt <name> - create a worktree with its own branch off latest origin/master,
+# then open it in a tmux window (inside tmux) or session (outside).
+# Idempotent: if the worktree already exists, just opens tmux there.
+set -e
+
+REPO="$HOME/main"
+BASE_DIR="$HOME/codingal/worktrees"
+BRANCH_PREFIX="rocktimsaikia/"
+BASE_BRANCH="master"
+
+name="$1"
+if [ -z "$name" ]; then
+	echo "usage: wt <name>"
+	exit 1
+fi
+
+dir="$BASE_DIR/$name"
+
+if [ ! -d "$dir" ]; then
+	mkdir -p "$BASE_DIR"
+	git -C "$REPO" fetch origin "$BASE_BRANCH"
+	git -C "$REPO" worktree add "$dir" -b "$BRANCH_PREFIX$name" "origin/$BASE_BRANCH"
+fi
+
+if [ -n "$TMUX" ]; then
+	tmux new-window -c "$dir" -n "$name"
+else
+	tmux -u new -As "$name" -c "$dir"
+fi
