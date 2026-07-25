@@ -1,19 +1,39 @@
 #!/bin/bash
-# Search all Claude Code session logs for a term (branch, PR title, keyword)
+# Search Claude Code session logs for a term (branch, PR title, keyword)
 # and print where each matching session ran + its id, newest first.
+# Searches the current directory's project by default; -a searches all projects.
 # Resume a result with: cd <cwd> && claude --resume <session-id>
-# Usage: claude-session-search <search-term>
+# Usage: claude-session-search [-a] <search-term>
+
+scope=~/.claude/projects/$(pwd | sed 's/[^a-zA-Z0-9]/-/g')
+if [ "$1" = "-a" ]; then
+	scope=~/.claude/projects/
+	shift
+fi
 
 q="$1"
 if [ -z "$q" ]; then
-	echo "usage: claude-session-search <search-term>"
+	echo "usage: claude-session-search [-a] <search-term>"
 	exit 1
 fi
 
-grep -rlsi --include='*.jsonl' "$q" ~/.claude/projects/ | while read -r f; do
-	id=$(basename "$f" .jsonl)
-	cwd=$(grep -m1 -o '"cwd":"[^"]*"' "$f" | cut -d'"' -f4)
-	last=$(grep -o '"timestamp":"[^"]*"' "$f" | tail -1 | cut -d'"' -f4)
-	branches=$(grep -o '"gitBranch":"[^"]*"' "$f" | cut -d'"' -f4 | sort -u | paste -sd, -)
-	echo "${last%.*} | $cwd | $branches | $id"
-done | sort -r
+if [ ! -d "$scope" ]; then
+	echo "no Claude sessions for $(pwd) (use -a to search all projects)"
+	exit 1
+fi
+
+{
+	echo "LAST ACTIVITY|DIRECTORY|BRANCHES|SESSION ID"
+	grep -rlsi --include='*.jsonl' "$q" "$scope" | while read -r f; do
+		id=$(basename "$f" .jsonl)
+		cwd=$(grep -m1 -o '"cwd":"[^"]*"' "$f" | cut -d'"' -f4)
+		last=$(grep -o '"timestamp":"[^"]*"' "$f" | tail -1 | cut -d'"' -f4)
+		branches=$(grep -o '"gitBranch":"[^"]*"' "$f" | cut -d'"' -f4 | sort -u | paste -sd, -)
+		# Keep the table readable: truncate long branch lists
+		[ ${#branches} -gt 60 ] && branches="${branches:0:57}..."
+		echo "${last%.*}|${cwd/#$HOME/\~}|$branches|$id"
+	done | sort -r | while IFS='|' read -r ts rest; do
+		# Timestamps are UTC in the logs; show them as IST
+		echo "$(TZ=Asia/Kolkata date -d "${ts}Z" +'%-d %b %Y')|$rest"
+	done
+} | column -t -s'|' -o '  '
