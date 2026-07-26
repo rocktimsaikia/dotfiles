@@ -1,0 +1,27 @@
+#!/bin/bash
+# Convert a video into a high-quality GIF using ffmpeg's two-pass palette method.
+
+set -e
+
+if [ $# -lt 1 ]; then
+    echo "Usage: vid2gif <video> [width] [fps]"
+    echo "  width  output width in px (default: 960)"
+    echo "  fps    output frame rate (default: 15)"
+    exit 1
+fi
+
+INPUT="$1"
+WIDTH="${2:-960}"
+FPS="${3:-15}"
+OUTPUT="${INPUT%.*}.gif"
+PALETTE="$(mktemp -t vid2gif).png"
+trap 'rm -f "$PALETTE"' EXIT
+
+FILTERS="fps=$FPS,scale=$WIDTH:-1:flags=lanczos"
+
+ffmpeg -y -v error -i "$INPUT" -vf "$FILTERS,palettegen=stats_mode=diff" "$PALETTE"
+ffmpeg -y -v error -i "$INPUT" -i "$PALETTE" \
+    -lavfi "$FILTERS[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" \
+    "$OUTPUT"
+
+echo "$OUTPUT ($(du -h "$OUTPUT" | cut -f1 | tr -d ' '))"
