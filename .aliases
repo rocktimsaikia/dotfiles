@@ -93,7 +93,7 @@ codingal() {
   local session="codingal"
   if ! tmux has-session -t "$session" 2>/dev/null; then
     tmux new-session -d -s "$session" -c ~/main
-    tmux send-keys -t "$session" "git checkout master && git pull && cc" C-m
+    tmux send-keys -t "$session" "git checkout master && git pull" C-m
   fi
   if [ -n "$TMUX" ]; then
     tmux switch-client -t "$session"
