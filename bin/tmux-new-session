@@ -14,13 +14,22 @@ if [[ -z $fzf ]]; then
 	exit 1
 fi
 
+directories=()
+if [[ -d "$current_dir/.git" ]]; then
+	directories+=("$current_dir")
+fi
+while IFS= read -r -d '' dir; do
+	[[ -d "$dir/.git" ]] && directories+=("$dir")
+done < <(find "$HOME" -mindepth 1 -maxdepth 1 -type d ! -name '.*' -print0 2>/dev/null)
+
+# ponytail: directory mtime approximates activity; track picker selections if precision matters.
 directory=$(
-	{
-		printf '%s\n' "$current_dir"
-		find "$HOME" -mindepth 1 -maxdepth 1 -type d ! -name '.*' -print 2>/dev/null
-	} | awk '!seen[$0]++' | "$fzf" --no-sort --height=100% --reverse --prompt='Directory> '
+	((${#directories[@]})) && ls -dt "${directories[@]}" | awk '!seen[$0]++' |
+		sed "s|^$HOME|~|" |
+		"$fzf" --no-sort --height=100% --reverse --prompt='Directory> '
 ) || exit 0
 
+directory=${directory/#\~/$HOME}
 default_name=$(basename "$directory")
 printf 'New session name [%s]: ' "$default_name" >&2
 IFS= read -r session_name
