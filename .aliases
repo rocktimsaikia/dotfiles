@@ -160,7 +160,7 @@ ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
 alias ccs="claude-session-search"
 
 # Copilot CLI
-alias co="copilot"
+alias co="copilot --autopilot"
 alias cor="copilot --resume"
 alias cot="copilot --continue"
 
