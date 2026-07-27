@@ -54,6 +54,16 @@ export PATH="$HOME/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
+# Nudge to run `nodeup` when node/global packages haven't been refreshed in 30 days.
+# ponytail: mtime check only, no network on shell start.
+if [[ -o interactive ]]; then
+    _nodeup_stamp="$HOME/.cache/nodeup-last-run"
+    if [[ ! -f $_nodeup_stamp ]] || [[ -n $(find "$_nodeup_stamp" -mtime +30 2>/dev/null) ]]; then
+        print -P "%F{yellow}node + global packages stale%f - run %F{cyan}nodeup%f"
+    fi
+    unset _nodeup_stamp
+fi
+
 # Detect OS and load platform-specific configuration
 case "$(uname -s)" in
     Linux*)

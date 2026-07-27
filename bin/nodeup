@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# nodeup - install latest node LTS (carrying globals over) and update global npm packages.
+set -euo pipefail
+
+STAMP="$HOME/.cache/nodeup-last-run"
+
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+# shellcheck disable=SC1091
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+if command -v nvm >/dev/null 2>&1; then
+    before=$(nvm current)
+    nvm install --lts --reinstall-packages-from=current --latest-npm
+    nvm alias default 'lts/*' >/dev/null
+    after=$(nvm current)
+    if [ "$before" = "$after" ]; then
+        echo "node: $after (already latest LTS)"
+    else
+        echo "node: $before -> $after"
+    fi
+else
+    echo "nodeup: nvm not found, skipping node upgrade" >&2
+fi
+
+echo "nodeup: checking global packages..."
+raw=$(npx --yes npm-check-updates -g --jsonUpgraded 2>/dev/null || true)
+
+# ncu prints a progress bar alongside the JSON, so pull out the object and drop range prefixes.
+pkgs=$(node -e '
+const m = (process.argv[1] || "").match(/\{[\s\S]*\}/);
+const up = m ? JSON.parse(m[0]) : {};
+console.log(Object.entries(up).map(([n, v]) => n + "@" + v.replace(/^[^0-9]*/, "")).join(" "));
+' "$raw")
+
+if [ -n "$pkgs" ]; then
+    echo "nodeup: updating $pkgs"
+    # shellcheck disable=SC2086
+    npm -g install $pkgs
+else
+    echo "global packages: all current"
+fi
+
+mkdir -p "$(dirname "$STAMP")"
+: >"$STAMP"
