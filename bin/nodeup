@@ -16,7 +16,10 @@ if command -v nvm >/dev/null 2>&1; then
     if [ "$before" = "$after" ]; then
         echo "node: $after (already latest LTS)"
     else
-        echo "node: $before -> $after"
+        # --reinstall-packages-from is a no-op when the target is already installed,
+        # so copy globals over explicitly or they stay stranded on the old version.
+        nvm reinstall-packages "$before"
+        echo "node: $before -> $after (reload shell to pick it up)"
     fi
 else
     echo "nodeup: nvm not found, skipping node upgrade" >&2

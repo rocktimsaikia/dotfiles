@@ -52,6 +52,11 @@ export PATH="$HOME/bin:$PATH"
 
 # NVM (Node Version Manager)
 export NVM_DIR="$HOME/.nvm"
+# `exec zsh` inherits PATH, and nvm skips its auto-use when PATH already holds a
+# version bin - so node stayed stale after `nodeup`. Drop inherited nvm entries
+# and let nvm re-add whatever `default` points at.
+path=("${(@)path:#$NVM_DIR/versions/node/*/bin}")
+unset NVM_BIN NVM_INC
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
 # Nudge to run `nodeup` when node/global packages haven't been refreshed in 30 days.
