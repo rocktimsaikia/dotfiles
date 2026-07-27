@@ -34,6 +34,9 @@ done
 link "$DOT/.claude/statusline.sh" "$HOME/.claude/statusline.sh"
 link "$DOT/.claude/settings.json" "$HOME/.claude/settings.json"
 
+# Copilot CLI (settings.json only; config.json is auto-managed and machine-specific)
+link "$DOT/.copilot/settings.json" "$HOME/.copilot/settings.json"
+
 # Global agent instructions (Claude Code via ~/.claude/CLAUDE.md, Codex/others via ~/AGENTS.md)
 link "$DOT/.claude/CLAUDE.md" "$HOME/AGENTS.md"
 link "$DOT/.claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
