@@ -159,11 +159,12 @@ cct() { sync-ai-skills; claude --continue "$@"; }
 ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
 alias ccs="claude-session-search"
 
-co() { sync-ai-skills; codex "$@"; }
-alias cod="~/codex-desktop-linux/codex-app/start.sh"
+# Copilot CLI
+alias co="copilot"
+alias cor="copilot --resume"
+alias cot="copilot --continue"
 
 alias fzfone='find . -maxdepth 1 -type f | fzf'
 
 alias actions='gh workflow view 1653306'
 alias pc='SKIP=tests pre-commit run'
-alias cop="copilot"
