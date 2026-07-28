@@ -171,5 +171,71 @@ alias cot="copilot --continue"
 
 alias fzfone='find . -maxdepth 1 -type f | fzf'
 
+# AWS (all prefixed `aw` + service)
+# Running EC2 instances as a table (override region: awec2 us-east-1)
+awec2() {
+	aws ec2 describe-instances --region "${1:-ap-south-1}" \
+		--filters "Name=instance-state-name,Values=running" \
+		--query 'Reservations[].Instances[].{Name:Tags[?Key==`Name`]|[0].Value,ID:InstanceId,Type:InstanceType,PrivateIP:PrivateIpAddress,AZ:Placement.AvailabilityZone}' \
+		--output table
+}
+
+# Resolve a Name tag to exactly one non-terminated instance; prints "<id>\t<state>"
+_awec2_find() {
+	local name="$1" region="$2" out
+	out=$(aws ec2 describe-instances --region "$region" \
+		--filters "Name=tag:Name,Values=$name" \
+		--query 'Reservations[].Instances[?State.Name!=`terminated`].[InstanceId,State.Name]' \
+		--output text) || return 1
+	[[ -z "$out" ]] && { echo "no instance named '$name' in $region" >&2; return 1; }
+	local -a found=("${(f)out}")
+	(( ${#found} > 1 )) && { echo "'$name' matches ${#found} instances:" >&2; printf '  %s\n' "${found[@]}" >&2; return 1; }
+	print -r -- "${found[1]}"
+}
+
+# Shell into an EC2 instance over SSM by Name tag: awssh preprod [region]
+awssh() {
+	local name="$1" region="${2:-ap-south-1}"
+	[[ -z "$name" ]] && { echo "usage: awssh <name-tag> [region]" >&2; return 1; }
+	local hit; hit=$(_awec2_find "$name" "$region") || return 1
+	local id="${hit%%$'\t'*}" state="${hit##*$'\t'}"
+
+	if [[ "$state" == stopped ]]; then
+		read -q "?'$name' ($id) is stopped. Start it? [y/N] " || { echo; return 1; }
+		echo
+		aws ec2 start-instances --region "$region" --instance-ids "$id" >/dev/null || return 1
+		state=pending
+	fi
+
+	if [[ "$state" == pending ]]; then
+		echo "waiting for $name ($id)..."
+		aws ec2 wait instance-running --region "$region" --instance-ids "$id" || return 1
+		# SSM agent registers a while after the instance reports running
+		local i
+		for i in {1..30}; do
+			[[ $(aws ssm describe-instance-information --region "$region" \
+				--filters "Key=InstanceIds,Values=$id" \
+				--query 'InstanceInformationList[0].PingStatus' --output text 2>/dev/null) == Online ]] && break
+			sleep 5
+		done
+		state=running
+	fi
+
+	[[ "$state" != running ]] && { echo "awssh: '$name' ($id) is $state, not running" >&2; return 1; }
+	aws ssm start-session --region "$region" --target "$id"
+}
+
+# Reboot an EC2 instance: awec2restart i-0abc123 [region]
+awec2restart() {
+	local id="$1" region="${2:-ap-south-1}"
+	[[ -z "$id" ]] && { echo "usage: awec2restart <instance-id> [region]" >&2; return 1; }
+	local name
+	name=$(aws ec2 describe-instances --region "$region" --instance-ids "$id" \
+		--query 'Reservations[].Instances[].Tags[?Key==`Name`]|[0][0].Value' --output text) || return 1
+	read -q "?Reboot $id ($name) in $region? [y/N] " || { echo; return 1; }
+	echo
+	aws ec2 reboot-instances --region "$region" --instance-ids "$id"
+}
+
 alias actions='gh workflow view 1653306'
 alias pc='SKIP=tests pre-commit run'
