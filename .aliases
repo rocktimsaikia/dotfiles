@@ -172,6 +172,31 @@ alias cot="copilot --continue"
 alias fzfone='find . -maxdepth 1 -type f | fzf'
 
 # AWS (all prefixed `aw` + service)
+
+# Catch expired sessions and offer to re-login instead of just failing.
+# stderr is buffered to a file so it can be inspected; stdout/stdin stay on the
+# tty, which interactive subcommands (ssm start-session) need.
+aws() {
+	[[ "$1" == login ]] && { command aws "$@"; return; }
+	local err rc
+	err=$(mktemp) || return 1
+	command aws "$@" 2>"$err"; rc=$?
+	# Covers "Your session has expired", "Unable to load a existing login
+	# session" and ExpiredToken - AWS words it differently per failure mode.
+	if (( rc )) && grep -qEi 'reauthenticate|ExpiredToken' "$err"; then
+		rm -f "$err"
+		local ans
+		read "ans?aws session expired. Run 'aws login' and retry? [Y/n] "
+		[[ "$ans" == [nN]* ]] && return $rc
+		command aws login || return $?
+		command aws "$@"
+		return $?
+	fi
+	[[ -s "$err" ]] && cat "$err" >&2
+	rm -f "$err"
+	return $rc
+}
+
 # Running EC2 instances as a table (override region: awec2 us-east-1)
 awec2() {
 	aws ec2 describe-instances --region "${1:-ap-south-1}" \
