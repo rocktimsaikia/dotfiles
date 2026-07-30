@@ -13,6 +13,15 @@ alias v="nvim"
 alias tmux="tmux -u"
 # New/attach tmux session named after current dir (or pass a name)
 tn() { tmux -u new -As "$(echo "${1:-${PWD:t}}" | tr . _)"; }
+# Same as tn, but resumes the last Claude session inside the new tmux session
+tnc() {
+	local s="${${1:-${PWD:t}}//./_}"
+	tmux -u has-session -t "=$s" 2>/dev/null || {
+		tmux -u new -ds "$s" -c "$PWD"
+		tmux -u send-keys -t "$s" cct C-m
+	}
+	tmux -u attach -t "=$s"
+}
 alias remove="sudo apt-get --purge autoremove"
 # Secret code lives in ~/.croc-code (untracked): echo "<code>" > ~/.croc-code && chmod 600 ~/.croc-code
 alias croc='croc $(cat ~/.croc-code)'
