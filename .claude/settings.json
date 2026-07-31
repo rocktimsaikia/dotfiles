@@ -65,5 +65,6 @@
   },
   "skipDangerousModePermissionPrompt": false,
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "skipWorkflowUsageWarning": true
 }
