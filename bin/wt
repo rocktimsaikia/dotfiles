@@ -1,7 +1,7 @@
 #!/bin/bash
-# wt <name> - create a worktree with its own branch off latest origin/master,
+# wt [-c] <name> - create a worktree with its own branch off latest origin/master,
 # then open it in a tmux window (inside tmux) or session (outside).
-# Idempotent: if the worktree already exists, just opens tmux there.
+# -c also launches Claude there. Idempotent: existing worktree just opens tmux.
 set -e
 
 REPO="$HOME/main"
@@ -9,9 +9,16 @@ BASE_DIR="$HOME/codingal/worktrees"
 BRANCH_PREFIX="rocktimsaikia/"
 BASE_BRANCH="master"
 
+# cc is a zsh function, so it has to be typed into the shell, not exec'd by tmux.
+cmd=""
+if [ "$1" = "-c" ]; then
+	cmd="cc"
+	shift
+fi
+
 name="$1"
 if [ -z "$name" ]; then
-	echo "usage: wt <name>"
+	echo "usage: wt [-c] <name>"
 	exit 1
 fi
 
@@ -25,6 +32,12 @@ fi
 
 if [ -n "$TMUX" ]; then
 	tmux new-window -c "$dir" -n "$name"
+	if [ -n "$cmd" ]; then tmux send-keys "$cmd" C-m; fi
 else
-	tmux -u new -As "$name" -c "$dir"
+	# Detached create so cmd can be sent before attaching (blocks).
+	if ! tmux -u has-session -t "=$name" 2>/dev/null; then
+		tmux -u new -ds "$name" -c "$dir"
+		if [ -n "$cmd" ]; then tmux send-keys -t "=$name" "$cmd" C-m; fi
+	fi
+	tmux -u attach -t "=$name"
 fi

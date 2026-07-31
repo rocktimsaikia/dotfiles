@@ -171,6 +171,8 @@ ccr() { sync-ai-skills; claude --resume "$@"; }
 cct() { sync-ai-skills; claude --continue "$@"; }
 ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
 alias ccs="claude-sessions"
+# New worktree + tmux, with Claude already running
+alias wtc="wt -c"
 alias ccmcp="claude mcp add --transport http"
 
 # Copilot CLI
