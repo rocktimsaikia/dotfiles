@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Pick a window of the current session by its full name and switch to it.
+# Bound to prefix + i; the status bar only shows the active window's title.
+
+set -euo pipefail
+
+index=$(
+	tmux list-windows -F '#{window_index}#{?window_active, *, } #{window_name}' |
+		fzf --height=100% --reverse --header='Enter: switch window' |
+		awk '{print $1}'
+)
+
+[ -n "$index" ] && tmux select-window -t "$index"
