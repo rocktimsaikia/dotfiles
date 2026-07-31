@@ -43,6 +43,9 @@ bindkey "^H" backward-word
 # Bind Ctrl+D to delete word forward
 bindkey "^D" kill-word
 
+# Ctrl+U kills only to the left of the cursor (zsh default nukes the whole line)
+bindkey "^U" backward-kill-line
+
 # Bind Ctrl+L to clear the screen
 bindkey "^L" clear-screen
 
