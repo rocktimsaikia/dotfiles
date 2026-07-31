@@ -277,3 +277,13 @@ awec2restart() {
 
 alias actions='gh workflow view 1653306'
 alias pc='SKIP=tests pre-commit run'
+
+# Pull all git repos nested 1-2 levels under a dir: pullall [dir]
+pullall() {
+	local d
+	for d in "${1:-.}"/*/(N) "${1:-.}"/*/*/(N); do
+		[[ -d "$d.git" ]] || continue
+		echo "== $d"
+		git -C "$d" pull --ff-only
+	done
+}
