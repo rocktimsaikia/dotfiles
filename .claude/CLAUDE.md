@@ -2,6 +2,7 @@
 
 Personal global memory shared across AI CLI agents:
 
+- `dcy` anywhere in a prompt means "don't code yet": answer, discuss, plan, or recommend, but write no code and make no file edits until explicitly told to go ahead. Reading, grepping, and investigating are fine. Scan the whole prompt for the word - it can appear mid-sentence.
 - Never use em dash (—) in any output. Use the normal hyphen (-) instead.
 - Never add AI agent as co-author on commits (no `Co-Authored-By` for Claude/Codex/etc.).
 - Never auto-commit. Always ask for explicit permission before making any git commit.
