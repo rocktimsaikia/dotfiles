@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# Pick open PRs with fzf (Tab for multiple), then act on them:
+#   Enter   open in browser
+#   Ctrl-S  squash and merge  (confirms)
+#   Ctrl-X  close             (confirms)
+# Usage: gh-pr-pick [fzf-query]
+
+set -euo pipefail
+
+# --expect makes fzf print the pressed key as the first line, then the selection.
+picked=$(
+	# Title is clipped so author/assignee stay on screen on narrow terminals.
+	gh pr list --limit 100 --json number,title,author,assignees \
+		--jq '.[] | "\(.number)\t\(.title[0:90])\t\(.author.login)\t\(.assignees | map(.login) | join(",") | if . == "" then "-" else . end)"' |
+		column -ts$'\t' |
+		fzf --multi --height=40% --reverse --query="${1:-}" \
+			--expect=ctrl-s,ctrl-x \
+			--header='num  title  author  assignee   |   Tab: mark   Enter: open   Ctrl-S: squash-merge   Ctrl-X: close'
+)
+
+key=$(head -1 <<<"$picked")
+nums=$(tail -n +2 <<<"$picked" | awk '{print $1}')
+[ -z "$nums" ] && exit 0
+
+# Merge and close are not undoable, so name the PRs and make the user say yes.
+confirm() {
+	echo "$1:"
+	for n in $nums; do
+		gh pr view "$n" --json number,title --jq '"  #\(.number) \(.title)"'
+	done
+	read -rp "proceed? [y/N] " ans
+	[[ $ans == [yY]* ]]
+}
+
+# Keep going if one PR fails (conflicts, checks, permissions) so the rest still run.
+run_each() {
+	local failed=""
+	for n in $nums; do
+		"$@" "$n" || failed+=" $n"
+	done
+	[ -z "$failed" ] || {
+		echo "failed:$failed" >&2
+		return 1
+	}
+}
+
+case $key in
+ctrl-s)
+	confirm "squash-merge" || exit 0
+	run_each gh pr merge --squash
+	;;
+ctrl-x)
+	confirm "close" || exit 0
+	run_each gh pr close
+	;;
+*)
+	run_each gh pr view --web
+	;;
+esac

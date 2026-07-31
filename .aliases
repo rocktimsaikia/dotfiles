@@ -83,6 +83,7 @@ alias gh-prs="gh pr list -A rocktimsaikia"
 alias gmerge="gh pr merge"
 alias gcheck="gh pr checks"
 alias gcreate="gh pr create --assignee @me"
+alias gpr="gh-pr-pick"
 alias gview="gh release view"
 alias gh-issue="gh issue create --editor"
 
