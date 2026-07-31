@@ -398,12 +398,23 @@ require("lazy").setup({
         -- },
 
         {
+            -- main branch: setup() only takes install_dir; parsers via install(),
+            -- highlighting via vim.treesitter.start() on FileType.
             "nvim-treesitter/nvim-treesitter",
+            branch = "main",
             build = ":TSUpdate",
-            opts = {
-                ensure_installed = { "lua", "python", "javascript", "typescript", "html", "css", "json", "elm" },
-                highlight = { enable = true, additional_vim_regex_highlighting = false },
-            },
+            config = function()
+                local ts = require("nvim-treesitter")
+                ts.setup()
+                ts.install({ "lua", "python", "javascript", "typescript", "tsx", "html", "css", "json", "elm" })
+                vim.api.nvim_create_autocmd("FileType", {
+                    callback = function(args)
+                        -- ponytail: pcall instead of checking parser availability first;
+                        -- no parser for the filetype is the normal case, not an error.
+                        pcall(vim.treesitter.start, args.buf)
+                    end,
+                })
+            end,
         },
 
         {
