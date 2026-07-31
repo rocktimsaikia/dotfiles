@@ -30,10 +30,56 @@ directory=$(
 ) || exit 0
 
 directory=${directory/#\~/$HOME}
-default_name=$(basename "$directory")
-printf 'New session name [%s]: ' "$default_name" >&2
-IFS= read -r session_name
-session_name=${session_name:-$default_name}
+prefix=$(basename "$directory")
+
+existing=$(tmux list-sessions -F '#{session_path} #{session_name}' 2>/dev/null |
+	awk -v d="$directory" '$1==d{printf "%s ", $2}')
+if [[ -n $existing ]]; then
+	set -- $existing
+	[[ $# -gt 1 ]] && label="active sessions are" || label="active session is"
+	# 179 = amber, matches the status bar
+	printf '\033[38;5;179m%d %s already in this dir: %s\033[0m\n' "$#" "$label" "$*" >&2
+fi
+
+printf 'New session name [%s-N]: %s-' "$prefix" "$prefix" >&2
+
+# ponytail: hand-rolled read so Esc can cancel; plain `read` can't see it.
+suffix=""
+while IFS= read -rsn1 key; do
+	case $key in
+	$'\e')
+		printf '\n' >&2
+		exit 0
+		;;
+	'') break ;; # Enter
+	$'\x7f' | $'\b')
+		if [[ -n $suffix ]]; then
+			suffix=${suffix%?}
+			printf '\b \b' >&2
+		fi
+		;;
+	*)
+		suffix+=$key
+		printf '%s' "$key" >&2
+		;;
+	esac
+done
+printf '\n' >&2
+
+# No name -> prefix-1, prefix-2, ... ; named collision gets the same treatment.
+if [[ -z $suffix ]]; then
+	n=1
+	while tmux has-session -t "=$prefix-$n" 2>/dev/null; do
+		n=$((n + 1))
+	done
+	session_name="$prefix-$n"
+else
+	session_name="$prefix-$suffix"
+	n=2
+	while tmux has-session -t "=$session_name" 2>/dev/null; do
+		session_name="$prefix-$suffix-$((n++))"
+	done
+fi
 
 tmux new-session -d -s "$session_name" -c "$directory"
-tmux switch-client -t "$session_name"
+tmux switch-client -t "=$session_name"
