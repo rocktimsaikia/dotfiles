@@ -30,13 +30,18 @@ if [ ! -d "$dir" ]; then
 	git -C "$REPO" worktree add "$dir" -b "$BRANCH_PREFIX$name" "origin/$BASE_BRANCH"
 fi
 
+# "CE-8334 Fix the thing" - the status bar shows only the id until the window is
+# active (see tmux.conf). No key/no such issue/offline -> plain id.
+label="$name"
+title=$(linear-title "$name" 2>/dev/null) && label="$name $title"
+
 if [ -n "$TMUX" ]; then
-	tmux new-window -c "$dir" -n "$name"
+	tmux new-window -c "$dir" -n "$label"
 	if [ -n "$cmd" ]; then tmux send-keys "$cmd" C-m; fi
 else
 	# Detached create so cmd can be sent before attaching (blocks).
 	if ! tmux -u has-session -t "=$name" 2>/dev/null; then
-		tmux -u new -ds "$name" -c "$dir"
+		tmux -u new -ds "$name" -c "$dir" -n "$label"
 		if [ -n "$cmd" ]; then tmux send-keys -t "=$name" "$cmd" C-m; fi
 	fi
 	tmux -u attach -t "=$name"

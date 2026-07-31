@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+# Print a Linear issue title. Usage: linear-title CE-8334
+# Cached in ~/.cache/linear-titles so reopening a worktree costs no API call.
+# Needs a Linear personal API key (read-only is enough) in ~/.linear-key.
+# Exits 1 without printing when the id is unknown, the key is missing, or the
+# network is down -- callers are expected to fall back to the bare id.
+
+set -euo pipefail
+
+id="${1:-}"
+# Only Linear-looking ids; anything else is someone's non-Linear branch name.
+[[ $id =~ ^[A-Z]+-[0-9]+$ ]] || exit 1
+
+cache="$HOME/.cache/linear-titles/$id"
+[ -s "$cache" ] && {
+	cat "$cache"
+	exit 0
+}
+
+[ -r "$HOME/.linear-key" ] || exit 1
+
+# issue(id:) accepts the human identifier ("CE-8334"), not just the UUID.
+title=$(curl -sS --max-time 5 https://api.linear.app/graphql \
+	-H "Authorization: $(cat "$HOME/.linear-key")" \
+	-H 'Content-Type: application/json' \
+	--data-binary "$(jq -nc --arg id "$id" \
+		'{query:"query($id:String!){issue(id:$id){title}}",variables:{id:$id}}')" |
+	jq -r '.data.issue.title // empty') || exit 1
+
+[ -n "$title" ] || exit 1
+
+mkdir -p "${cache%/*}"
+printf '%s\n' "$title" | tee "$cache"
