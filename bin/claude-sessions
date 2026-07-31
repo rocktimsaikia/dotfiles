@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+# List Claude Code sessions for the whole repo (main checkout + all worktrees),
+# not just the current directory, then resume the picked one.
+# Sessions live in ~/.claude/projects/<escaped-cwd>/<session-id>.jsonl, keyed by
+# cwd -- which is why `claude --resume` alone never shows the worktrees.
+
+set -euo pipefail
+
+self=$(readlink -f "$0")
+
+# fzf preview: tail of the conversation in one session file, markdown-rendered
+if [[ ${1:-} == --tail ]]; then
+	width=${FZF_PREVIEW_COLUMNS:-80}
+	# glow renders the markdown; without it the raw markdown is still readable
+	# CLICOLOR_FORCE: glow drops its colors when piped
+	render() { if command -v glow >/dev/null; then CLICOLOR_FORCE=1 glow -s dark -w "$width" -; else cat; fi; }
+	# Drop blank lines (ANSI-padded ones included), but keep one before each
+	# "## You" / "## Claude" so turns stay visually separated
+	gap() {
+		awk '{ s = $0; gsub(/\033\[[0-9;]*m/, "", s); gsub(/^[ \t]+|[ \t]+$/, "", s)
+		       if (s == "") next
+		       if (s ~ /^## / && seen) print ""
+		       seen = 1; print }'
+	}
+	python3 - "$2" <<'PY' | render | gap | tail -n "${CLAUDE_SESSIONS_PREVIEW_LINES:-50}"
+import json, sys
+
+msgs = []
+for line in open(sys.argv[1], errors="replace"):
+    try:
+        d = json.loads(line)
+    except ValueError:
+        continue
+    if d.get("type") not in ("user", "assistant") or d.get("isSidechain"):
+        continue
+    c = d["message"]["content"]
+    if isinstance(c, str):
+        text = c
+    else:
+        text = "\n".join(
+            b.get("text", "") for b in c
+            if isinstance(b, dict) and b.get("type") == "text")
+    text = text.strip()
+    if text:
+        msgs.append((d["type"], text))
+
+# Emit markdown; glow does the styling. Only the tail matters, so keep it short.
+for role, text in msgs[-20:]:
+    print(f"## {'You' if role == 'user' else 'Claude'}\n\n{text}\n")
+PY
+	exit 0
+fi
+
+root=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+PATHS=$(
+	printf '%s\n' "$root"
+	git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2}'
+)
+export PATHS
+
+pick=$(
+	python3 - "$HOME/.claude/projects" <<'PY' | fzf --no-sort --height=100% --reverse \
+		--with-nth=4.. --delimiter=$'\t' --prompt='Session> ' --header-lines=1 \
+		--preview "$self --tail {3}" --preview-window='right,50%,wrap,border-left' --ansi
+import json, os, pathlib, re, sys
+from datetime import datetime
+
+roots = [p for p in os.environ["PATHS"].splitlines() if p]
+home = os.path.expanduser("~")
+rows = []
+for f in pathlib.Path(sys.argv[1]).glob("*/*.jsonl"):
+    cwd = branch = prompt = title = None
+    with f.open(errors="replace") as fh:
+        for line in fh:
+            # Cheap substring gate first -- these files run to megabytes
+            if '"ai-title"' in line:
+                try:
+                    title = json.loads(line).get("aiTitle") or title
+                except ValueError:
+                    pass
+                continue
+            if prompt is not None or '"type":"user"' not in line:
+                continue
+            try:
+                d = json.loads(line)
+            except ValueError:
+                continue
+            if d.get("type") != "user" or d.get("isSidechain"):
+                continue
+            cwd, branch = d.get("cwd"), d.get("gitBranch") or "-"
+            c = d["message"]["content"]
+            prompt = c if isinstance(c, str) else "".join(
+                b.get("text", "") for b in c if isinstance(b, dict))
+    if not cwd or not any(cwd == r or cwd.startswith(r + "/") for r in roots):
+        continue
+    # ai-title is generated a few turns in, so old/short sessions fall back to the first prompt
+    fallback = re.sub(r"<[^>]*>", " ", prompt or "")
+    fallback = re.sub(r"Caveat:.*?(?=\S)", "", fallback, flags=re.S)
+    label = title or " ".join(fallback.split())[:80] or "(empty)"
+    rows.append((f.stat().st_mtime, f.stem, cwd, str(f), branch, label))
+
+rows.sort(reverse=True)
+
+
+def clip(s, n):
+    return s if len(s) <= n else s[:n - 1] + "…"
+
+
+bw = min(max((len(r[4]) for r in rows), default=6), 28)
+dw = min(max((len(r[2].replace(home, "~", 1)) for r in rows), default=3), 38)
+
+# Header goes through fzf --header-lines=1, so it needs the same hidden columns
+print(f"-\t-\t-\t\033[1m{'UPDATED':<12}  {'BRANCH':<{bw}}  {'DIR':<{dw}}  TITLE\033[0m")
+for mtime, sid, cwd, path, branch, label in rows:
+    when = datetime.fromtimestamp(mtime).strftime("%d %b %H:%M")
+    short = clip(cwd.replace(home, "~", 1), dw)
+    print(f"{sid}\t{cwd}\t{path}\t{when:<12}  {clip(branch, bw):<{bw}}  {short:<{dw}}  {label}")
+PY
+) || exit 0
+
+[[ -n $pick ]] || exit 0
+sid=$(cut -f1 <<<"$pick")
+cwd=$(cut -f2 <<<"$pick")
+cd "$cwd" && exec claude --resume "$sid"

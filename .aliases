@@ -170,7 +170,7 @@ cc() { sync-ai-skills; claude --chrome "$@"; }
 ccr() { sync-ai-skills; claude --resume "$@"; }
 cct() { sync-ai-skills; claude --continue "$@"; }
 ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
-alias ccs="claude-session-search"
+alias ccs="claude-sessions"
 alias ccmcp="claude mcp add --transport http"
 
 # Copilot CLI
