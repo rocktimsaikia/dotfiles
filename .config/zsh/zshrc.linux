@@ -26,6 +26,12 @@ function cd() {
 	activatevenv
 }
 
+# Codingal: api/.env is gitignored, so git worktrees never get one and Django
+# dies on `Set the DJANGO_SECRET_KEY environment variable`. Point every local
+# manage.py run at the main checkout's copy instead of copying it per worktree
+# (copies drift). Docker is unaffected - compose sets its own ENV_PATH.
+export ENV_PATH="$HOME/main/api/.env"
+
 # Go
 export PATH="$HOME/.local/go/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
