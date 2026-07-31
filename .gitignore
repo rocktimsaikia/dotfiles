@@ -17,3 +17,6 @@
 
 # Claude statusline runtime log (grows unbounded)
 .claude/statusline.log
+
+# fontconfig per-machine dir id
+.local/share/fonts/.uuid
