@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Move files out of ~/Downloads into the current dir.
+# Newest first; Tab to pick several.
+
+set -euo pipefail
+
+src=$HOME/Downloads
+dest=$PWD
+
+files=$(cd "$src" && ls -t | fzf -m --height=40% --reverse \
+	--bind=ctrl-a:toggle-all \
+	--header="Tab: pick | Ctrl-A: all | Enter: move to $dest" || true)
+
+[ -n "$files" ] || exit 0
+
+while IFS= read -r f; do
+	mv -iv "$src/$f" "$dest/"
+done <<<"$files"
