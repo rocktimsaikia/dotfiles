@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Safe wrapper around `git restore`: snapshots the worktree before discarding
+# tracked changes, so the discard is always undoable.
+#
+#   git safe-restore <pathspec>...   snapshot, then git restore <pathspec>
+#   git safe-restore --undo          re-apply the most recent snapshot
+#   git safe-restore --list          list snapshots, newest first
+#   git safe-restore --prune [days]  delete snapshots older than N days (default 30)
+
+set -u
+
+NS="refs/safe-restore"
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  echo "Error: Not inside a git repository."
+  exit 1
+fi
+
+case "${1-}" in
+  --undo | --revert)
+    ref=$(git for-each-ref --sort=-creatordate --count=1 --format='%(refname)' "$NS")
+    [ -n "$ref" ] || {
+      echo "No snapshots found."
+      exit 1
+    }
+    # --index reinstates the staged/unstaged split; fall back when it can't
+    git stash apply --index "$ref" || git stash apply "$ref" || exit $?
+    echo "Restored snapshot ${ref##*/}"
+    ;;
+  --list | -l)
+    git for-each-ref --sort=-creatordate \
+      --format='%(refname:short)  %(creatordate:relative)' "$NS"
+    ;;
+  --prune)
+    cutoff=$(($(date +%s) - ${2:-30} * 86400))
+    git for-each-ref --format='%(refname)' "$NS" | while read -r ref; do
+      name=${ref##*/}
+      if [ "${name%%-*}" -lt "$cutoff" ]; then git update-ref -d "$ref"; fi
+    done
+    ;;
+  "" | -h | --help)
+    sed -n '3,10p' "$0"
+    ;;
+  *)
+    snap=$(git stash create) # snapshot commit SHA; empty when nothing to save
+    if [ -n "$snap" ]; then
+      git update-ref "$NS/$(date +%s)-$(git rev-parse --short "$snap")" "$snap"
+    fi
+    git restore "$@" || exit $?
+    if [ -n "$snap" ]; then
+      echo "Snapshot saved. Undo with: git safe-restore --undo"
+    fi
+    ;;
+esac
