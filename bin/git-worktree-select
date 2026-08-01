@@ -3,8 +3,38 @@
 # Pick a git worktree with fzf and print its path.
 # cd can't happen from a subprocess, so the `gwt` alias wraps this (see .aliases).
 
-# Sort by last commit time, most recent first.
-git worktree list | grep -vE '\[(master|main)\]$' | while read -r line; do
-	path=${line%% *}
-	printf '%s\t%s\n' "$(git -C "$path" log -1 --format=%ct 2>/dev/null || echo 0)" "$line"
-done | sort -rn | cut -f2- | fzf --height=40% --reverse | awk '{print $1}'
+# Still sorted by last commit time, most recent first -- the timestamp is just
+# not shown. Home is displayed as ~ for readability and expanded again below, so
+# the caller still gets a path cd can use.
+rows=$(
+	git worktree list | grep -vE '\[(master|main)\]$' | while read -r path _sha branch; do
+		branch=${branch//[\[\]]/}
+
+		# Branches look like rocktimsaikia/CE-8327, CE-8233 or
+		# ce-8309-rzp-payment-id-reference, so pull the first id-shaped token out
+		# and normalise its case. Falls back to the directory name, which is what
+		# `wt` names after the issue. Titles come from the cache, so this is only
+		# slow the first time a worktree is seen.
+		# grep -m1 caps lines, not matches, and the id usually appears in both the
+		# branch and the directory -- so take the first match explicitly.
+		id=$(grep -oiE '[a-z]+-[0-9]+' <<<"$branch/${path##*/}" | head -1)
+		title=$(linear-title "${id^^}" 2>/dev/null) || title=""
+		title=${title:0:60}
+
+		printf '%s\t%s\t%s\t%s\n' \
+			"$(git -C "$path" log -1 --format=%ct 2>/dev/null || echo 0)" \
+			"${path/#$HOME/\~}" \
+			"$branch" \
+			"${title:-—}"
+	done | sort -rn | cut -f2-
+)
+
+[ -n "$rows" ] || exit 0
+
+# Header goes through column -t with the data so the two line up on their own.
+picked=$(
+	printf 'WORKTREE\tBRANCH\tTASK\n%s\n' "$rows" | column -ts$'\t' |
+		fzf --height=40% --reverse --header-lines=1 | awk '{print $1}'
+)
+
+[ -n "$picked" ] && printf '%s\n' "${picked/#\~\//$HOME/}"
