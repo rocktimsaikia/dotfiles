@@ -4,10 +4,31 @@
 # -c also launches Claude there. Idempotent: existing worktree just opens tmux.
 set -e
 
-REPO="$HOME/main"
-BASE_DIR="$HOME/codingal/worktrees"
 BRANCH_PREFIX="rocktimsaikia/"
-BASE_BRANCH="master"
+
+# Work on whatever repo we are standing in, falling back to the Codingal
+# checkout. --git-common-dir (not --show-toplevel) so running this from inside a
+# worktree still resolves to the main checkout instead of nesting.
+REPO=$(dirname "$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" 2>/dev/null)
+[ -d "$REPO/.git" ] || REPO="$HOME/main"
+
+# ~/worktrees/<repo>/<name>
+BASE_DIR="$HOME/worktrees/$(basename "$REPO")"
+
+# master here, main elsewhere -- ask the remote rather than assuming. The
+# `|| true` matters: under `set -e` a failed command substitution in an
+# assignment kills the script, and origin/HEAD is missing more often than not.
+BASE_BRANCH=$(git -C "$REPO" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || true)
+BASE_BRANCH=${BASE_BRANCH#origin/}
+
+if git -C "$REPO" remote get-url origin >/dev/null 2>&1; then
+	BASE_BRANCH=${BASE_BRANCH:-master}
+	START="origin/$BASE_BRANCH"
+else
+	# Local-only repo: nothing to fetch, so branch off its own default branch.
+	BASE_BRANCH=${BASE_BRANCH:-$(git -C "$REPO" branch --show-current || true)}
+	START=${BASE_BRANCH:-HEAD}
+fi
 
 # cc is a zsh function, so it has to be typed into the shell, not exec'd by tmux.
 cmd=""
@@ -26,8 +47,10 @@ dir="$BASE_DIR/$name"
 
 if [ ! -d "$dir" ]; then
 	mkdir -p "$BASE_DIR"
-	git -C "$REPO" fetch origin "$BASE_BRANCH"
-	git -C "$REPO" worktree add "$dir" -b "$BRANCH_PREFIX$name" "origin/$BASE_BRANCH"
+	if [ "$START" != "${START#origin/}" ]; then
+		git -C "$REPO" fetch origin "$BASE_BRANCH"
+	fi
+	git -C "$REPO" worktree add "$dir" -b "$BRANCH_PREFIX$name" "$START"
 
 	# node_modules is gitignored, so a fresh worktree has none and every node
 	# tool breaks there -- typescript-language-server exits with "Could not find
