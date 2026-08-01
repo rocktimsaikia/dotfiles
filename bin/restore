@@ -3,10 +3,10 @@
 # Safe wrapper around `git restore`: snapshots the worktree before discarding
 # tracked changes, so the discard is always undoable.
 #
-#   git safe-restore <pathspec>...   snapshot, then git restore <pathspec>
-#   git safe-restore --undo          re-apply the most recent snapshot
-#   git safe-restore --list          list snapshots, newest first
-#   git safe-restore --prune [days]  delete snapshots older than N days (default 30)
+#   restore <pathspec>...   snapshot, then git restore <pathspec>
+#   restore --undo          re-apply the most recent snapshot
+#   restore --list          list snapshots, newest first
+#   restore --prune [days]  delete snapshots older than N days (default 30)
 
 set -u
 
@@ -40,7 +40,7 @@ case "${1-}" in
     done
     ;;
   "" | -h | --help)
-    sed -n '3,10p' "$0"
+    sed -n '3,9p' "$0"
     ;;
   *)
     snap=$(git stash create) # snapshot commit SHA; empty when nothing to save
@@ -49,7 +49,7 @@ case "${1-}" in
     fi
     git restore "$@" || exit $?
     if [ -n "$snap" ]; then
-      echo "Snapshot saved. Undo with: git safe-restore --undo"
+      echo "Snapshot saved. Undo with: restore --undo"
     fi
     ;;
 esac

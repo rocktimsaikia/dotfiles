@@ -51,7 +51,6 @@ alias gcp="git cherry-pick"
 alias gcl="git clone"
 alias clone="gh repo clone"
 alias gcln="git clean -df"
-alias gsr="git safe-restore" # Undoable `git restore` (bin/git-safe-restore)
 alias gc="git commit -m"
 alias gcn="git commit -n -m"
 alias gca="git commit -e --amend -n" # Edit last commit message

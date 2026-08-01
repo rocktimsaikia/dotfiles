@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Self-check for bin/git-safe-restore. Run: bash tests/git-safe-restore.test.sh
+# Self-check for bin/restore. Run: bash tests/restore.test.sh
 
 set -eu
 
-GSR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../bin" && pwd)/git-safe-restore"
+GSR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../bin" && pwd)/restore"
 TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
 
