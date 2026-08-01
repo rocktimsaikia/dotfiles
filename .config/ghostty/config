@@ -20,7 +20,13 @@ keybind = alt+digit_7=unbind
 keybind = alt+7=unbind
 keybind = alt+digit_8=unbind
 keybind = alt+8=unbind
+keybind = alt+digit_9=unbind
 keybind = alt+9=unbind
+
+# macOS sends Option as a compose key (option+o -> ø), so tmux never sees M-o.
+# Ignored on Linux.
+macos-option-as-alt = true
+
 font-family = DejaVu Sans Mono
 font-size = 11
 theme = Adventure
