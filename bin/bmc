@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# BuyMeACoffee balance + pending payouts.
+#
+# There is no public API for this - developers.buymeacoffee.com has no balance
+# route (404) and rejects personal access tokens on this host. Only the studio
+# session cookie works, and it expires every few weeks. When it does, this
+# script offers to open the login page and writes the new cookie to ~/.env
+# itself, so there is nothing to hand-edit.
+set -euo pipefail
+
+LOGIN_URL='https://buymeacoffee.com/login'
+ENV_FILE="$HOME/.env"
+
+# ponytail: colour only when stderr is a tty, so pipes/cron stay plain text.
+if [ -t 2 ]; then
+  RED=$'\e[31m'; ORANGE=$'\e[1;38;5;208m'; BOLD=$'\e[1m'; OFF=$'\e[0m'
+else
+  RED=''; ORANGE=''; BOLD=''; OFF=''
+fi
+
+# shellcheck source=/dev/null
+source "$ENV_FILE"
+: "${BMC_COOKIE:?BMC_COOKIE not set in ~/.env}"
+
+# ponytail: origin header is not decoration - the endpoint 401s without it.
+resp=$(curl -sS -w '\n%{http_code}' 'https://app.buymeacoffee.com/api/v1/user/balance' \
+  -H 'origin: https://studio.buymeacoffee.com' \
+  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36' \
+  -b "bmc_api_production_session=$BMC_COOKIE")
+
+code=${resp##*$'\n'}
+body=${resp%$'\n'*}
+
+if [ "$code" = 401 ]; then
+  echo "${RED}bmc:${OFF} session cookie expired." >&2
+
+  # Non-interactive, or the cookie we just saved is already bad: say it and stop
+  # rather than prompting in a cron log or looping.
+  if [ ! -t 0 ] || [ -n "${BMC_RETRIED:-}" ]; then
+    echo "     Copy '${ORANGE}bmc_api_production_session${OFF}' from devtools > Application > Cookies" >&2
+    echo "     and set it as ${BOLD}BMC_COOKIE${OFF} in ${BOLD}~/.env${OFF}." >&2
+    exit 1
+  fi
+
+  read -rp "     Open $LOGIN_URL to grab a new one? [Y/n] " reply || reply=n
+  if [[ ${reply:-Y} =~ ^[Yy]$ ]]; then
+    if command -v open >/dev/null; then open "$LOGIN_URL"; else xdg-open "$LOGIN_URL"; fi
+  fi
+
+  echo "     Once logged in: devtools > Application > Cookies > app.buymeacoffee.com," >&2
+  echo "     then copy the value of '${ORANGE}bmc_api_production_session${OFF}'." >&2
+  echo "     (~340 chars, starts 'eyJpdiI6'. Not '${BOLD}buymeacoffee_v2_session${OFF}' - that one 401s.)" >&2
+  read -rsp "     Paste it here (hidden, blank to skip): " new || { echo >&2; exit 1; }
+  echo >&2
+
+  # Forgiving paste: accept `name=value`, a trailing `;`, and stray quotes/space.
+  new=${new#bmc_api_production_session=}
+  new=${new%;}
+  new=${new//[\'\"[:space:]]/}
+  if [ -z "$new" ]; then
+    echo "${RED}bmc:${OFF} nothing pasted, ~/.env unchanged." >&2
+    exit 1
+  fi
+
+  # Rewrite in place so the surrounding comments keep their position. awk -v is
+  # literal, so base64 padding and slashes need no escaping.
+  tmp=$(mktemp "$ENV_FILE.XXXXXX")
+  awk -v v="$new" '
+    /^BMC_COOKIE=/ { print "BMC_COOKIE=\047" v "\047"; seen=1; next }
+    { print }
+    END { if (!seen) print "BMC_COOKIE=\047" v "\047" }
+  ' "$ENV_FILE" >"$tmp"
+  chmod 600 "$tmp"
+  mv "$tmp" "$ENV_FILE"
+
+  echo "     saved ${#new} chars to ${BOLD}BMC_COOKIE${OFF}, retrying..." >&2
+  export BMC_RETRIED=1
+  exec "$0" ${1:+"$@"}   # ponytail: ${1:+..} because bash 3.2 trips on "$@" under set -u
+elif [ "$code" != 200 ]; then
+  echo "${RED}bmc:${OFF} HTTP $code" >&2
+  echo "$body" >&2
+  exit 1
+fi
+
+[ "${1:-}" = --json ] && { echo "$body"; exit 0; }
+
+jq -r '
+  (.balances | to_entries[] |
+    "\(.key)  gross \(.value.total_amount | .*100 | round / 100)  net \(.value.amount | .*100 | round / 100)"),
+  (.payout_requests.data // [] | .[] |
+    "pending payout  \(.currency) \(.amount)  status \(.status)")
+' <<<"$body"
