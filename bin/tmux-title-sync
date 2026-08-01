@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Put the Linear title back on any window named after a bare issue id.
+# Run after a tmux-resurrect restore (see tmux.conf) or by hand.
+#
+# Restored windows inherit automatic-rename=on, because tmux-resurrect saves
+# window names but not window options -- so the next command silently renames
+# them to the directory basename, which for a worktree is the bare issue id.
+# Renaming explicitly here also turns automatic-rename back off.
+
+set -uo pipefail
+
+tmux list-windows -a -F '#{session_name}:#{window_index}	#{window_name}' |
+	while IFS=$'\t' read -r target name; do
+		case $name in *' '*) continue ;; esac # already carries a title
+		title=$(linear-title "$name" 2>/dev/null) || continue
+		tmux rename-window -t "$target" "$name $title"
+	done
