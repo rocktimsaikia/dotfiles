@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-# This is an one-off script I created to test different image compression libs
-img_url="$(curl https://source.unsplash.com/random --stderr - | grep -oP 'href="\K[^"]+')"
-curl "$img_url" -o random_unsplash_img.jpeg
