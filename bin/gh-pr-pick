@@ -8,11 +8,19 @@
 
 set -euo pipefail
 
+ME=rocktimsaikia
+
 # --expect makes fzf print the pressed key as the first line, then the selection.
 picked=$(
+	# PRs I authored or am assigned to come first (false sorts before true, and
+	# jq's sort_by is stable, so each group keeps gh's newest-first order).
 	# Title is clipped so author/assignee stay on screen on narrow terminals.
-	gh pr list --limit 100 --json number,title,author,assignees \
-		--jq '.[] | "\(.number)\t\(.title[0:90])\t\(.author.login)\t\(.assignees | map(.login) | join(",") | if . == "" then "-" else . end)"' |
+	# (piped to real jq rather than gh's --jq, which has no --arg)
+	gh pr list --limit 100 --json number,title,author,assignees |
+		jq -r --arg me "$ME" '
+			def mine: .author.login == $me or (.assignees | map(.login) | index($me)) != null;
+			sort_by(mine | not) | .[] |
+			"\(.number)\t\(.title[0:90])\t\(.author.login)\t\(.assignees | map(.login) | join(",") | if . == "" then "-" else . end)"' |
 		column -ts$'\t' |
 		fzf --multi --height=40% --reverse --query="${1:-}" \
 			--expect=ctrl-s,ctrl-x \
