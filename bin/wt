@@ -28,6 +28,22 @@ if [ ! -d "$dir" ]; then
 	mkdir -p "$BASE_DIR"
 	git -C "$REPO" fetch origin "$BASE_BRANCH"
 	git -C "$REPO" worktree add "$dir" -b "$BRANCH_PREFIX$name" "origin/$BASE_BRANCH"
+
+	# node_modules is gitignored, so a fresh worktree has none and every node
+	# tool breaks there -- typescript-language-server exits with "Could not find
+	# a valid TypeScript installation". Borrow the main checkout's copy instead
+	# of installing 1.2G per worktree; branches that change deps get main's
+	# versions, which is already true of every tool run from the main checkout.
+	if [ -d "$REPO/web/node_modules" ] && [ ! -e "$dir/web/node_modules" ]; then
+		ln -s "$REPO/web/node_modules" "$dir/web/node_modules"
+		# The repo ignores "node_modules/" -- trailing slash, so directories
+		# only. A symlink is not a directory and would show up as untracked,
+		# one `git add -A` away from being committed. info/exclude is shared by
+		# every worktree, so this is a one-time fixup per clone.
+		exclude="$(git -C "$REPO" rev-parse --git-common-dir)/info/exclude"
+		grep -qxF 'web/node_modules' "$exclude" 2>/dev/null ||
+			printf 'web/node_modules\n' >>"$exclude"
+	fi
 fi
 
 # "CE-8334 Fix the thing" - the status bar shows only the id until the window is
