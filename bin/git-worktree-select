@@ -4,8 +4,7 @@
 # cd can't happen from a subprocess, so the `gwt` alias wraps this (see .aliases).
 
 # Still sorted by last commit time, most recent first -- the timestamp is just
-# not shown. Home is displayed as ~ for readability and expanded again below, so
-# the caller still gets a path cd can use.
+# not shown.
 rows=$(
 	git worktree list | grep -vE '\[(master|main)\]$' | while read -r path _sha branch; do
 		branch=${branch//[\[\]]/}
@@ -23,7 +22,7 @@ rows=$(
 
 		printf '%s\t%s\t%s\t%s\n' \
 			"$(git -C "$path" log -1 --format=%ct 2>/dev/null || echo 0)" \
-			"${path/#$HOME/\~}" \
+			"${path##*/}" \
 			"$branch" \
 			"${title:-—}"
 	done | sort -rn | cut -f2-
@@ -33,8 +32,13 @@ rows=$(
 
 # Header goes through column -t with the data so the two line up on their own.
 picked=$(
-	printf 'WORKTREE\tBRANCH\tTASK\n%s\n' "$rows" | column -ts$'\t' |
+	printf 'WORKTREE\tBRANCH\tLINEAR\n%s\n' "$rows" | column -ts$'\t' |
 		fzf --height=40% --reverse --header-lines=1 | awk '{print $1}'
 )
 
-[ -n "$picked" ] && printf '%s\n' "${picked/#\~\//$HOME/}"
+[ -n "$picked" ] || exit 0
+
+# Only the directory name is shown, so map it back to a full path. Compared as a
+# plain string rather than a pattern, since worktree names are arbitrary.
+git worktree list --porcelain | awk -v n="$picked" '
+	$1 == "worktree" { p = $2; sub(".*/", "", p); if (p == n) { print $2; exit } }'
