@@ -15,7 +15,7 @@ Key locations:
 - `.config/zsh/` — XDG-based zsh setup. Bootstrap is `zshenv` (symlinked to `~/.zshenv`), sets `ZDOTDIR=$HOME/.config/zsh`. From there `.zshrc` loads Antidote plugins, sources `~/.aliases`, then sources `zshrc.linux` or `zshrc.macos` based on `uname`. Platform-specific PATH/tooling (pyenv, bun, n, go) lives in those OS files — not `.zshrc`.
 - `.config/zsh/.zsh_plugins.txt` — Antidote plugin list. After edit, regenerate `.zsh_plugins.zsh` (see "Zsh plugins" below). Generated `.zsh_plugins.zsh` gitignored.
 - `bin/` — custom user scripts, symlinked to `~/bin` and added to PATH by `.zshrc`. Many referenced as aliases in `.aliases` (e.g. `dm` → `drop-migrations`, `qc` → `qcommit`, `tb` → `tmux-branch`, `grb` → `git-recent-branches`).
-- `.config/nvim/`, `.config/tmux/`, `.config/ghostty/`, `.config/fish/`, `.config/fontconfig/` — app configs activated by symlink.
+- `.config/nvim/`, `.config/tmux/`, `.config/ghostty/`, `.config/fontconfig/` — app configs activated by symlink.
 - Submodules: `.config/zsh/antidote` (plugin manager) and `.config/tmux/plugins/tpm`. Clone with `--recurse-submodules` or run `git submodule update --init` after clone.
 
 ## First-time setup
