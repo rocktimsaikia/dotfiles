@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# Re-add my user-scope MCP servers (Claude Code) on a fresh machine.
+# URLs only, no secrets: auth is per-machine OAuth, so afterwards run
+# `claude mcp login <name>` or /mcp in a session for the ones that need it.
+#
+# Adding a new server? Use `ccmcp <name> <url>` (see .aliases), then append it
+# here so the next machine gets it too.
+
+set -euo pipefail
+
+# name <TAB> json config, same shape claude stores in ~/.claude.json
+servers=(
+	'buymeacoffee	{"type":"http","url":"https://mcp.buymeacoffee.com/connect"}'
+	'digi-accounts	{"type":"http","url":"https://accounts.mcp.digitalocean.com/mcp"}'
+	'digi-droplets	{"type":"http","url":"https://droplets.mcp.digitalocean.com/mcp"}'
+	"groww	{\"type\":\"http\",\"url\":\"https://mcp.groww.in/mcp/\",\"headersHelper\":\"$HOME/.local/bin/groww-mcp-headers\"}"
+	'instantdomainsearch	{"type":"http","url":"https://api.instantdomainsearch.com/mcp/streamable-http"}'
+	'linear-rocktim	{"type":"http","url":"https://mcp.linear.app/mcp"}'
+	'netlify	{"type":"http","url":"https://netlify-mcp.netlify.app/mcp"}'
+	'sentry	{"type":"http","url":"https://mcp.sentry.dev/mcp"}'
+)
+
+for entry in "${servers[@]}"; do
+	name=${entry%%$'\t'*}
+	json=${entry#*$'\t'}
+	if claude mcp get "$name" >/dev/null 2>&1; then
+		echo "skip $name (already configured)"
+		continue
+	fi
+	claude mcp add-json -s user "$name" "$json"
+done
+
+echo
+echo "done. authenticate what needs it:  claude mcp list"
