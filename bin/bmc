@@ -11,11 +11,17 @@ set -euo pipefail
 LOGIN_URL='https://buymeacoffee.com/login'
 ENV_FILE="$HOME/.env"
 
-# ponytail: colour only when stderr is a tty, so pipes/cron stay plain text.
+# ponytail: gate each stream on its own tty, so `bmc > file` and `bmc 2>log`
+# both stay plain. Messages/prompts go to stderr, the table to stdout.
 if [ -t 2 ]; then
   RED=$'\e[31m'; ORANGE=$'\e[1;38;5;208m'; BOLD=$'\e[1m'; OFF=$'\e[0m'
 else
   RED=''; ORANGE=''; BOLD=''; OFF=''
+fi
+if [ -t 1 ]; then
+  T_BOLD=$'\e[1m'; T_DIM=$'\e[2m'; T_YELLOW=$'\e[33m'; T_GREEN=$'\e[32m'; T_OFF=$'\e[0m'
+else
+  T_BOLD=''; T_DIM=''; T_YELLOW=''; T_GREEN=''; T_OFF=''
 fi
 
 # shellcheck source=/dev/null
@@ -84,9 +90,18 @@ fi
 
 [ "${1:-}" = --json ] && { echo "$body"; exit 0; }
 
-jq -r '
-  (.balances | to_entries[] |
-    "\(.key)  gross \(.value.total_amount | .*100 | round / 100)  net \(.value.amount | .*100 | round / 100)"),
-  (.payout_requests.data // [] | .[] |
-    "pending payout  \(.currency) \(.amount)  status \(.status)")
-' <<<"$body"
+jq -r '.balances | to_entries[] | "\(.key)\t\(.value.total_amount)\t\(.value.amount)"' <<<"$body" |
+  awk -F'\t' -v b="$T_BOLD" -v d="$T_DIM" -v o="$T_OFF" \
+    '{printf "%s%s%s  gross %s%.2f%s  net %s%.2f%s\n", b, $1, o, d, $2, o, b, $3, o}'
+
+payouts=$(jq -r '.payout_requests.data // [] | .[] | "\(.status)\t\(.currency)\t\(.amount)"' <<<"$body")
+if [ -n "$payouts" ]; then
+  printf '\n%sPayouts%s\n' "$T_BOLD" "$T_OFF"
+  # status 0 = pending, 1 = processed. Anything else is shown raw rather than
+  # guessed at, so a new status code cannot silently read as "paid".
+  awk -F'\t' -v y="$T_YELLOW" -v g="$T_GREEN" -v o="$T_OFF" '
+    { if      ($1 == 0) { label = "pending"; col = y }
+      else if ($1 == 1) { label = "paid";    col = g }
+      else              { label = "status " $1; col = "" }
+      printf "  %s%-8s%s  %s %8.2f\n", col, label, o, $2, $3 }' <<<"$payouts"
+fi
