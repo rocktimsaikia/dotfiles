@@ -8,9 +8,31 @@ set -euo pipefail
 
 self=$(readlink -f "$0")
 
-# fzf preview: tail of the conversation in one session file, markdown-rendered
+# The preview runs as its own process, so the content-search term reaches it
+# through a file rather than an argument or the environment.
+QUERY_FILE=${CLAUDE_SESSIONS_QUERY_FILE:-$HOME/.cache/claude-sessions-query}
+mkdir -p "$(dirname "$QUERY_FILE")"
+
+# fzf preview: the conversation in one session file, markdown-rendered. After a
+# content search it shows the matching turns instead of the tail, with the term
+# highlighted -- otherwise the hit is usually off-screen.
 if [[ ${1:-} == --tail ]]; then
 	width=${FZF_PREVIEW_COLUMNS:-80}
+	term=$(cat "$QUERY_FILE" 2>/dev/null || true)
+	# Reverse-video the term wherever it appears, keeping every line. Done with
+	# index() rather than a regex so a term like "a.*b[" is matched literally.
+	hl() {
+		[[ -n $term ]] || {
+			cat
+			return
+		}
+		awk -v t="$term" 'BEGIN { lt = tolower(t); n = length(t) }
+			{ rest = $0; out = ""
+			  while (n) { p = index(tolower(rest), lt); if (!p) break
+			              out = out substr(rest, 1, p - 1) "\033[7m" substr(rest, p, n) "\033[0m"
+			              rest = substr(rest, p + n) }
+			  print out rest }'
+	}
 	# glow renders the markdown; without it the raw markdown is still readable
 	# CLICOLOR_FORCE: glow drops its colors when piped
 	render() { if command -v glow >/dev/null; then CLICOLOR_FORCE=1 glow -s dark -w "$width" -; else cat; fi; }
@@ -22,7 +44,7 @@ if [[ ${1:-} == --tail ]]; then
 		       if (s ~ /^## / && seen) print ""
 		       seen = 1; print }'
 	}
-	python3 - "$2" <<'PY' | render | gap | tail -n "${CLAUDE_SESSIONS_PREVIEW_LINES:-50}"
+	python3 - "$2" "$term" <<'PY' | render | gap | tail -n "${CLAUDE_SESSIONS_PREVIEW_LINES:-50}" | hl
 import json, sys
 
 msgs = []
@@ -44,8 +66,15 @@ for line in open(sys.argv[1], errors="replace"):
     if text:
         msgs.append((d["type"], text))
 
-# Emit markdown; glow does the styling. Only the tail matters, so keep it short.
-for role, text in msgs[-20:]:
+# After a content search, show the turns that actually mention the term. The
+# term can live in tool output rather than message text, so fall back to the
+# tail when nothing matches -- an empty preview would look broken.
+term = (sys.argv[2] if len(sys.argv) > 2 else "").lower()
+hits = [m for m in msgs if term and term in m[1].lower()]
+picked = hits or msgs
+
+# Emit markdown; glow does the styling. Only a slice matters, so keep it short.
+for role, text in picked[-20:]:
     print(f"## {'You' if role == 'user' else 'Claude'}\n\n{text}\n")
 PY
 	exit 0
@@ -58,17 +87,50 @@ PATHS=$(
 )
 export PATHS
 
-pick=$(
-	python3 - "$HOME/.claude/projects" <<'PY' | fzf --no-sort --height=100% --reverse \
-		--with-nth=4.. --delimiter=$'\t' --prompt='Session> ' --header-lines=1 \
-		--preview "$self --tail {3}" --preview-window='right,50%,wrap,border-left' --ansi
+# Rows for fzf: three hidden tab-separated columns (id, cwd, file) then the
+# visible ones. Restricted to $MATCH when set (see --grep below).
+rows() {
+	python3 - "$HOME/.claude/projects" <<'PY'
 import json, os, pathlib, re, sys
-from datetime import datetime
 
 roots = [p for p in os.environ["PATHS"].splitlines() if p]
 home = os.path.expanduser("~")
+
+# --grep passes the files ripgrep matched; empty means "every session"
+only = {p for p in os.environ.get("MATCH", "").splitlines() if p}
+
+# ripgrep sees the raw JSONL, so it also hits tool output, pasted diffs and file
+# contents -- 9 of 11 matches for one term were invisible in the conversation.
+# Confirm the term is in something a person actually said, which is all the
+# preview renders.
+needle = os.environ.get("TERM_QUERY", "").lower()
+
+
+def spoken(path):
+    for line in open(path, errors="replace"):
+        if '"type":"user"' not in line and '"type":"assistant"' not in line:
+            continue
+        try:
+            d = json.loads(line)
+        except ValueError:
+            continue
+        if d.get("type") not in ("user", "assistant") or d.get("isSidechain"):
+            continue
+        c = d["message"]["content"]
+        t = c if isinstance(c, str) else "\n".join(
+            b.get("text", "") for b in c
+            if isinstance(b, dict) and b.get("type") == "text")
+        if needle in t.lower():
+            return True
+    return False
+
+
 rows = []
 for f in pathlib.Path(sys.argv[1]).glob("*/*.jsonl"):
+    if only and str(f) not in only:
+        continue
+    if needle and not spoken(f):
+        continue
     cwd = branch = prompt = title = None
     with f.open(errors="replace") as fh:
         for line in fh:
@@ -87,7 +149,7 @@ for f in pathlib.Path(sys.argv[1]).glob("*/*.jsonl"):
                 continue
             if d.get("type") != "user" or d.get("isSidechain"):
                 continue
-            cwd, branch = d.get("cwd"), d.get("gitBranch") or "-"
+            cwd = d.get("cwd")
             c = d["message"]["content"]
             prompt = c if isinstance(c, str) else "".join(
                 b.get("text", "") for b in c if isinstance(b, dict))
@@ -97,7 +159,7 @@ for f in pathlib.Path(sys.argv[1]).glob("*/*.jsonl"):
     fallback = re.sub(r"<[^>]*>", " ", prompt or "")
     fallback = re.sub(r"Caveat:.*?(?=\S)", "", fallback, flags=re.S)
     label = title or " ".join(fallback.split())[:80] or "(empty)"
-    rows.append((f.stat().st_mtime, f.stem, cwd, str(f), branch, label))
+    rows.append((f.stat().st_mtime, f.stem, cwd, str(f), label))
 
 rows.sort(reverse=True)
 
@@ -106,16 +168,51 @@ def clip(s, n):
     return s if len(s) <= n else s[:n - 1] + "…"
 
 
-bw = min(max((len(r[4]) for r in rows), default=6), 28)
 dw = min(max((len(r[2].replace(home, "~", 1)) for r in rows), default=3), 38)
 
+# Still ordered by mtime, newest first -- the timestamp is just not shown.
 # Header goes through fzf --header-lines=1, so it needs the same hidden columns
-print(f"-\t-\t-\t\033[1m{'UPDATED':<12}  {'BRANCH':<{bw}}  {'DIR':<{dw}}  TITLE\033[0m")
-for mtime, sid, cwd, path, branch, label in rows:
-    when = datetime.fromtimestamp(mtime).strftime("%d %b %H:%M")
+print(f"-\t-\t-\t\033[1m{'DIR':<{dw}}  TITLE\033[0m")
+for mtime, sid, cwd, path, label in rows:
     short = clip(cwd.replace(home, "~", 1), dw)
-    print(f"{sid}\t{cwd}\t{path}\t{when:<12}  {clip(branch, bw):<{bw}}  {short:<{dw}}  {label}")
+    print(f"{sid}\t{cwd}\t{path}\t{short:<{dw}}  {label}")
 PY
+}
+
+case ${1:-} in
+--list)
+	: >"$QUERY_FILE" # back to all: previews go back to showing the tail
+	rows
+	exit 0
+	;;
+--grep)
+	# fzf only searches what it displays, so searching the transcripts means
+	# narrowing the list first. Fixed-string and case-insensitive: the query is a
+	# phrase someone typed, not a regex, and the text sits inside JSON.
+	printf '%s' "${2:-}" >"$QUERY_FILE" # the preview reads this to jump/highlight
+	[[ -n ${2:-} ]] || {
+		rows
+		exit 0
+	}
+	# rg is only a fast prefilter over the raw files; rows() then confirms the
+	# term was actually spoken, so the list matches what the preview can show.
+	MATCH=$(rg -l -i -F -- "$2" "$HOME/.claude/projects"/*/*.jsonl 2>/dev/null || true)
+	# A sentinel rather than an early exit, so a miss still renders the header
+	# instead of an empty pane with no way back.
+	export MATCH="${MATCH:-/no/such/session}"
+	export TERM_QUERY="$2"
+	rows
+	exit 0
+	;;
+esac
+
+pick=$(
+	rows | fzf --no-sort --height=100% --reverse \
+		--with-nth=4.. --delimiter=$'\t' --prompt='Session> ' --header-lines=1 \
+		--preview "$self --tail {3}" --preview-window='right,50%,wrap,border-left' --ansi \
+		--header 'Ctrl-G: search inside conversations   Ctrl-A: back to all' \
+		--bind "ctrl-g:transform-prompt(echo 'Content[{q}]> ')+reload($self --grep {q})+clear-query" \
+		--bind "ctrl-a:change-prompt(Session> )+reload($self --list)+clear-query"
 ) || exit 0
 
 [[ -n $pick ]] || exit 0
