@@ -162,9 +162,9 @@ alias dm="drop-migrations"
 # Git restore staged but only the new files
 alias grsn='git restore --staged $(git status --porcelain | grep "^A" | awk "{print \$2}")'
 
-# AI skill sync (skills live in ~/agent-skills, separate repo)
+# AI skill sync (skills live in ~/dotfiles-private, separate repo)
 sync-ai-skills() {
-  [[ -x ~/agent-skills/setup.sh ]] && ~/agent-skills/setup.sh >/dev/null
+  [[ -x ~/dotfiles-private/setup-skills.sh ]] && ~/dotfiles-private/setup-skills.sh >/dev/null
 }
 
 # Claude CLI

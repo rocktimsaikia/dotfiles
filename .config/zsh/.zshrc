@@ -21,9 +21,9 @@ export LANG='en_US.UTF-8'
 # Load aliases
 source "$HOME/.aliases"
 
-# Keep AI agent skill links in sync with ~/agent-skills (separate repo).
-if [[ -x "$HOME/agent-skills/setup.sh" ]]; then
-    "$HOME/agent-skills/setup.sh" >/dev/null 2>&1 || true
+# Keep AI agent skill links in sync with ~/dotfiles-private (separate repo).
+if [[ -x "$HOME/dotfiles-private/setup-skills.sh" ]]; then
+    "$HOME/dotfiles-private/setup-skills.sh" >/dev/null 2>&1 || true
 fi
 
 # *** Keybindings ***

@@ -49,7 +49,7 @@ exec zsh
 
 **Platform-specific config:** Linux-only env/PATH in `zshrc.linux`, macOS-only in `zshrc.macos`. Cross-platform in `.zshrc`.
 
-**AI agent skills:** live in separate private repo `~/agent-skills` (github.com/rocktimsaikia/agent-skills), not in dotfiles. Add a skill there and run `~/agent-skills/setup.sh` to sync to all CLI agents (Codex, Claude, Copilot CLI).
+**AI agent skills:** live in separate private repo `~/dotfiles-private` (github.com/rocktimsaikia/dotfiles-private), not in dotfiles. Skills sit under `skills/<name>/SKILL.md` there. Add one and run `~/dotfiles-private/setup-skills.sh` to sync to all CLI agents (Codex, Claude, Copilot CLI).
 
 ## Conventions in this repo
 
