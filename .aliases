@@ -66,11 +66,35 @@ alias gdw="gh pr diff --web"
 alias gr="git restore"
 alias grs="git restore --staged"
 alias grm="git rm -r --cached"
-alias gbc="git branch --show-current | pbcopy"
+# Copy the current branch name and say what landed on the clipboard. Detached HEAD
+# gives an empty name with exit 0, which would otherwise copy nothing and look fine.
+gbc() {
+  local b
+  b=$(git branch --show-current) || return 1
+  [[ -n $b ]] || {
+    echo "gbc: detached HEAD, no branch name to copy" >&2
+    return 1
+  }
+  printf '%s\n' "$b" | clipcopy && echo "copied: $b"
+}
 alias gsa="git stash"
 alias gsp="git stash pop"
 alias grb="git-recent-branches"
 gwt() { local d; d=$(git-worktree-select) && [ -n "$d" ] && cd "$d"; }
+
+# Pipe stdin to the system clipboard, whichever tool this machine has. wl-copy is
+# tried before xclip only inside a wayland session, since xclip still works there
+# through xwayland and would otherwise win on a machine that has both.
+clipcopy() {
+  if command -v pbcopy >/dev/null; then pbcopy
+  elif [[ -n $WAYLAND_DISPLAY ]] && command -v wl-copy >/dev/null; then wl-copy
+  elif command -v xclip >/dev/null; then xclip -selection clipboard
+  elif command -v xsel >/dev/null; then xsel --clipboard --input
+  else
+    echo "clipcopy: no clipboard tool (install wl-clipboard or xclip)" >&2
+    return 1
+  fi
+}
 alias es="edit-staged"
 alias qc="qcommit"
 alias gvert="git revert"
