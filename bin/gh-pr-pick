@@ -15,11 +15,27 @@ ME=rocktimsaikia
 # Title is clipped so author/assignee stay on screen on narrow terminals.
 # (piped to real jq rather than gh's --jq, which has no --arg)
 rows=$(
-	gh pr list --limit 100 --json number,title,author,assignees |
+	gh pr list --limit 100 --json number,title,author,assignees,statusCheckRollup |
 		jq -r --arg me "$ME" '
 			def mine: .author.login == $me or (.assignees | map(.login) | index($me)) != null;
+			# Fixed title width so author and assignee stay on screen. The trailing
+			# dots are the signal that there is more title than is shown.
+			def clip($n): if length > $n then .[0:$n - 3] + "..." else . end;
+			# One glyph for the checks on the PR head commit. A CheckRun that has not
+			# finished yet has no conclusion, so fall back to its status; the older
+			# StatusContext kind carries everything in .state instead. SKIPPED and
+			# NEUTRAL are not failures, so anything unlisted counts as a pass.
+			def ci:
+				[ .statusCheckRollup[]? |
+					if .__typename == "CheckRun"
+					then (if .status != "COMPLETED" then "PENDING" else (.conclusion // "PENDING") end)
+					else (.state // "PENDING") end ] as $s |
+				if ($s | length) == 0 then "-"
+				elif ($s | any(IN("FAILURE", "ERROR", "TIMED_OUT", "CANCELLED", "ACTION_REQUIRED", "STARTUP_FAILURE"))) then "x"
+				elif ($s | any(IN("PENDING", "QUEUED", "IN_PROGRESS", "WAITING", "EXPECTED"))) then "*"
+				else "v" end;
 			sort_by(mine | not) | .[] |
-			"\(.number)\t\(.title[0:90])\t\(.author.login)\t\(.assignees | map(.login) | join(",") | if . == "" then "-" else . end)"'
+			"\(.number)\t\(ci)\t\(.title | clip(60))\t\(.author.login)\t\(.assignees | map(.login) | join(",") | if . == "" then "-" else . end)"'
 )
 
 [ -n "$rows" ] || {
@@ -27,19 +43,37 @@ rows=$(
 	exit 0
 }
 
-# The column header goes through column -t with the rows so it lines up on its
-# own, then --header-lines pins it in place. --expect makes fzf print the
-# pressed key as the first line, then the selection.
+# The PR number has to reach the actions but not the screen, so it rides along as
+# a hidden tab-separated first column (--with-nth=2..). column -t therefore only
+# gets the visible fields, and the numbers are pasted back on after it has
+# aligned them. The header carries a "-" in the number slot so --header-lines
+# sees the same shape as the rows.
+visible=$(printf 'CI\tTITLE\tAUTHOR\tASSIGNEE\n%s\n' "$(cut -f2- <<<"$rows")" | column -ts$'\t')
+
+# jq emits the CI column as one plain ascii char and it is swapped for a colored
+# glyph only after column -t has aligned everything: escape sequences and
+# multibyte glyphs both throw off its width maths. Anchored to the hidden number
+# column so a "v" or "x" inside a title is never mistaken for the status.
+c() { printf '\033[%sm%s\033[0m' "$1" "$2"; }
+
+# --expect makes fzf print the pressed key as the first line, then the selection.
 picked=$(
-	printf 'NUM\tTITLE\tAUTHOR\tASSIGNEE\n%s\n' "$rows" | column -ts$'\t' |
-		fzf --multi --height=40% --reverse --query="${1:-}" \
+	paste -d$'\t' <(
+		echo -
+		cut -f1 <<<"$rows"
+	) <(printf '%s\n' "$visible") |
+		sed -e "s/^\([0-9-]*\t\)v/\1$(c 32 '✓')/" \
+			-e "s/^\([0-9-]*\t\)x/\1$(c 31 '✗')/" \
+			-e "s/^\([0-9-]*\t\)\*/\1$(c 33 '●')/" |
+		fzf --multi --height=40% --reverse --ansi --query="${1:-}" \
+			--delimiter=$'\t' --with-nth=2.. \
 			--expect=ctrl-s,ctrl-x \
 			--header-lines=1 --header-first \
 			--header='Tab: mark   Enter: open   Ctrl-S: squash-merge   Ctrl-X: close'
 )
 
 key=$(head -1 <<<"$picked")
-nums=$(tail -n +2 <<<"$picked" | awk '{print $1}')
+nums=$(tail -n +2 <<<"$picked" | cut -f1)
 [ -z "$nums" ] && exit 0
 
 # Merge and close are not undoable, so name the PRs and make the user say yes.
@@ -74,6 +108,11 @@ ctrl-x)
 	run_each gh pr close
 	;;
 *)
-	run_each gh pr view --web
+	# Detached and silenced: --web blocks while the browser reports back, which
+	# holds the prompt and then prints over it. Nothing here needs its exit code,
+	# and an orphaned child keeps running once this script is gone.
+	for n in $nums; do
+		gh pr view --web "$n" >/dev/null 2>&1 &
+	done
 	;;
 esac
