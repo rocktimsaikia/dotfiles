@@ -84,6 +84,7 @@ alias gmerge="gh pr merge"
 alias gcheck="gh pr checks"
 alias gcreate="gh pr create --assignee @me"
 alias gpr="gh-pr-pick"
+alias ggp="gh-gist-pick"
 alias gview="gh release view"
 alias gh-issue="gh issue create --editor"
 

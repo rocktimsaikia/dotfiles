@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+
+# Pick your gists with fzf (Tab for multiple), then act on them:
+#   Enter   open in the browser
+#   Ctrl-E  edit in $EDITOR   (gh asks which file when the gist has several)
+#   Ctrl-X  delete            (confirms)
+# Usage: gh-gist-pick [fzf-query]
+
+set -euo pipefail
+
+# Piped, gh gist list is plain TSV: id, description, files, visibility, updated
+# (ISO -- the "about 2 years ago" phrasing only happens on a tty).
+rows=$(gh gist list --limit 100)
+
+[ -n "$rows" ] || {
+	echo "no gists" >&2
+	exit 0
+}
+
+# The id has to reach the actions and the preview but should not be on screen,
+# so it stays as a hidden column 1 (--with-nth=2..). That rules out column -t,
+# which turns the separating tab into spaces, so the visible columns are padded
+# here. Header goes through --header-lines=1 with the same hidden column.
+picked=$(
+	python3 - "$rows" <<'PY' |
+import sys, unicodedata
+
+# Emoji and CJK occupy two terminal cells, so the description is measured by
+# display width -- awk's byte or character count shifts those rows.
+def w(s):
+    return sum(2 if unicodedata.east_asian_width(c) in "WF" else 1 for c in s)
+
+
+def clip(s, n):
+    if w(s) <= n:
+        return s
+    out = ""
+    for c in s:
+        if w(out) + w(c) > n - 3:
+            break
+        out += c
+    return out + "..."
+
+
+def pad(s, n):
+    return s + " " * (n - w(s))
+
+
+items = []
+for line in sys.argv[1].splitlines():
+    if not line.strip():
+        continue
+    # Split from both ends: a description holding a tab would shift the rest.
+    p = line.split("\t")
+    items.append((p[0], clip(" ".join(p[1:-3]), 70), p[-3], p[-2], p[-1][:10]))
+
+dw = max([w(i[1]) for i in items] + [len("DESCRIPTION")])
+
+print(f"-\t\033[1m{pad('DESCRIPTION', dw)}  {'FILES':<7}  {'VISIBILITY':<10}  UPDATED\033[0m")
+for gid, desc, files, vis, updated in items:
+    # same green/red gh uses on a tty
+    c = "\033[32m" if vis == "public" else "\033[31m"
+    print(f"{gid}\t{pad(desc, dw)}  {files:<7}  {c}{vis:<10}\033[0m  {updated}")
+PY
+		fzf --multi --height=100% --reverse --ansi --query="${1:-}" \
+			--delimiter=$'\t' --with-nth=2.. \
+			--header-lines=1 --header-first \
+			--header='Tab: mark   Enter: open   Ctrl-E: edit   Ctrl-X: delete' \
+			--expect=ctrl-e,ctrl-x \
+			--preview 'gh gist view {1}' \
+			--preview-window='right,55%,wrap,border-left'
+)
+
+key=$(head -1 <<<"$picked")
+lines=$(tail -n +2 <<<"$picked")
+[ -n "$lines" ] || exit 0
+ids=$(cut -f1 <<<"$lines")
+
+case $key in
+ctrl-e)
+	# fzf has already exited, so $EDITOR gets the terminal to itself. One gist at
+	# a time, in the order they were marked.
+	for id in $ids; do gh gist edit "$id"; done
+	;;
+ctrl-x)
+	# gh gist delete does not ask, and a deleted gist is gone, so name them first.
+	echo "delete:"
+	cut -f2 <<<"$lines" | sed 's/^/  /'
+	read -rp "proceed? [y/N] " ans
+	[[ $ans == [yY]* ]] || exit 0
+	failed=""
+	for id in $ids; do
+		gh gist delete "$id" || failed+=" $id"
+	done
+	[ -z "$failed" ] || {
+		echo "failed:$failed" >&2
+		exit 1
+	}
+	;;
+*)
+	for id in $ids; do gh gist view --web "$id"; done
+	;;
+esac
