@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# Pick your own commits on main/master and copy their hashes to the clipboard.
+# Usage: my-commits [number]   (default: 20)
+
+set -euo pipefail
+
+n=${1:-20}
+branch=$(git rev-parse --verify --quiet main >/dev/null && echo main || echo master)
+
+# -z + --read0 so each commit stays one fzf row despite spanning two lines.
+# format-local + TZ renders timestamps in IST regardless of the commit's own offset.
+picked=$(TZ=Asia/Kolkata git log "$branch" \
+	--author="$(git config user.email)" \
+	--max-count="$n" \
+	--date=format-local:'%d %b %Y, %I:%M %p' \
+	-z --pretty=format:'%C(dim white)%ad IST%Creset%n%C(yellow)%h%Creset  %s' \
+	| fzf --read0 --multi --ansi --height=60% --reverse --no-preview \
+		--color=selected-fg:8:dim,selected-bg:-1 \
+		--header='tab: select  enter: copy hashes')
+
+# strip color codes, then keep the hash line of every selected commit
+ids=$(printf '%s\n' "$picked" \
+	| sed 's/\x1b\[[0-9;]*m//g' \
+	| awk '$1 ~ /^[0-9a-f]{7,40}$/ { printf "%s%s", sep, $1; sep=" " }')
+
+[ -n "$ids" ] || exit 0
+
+if command -v pbcopy >/dev/null; then printf '%s' "$ids" | pbcopy
+elif [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-copy >/dev/null; then printf '%s' "$ids" | wl-copy
+elif command -v xclip >/dev/null; then printf '%s' "$ids" | xclip -selection clipboard
+elif command -v xsel >/dev/null; then printf '%s' "$ids" | xsel --clipboard --input
+else
+	echo "my-commits: no clipboard tool (install wl-clipboard or xclip)" >&2
+	exit 1
+fi
+
+echo "copied: $ids"

@@ -80,6 +80,7 @@ gbc() {
 alias gsa="git stash"
 alias gsp="git stash pop"
 alias grb="git-recent-branches"
+alias gmc="my-commits"
 gwt() { local d; d=$(git-worktree-select) && [ -n "$d" ] && cd "$d"; }
 
 # Pipe stdin to the system clipboard, whichever tool this machine has. wl-copy is
