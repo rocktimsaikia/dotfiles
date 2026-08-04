@@ -64,7 +64,7 @@
     "mode": "hold"
   },
   "skipDangerousModePermissionPrompt": false,
+  "skipWorkflowUsageWarning": true,
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true,
-  "skipWorkflowUsageWarning": true
+  "skipAutoPermissionPrompt": true
 }
