@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# git log without author emails, commit header in git's default yellow/orange.
+exec git log --date=local --pretty=format:"%C(yellow)commit %H%C(reset)%nAuthor: %an%nDate:   %ad%n%n    %s%n" "$@"
