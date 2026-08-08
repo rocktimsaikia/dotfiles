@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Antigravity CLI shim for argue-cli.
+# ponytail: argue has no `antigravity` cliType, so the config uses `copilot`
+# (prompt via -p, model via --model) and this swaps the one flag agy lacks.
+# Drop the shim if argue ever ships a native antigravity adapter.
+exec agy "${@/--yolo/--dangerously-skip-permissions}"
