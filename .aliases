@@ -313,3 +313,6 @@ pullall() {
 		git -C "$d" pull --ff-only
 	done
 }
+
+# Who's listening on the 3000-3999 dev port range
+alias devports="sudo ss -lntp | awk '\$4 ~ /:3[0-9]{3}\$/'"
