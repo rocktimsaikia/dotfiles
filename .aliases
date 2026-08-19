@@ -217,6 +217,7 @@ alias fzfone='find . -maxdepth 1 -type f | fzf'
 # tty, which interactive subcommands (ssm start-session) need.
 aws() {
 	[[ "$1" == login ]] && { command aws "$@"; return; }
+	local -x AWS_PROFILE=${AWS_PROFILE:-prod}
 	local err rc
 	err=$(mktemp) || return 1
 	command aws "$@" 2>"$err"; rc=$?
