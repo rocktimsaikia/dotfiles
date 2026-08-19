@@ -302,6 +302,14 @@ awec2restart() {
 	aws ec2 reboot-instances --region "$region" --instance-ids "$id"
 }
 
+# Tail cg-backend logs, filtered: awlogs ShopSe [since]  (-f follows live)
+awlogs() {
+	local -a opts=()
+	[[ "$1" == -f ]] && { opts+=(--follow); shift; }
+	[[ -n "$1" ]] && opts+=(--filter "$1")
+	aws logs tail /ecs/cg-backend/ --since "${2:-1h}" --format short "${opts[@]}"
+}
+
 alias actions='gh workflow view 1653306'
 alias pc='SKIP=tests pre-commit run'
 
