@@ -20,3 +20,6 @@
 
 # fontconfig per-machine dir id
 .local/share/fonts/.uuid
+
+# Claude settings (machine-specific)
+.claude/settings.json
