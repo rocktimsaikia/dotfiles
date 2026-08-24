@@ -40,9 +40,9 @@ for f in "$DOT"/.config/autostart/*.desktop; do
   link "$f" "$HOME/.config/autostart/$(basename "$f")"
 done
 
-# Claude Code (statusline + settings; settings.local.json stays machine-local)
+# Claude Code (statusline only; settings.json and settings.local.json pick up
+# per-machine state and are gitignored, so they stay local and unlinked)
 link "$DOT/.claude/statusline.sh" "$HOME/.claude/statusline.sh"
-link "$DOT/.claude/settings.json" "$HOME/.claude/settings.json"
 
 # Copilot CLI (settings.json only; config.json is auto-managed and machine-specific)
 link "$DOT/.copilot/settings.json" "$HOME/.copilot/settings.json"
