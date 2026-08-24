@@ -23,7 +23,7 @@
       "type": "cli",
       "cliType": "copilot",
       "command": "copilot",
-      "args": [],
+      "args": ["--silent"],
       "models": {
         "kimi-k2.7-code": {}
       }
