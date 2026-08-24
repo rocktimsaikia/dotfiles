@@ -541,13 +541,8 @@ require("lazy").setup({
     -- Configure any other settings here. See the documentation for more details.
     -- colorscheme that will be used when installing plugins.
     install = { colorscheme = { "habamax" } },
-    -- automatically check for plugin updates
-    checker = { enabled = true },
-})
-
--- Auto-run Lazy update on startup (silent, in background)
-vim.api.nvim_create_autocmd("VimEnter", {
-    callback = function()
-        require("lazy").update({ show = false })
-    end,
+    -- ponytail: no auto check/update. Both fired a git fetch per plugin on every
+    -- launch (~90 git procs), which is the lag right after the editor paints.
+    -- Run :Lazy update by hand when you actually want new plugin versions.
+    checker = { enabled = false },
 })
