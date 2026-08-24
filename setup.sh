@@ -25,9 +25,19 @@ link "$DOT/.vimrc"   "$HOME/.vimrc"
 link "$DOT/zshenv"   "$HOME/.zshenv"
 link "$DOT/bin"      "$HOME/bin"
 
-# XDG config directories
+# XDG config directories (autostart handled below, per-file)
 for d in "$DOT"/.config/*/; do
+  [ "$(basename "$d")" = "autostart" ] && continue
   link "${d%/}" "$HOME/.config/$(basename "$d")"
+done
+
+# Autostart entries, linked file by file rather than as a directory: apps like
+# Slack and Chrome write their own .desktop files into ~/.config/autostart when
+# you toggle "launch on login", and a whole-dir symlink would drop those into
+# this repo. Only the entries tracked here get linked; the rest stay local.
+for f in "$DOT"/.config/autostart/*.desktop; do
+  [ -e "$f" ] || continue   # unmatched glob
+  link "$f" "$HOME/.config/autostart/$(basename "$f")"
 done
 
 # Claude Code (statusline + settings; settings.local.json stays machine-local)

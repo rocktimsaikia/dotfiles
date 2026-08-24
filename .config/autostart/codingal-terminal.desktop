@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Codingal Terminal
+Exec=ghostty
+X-GNOME-Autostart-enabled=true
