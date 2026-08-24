@@ -296,6 +296,15 @@ awlogs() {
 	aws logs tail /ecs/cg-backend/ --since "${2:-1h}" --format short "${opts[@]}"
 }
 
+# ECS task-definition env vars as KEY=VALUE: awenv [family[:revision]] [region]
+# Prints prod secrets - pipe to a file or grep, don't paste output around.
+awenv() {
+	aws ecs describe-task-definition --region "${2:-ap-south-1}" \
+		--task-definition "${1:-cg-backend}" \
+		--query 'taskDefinition.containerDefinitions[0].environment[].[name,value]' \
+		--output text | sort | awk -F'\t' '{print $1"="$2}'
+}
+
 alias actions='gh workflow view 1653306'
 alias pc='SKIP=tests pre-commit run'
 
