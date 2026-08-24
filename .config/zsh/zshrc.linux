@@ -1,7 +1,11 @@
 # Linux-specific zsh configuration
 
-# Neovim
-export PATH="$HOME/neovim/bin:$PATH"
+# Neovim: skip the /snap/bin/nvim wrapper, it costs ~90ms per launch.
+# nvim's snap is classic confinement, so the raw binary is the same program.
+if [[ -x /snap/nvim/current/usr/bin/nvim ]]; then
+	alias nvim=/snap/nvim/current/usr/bin/nvim
+	export EDITOR=/snap/nvim/current/usr/bin/nvim
+fi
 
 # Bun
 export BUN_INSTALL="$HOME/.bun"
