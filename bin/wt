@@ -43,14 +43,27 @@ if [ -z "$name" ]; then
 	exit 1
 fi
 
+branch="$BRANCH_PREFIX$name"
 dir="$BASE_DIR/$name"
+
+# If the branch is already checked out in another worktree, open that worktree
+# instead of trying to create a duplicate directory for it.
+existing_dir=$(git -C "$REPO" worktree list --porcelain | awk -v branch="refs/heads/$branch" '
+	$1 == "worktree" { dir = substr($0, 10) }
+	$1 == "branch" && $2 == branch { print dir; exit }
+')
+[ -z "$existing_dir" ] || dir="$existing_dir"
 
 if [ ! -d "$dir" ]; then
 	mkdir -p "$BASE_DIR"
-	if [ "$START" != "${START#origin/}" ]; then
-		git -C "$REPO" fetch origin "$BASE_BRANCH"
+	if git -C "$REPO" show-ref --verify --quiet "refs/heads/$branch"; then
+		git -C "$REPO" worktree add "$dir" "$branch"
+	else
+		if [ "$START" != "${START#origin/}" ]; then
+			git -C "$REPO" fetch origin "$BASE_BRANCH"
+		fi
+		git -C "$REPO" worktree add "$dir" -b "$branch" "$START"
 	fi
-	git -C "$REPO" worktree add "$dir" -b "$BRANCH_PREFIX$name" "$START"
 
 	# node_modules is gitignored, so a fresh worktree has none and every node
 	# tool breaks there -- typescript-language-server exits with "Could not find
