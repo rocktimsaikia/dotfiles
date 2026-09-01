@@ -140,6 +140,10 @@ alias dot="cd ~/dotfiles"
 # Make dir(s) and cd into it
 mkcd() { mkdir -p "$1" && cd "$1"; }
 
+mkfile() {
+	mkdir -p "$(dirname "$1")" && touch "$1"
+}
+
 alias bat="bat -p"
 
 # Open file in Google Chrome
@@ -320,3 +324,5 @@ pullall() {
 
 # Who's listening on the 3000-3999 dev port range
 alias devports="sudo ss -lntp | awk '\$4 ~ /:3[0-9]{3}\$/'"
+
+alias review="difit @ master --merge-base --keep-alive"
