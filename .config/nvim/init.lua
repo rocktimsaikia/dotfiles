@@ -194,6 +194,10 @@ require("lazy").setup({
                 }
                 vim.lsp.enable("tailwindcss")
 
+                -- cmd/filetypes/root_markers come from nvim-lspconfig's lsp/zls.lua
+                vim.lsp.config.zls = { capabilities = capabilities }
+                vim.lsp.enable("zls")
+
                 -- Set up on_attach via autocmd
                 vim.api.nvim_create_autocmd("LspAttach", {
                     callback = function(args)
