@@ -19,3 +19,5 @@
 [credential "https://gist.github.com"]
 	helper =
 	helper = !gh auth git-credential
+[url "https://github.com/"]
+	insteadOf = git@github.com:
