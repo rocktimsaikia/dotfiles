@@ -92,3 +92,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
+
+# Secrets. Lives in $HOME, deliberately outside the dotfiles repo.
+[ -f ~/.secrets ] && source ~/.secrets
