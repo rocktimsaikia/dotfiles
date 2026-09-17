@@ -10,6 +10,7 @@ Personal global memory shared across AI CLI agents:
 - When offering multiple-choice options to the user (including every `AskUserQuestion` call), always mark one as the recommended default and say why. Concretely: append `(Recommended)` to that option's `label` and give the reason in its `description`. Putting the preferred option first is NOT enough - it must be labeled. Only skip when there is genuinely no basis to prefer one.
 - Create git worktrees with the `wt <name>` bin script, not `git worktree add` or the `EnterWorktree` tool.
 - Multiple Linear MCPs may exist. For any Linear task whose issue ID prefix is `ROC-`, always use the `linear-rocktim` MCP.
+- Always use the `agent-browser` skill to open any internet links (do not use other browser automation tools for this).
 
 ## UI / styling
 
