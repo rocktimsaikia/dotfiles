@@ -207,6 +207,7 @@ alias fzfone='find . -maxdepth 1 -type f | fzf'
 # tty, which interactive subcommands (ssm start-session) need.
 aws() {
 	[[ "$1" == login ]] && { command aws "$@"; return; }
+	local orig_profile=$AWS_PROFILE
 	local -x AWS_PROFILE=${AWS_PROFILE:-prod}
 	local err rc
 	err=$(mktemp) || return 1
@@ -218,7 +219,9 @@ aws() {
 		local ans
 		read "ans?aws session expired. Run 'aws login' and retry? [Y/n] "
 		[[ "$ans" == [nN]* ]] && return $rc
-		command aws login || return $?
+		# Login with the caller's original profile, not our forced default -
+		# must match plain `aws login` behavior exactly.
+		AWS_PROFILE=$orig_profile command aws login || return $?
 		command aws "$@"
 		return $?
 	fi
@@ -326,3 +329,5 @@ pullall() {
 alias devports="sudo ss -lntp | awk '\$4 ~ /:3[0-9]{3}\$/'"
 
 alias review="difit @ master --merge-base --keep-alive"
+
+alias research="feynman"
