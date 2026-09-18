@@ -331,3 +331,6 @@ alias devports="sudo ss -lntp | awk '\$4 ~ /:3[0-9]{3}\$/'"
 alias review="difit @ master --merge-base --keep-alive"
 
 alias research="feynman"
+
+# Copy a file's contents to the clipboard: copy <path>
+copy() { [ -n "$1" ] || { echo "copy: need a file" >&2; return 1; }; clipcopy < "$1" && echo "✅ copied ($(wc -c < "$1" | tr -d " ") bytes)"; }
