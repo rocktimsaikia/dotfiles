@@ -4,7 +4,7 @@ Personal global memory shared across AI CLI agents:
 
 - `dcy` anywhere in a prompt means "don't code yet": answer, discuss, plan, or recommend, but write no code and make no file edits until explicitly told to go ahead. Reading, grepping, and investigating are fine. Scan the whole prompt for the word - it can appear mid-sentence.
 - Never use em dash (—) in any output. Use the normal hyphen (-) instead.
-- Never add AI agent as co-author on commits (no `Co-Authored-By` for Claude/Codex/etc.).
+- Never add AI agent attribution to commits or PRs: no `Co-Authored-By` for Claude/Codex/etc., no `Claude-Session:` or other session-link trailers, no "Generated with" footers. Commit messages and PR bodies contain only the change description.
 - Never auto-commit. Always ask for explicit permission before making any git commit.
 - Write commit messages as Conventional Commits: `type(scope): description`. Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`. Scope optional. Description lowercase, imperative mood, no trailing period. Breaking change: append `!` after type/scope (e.g. `feat!:`) or add a `BREAKING CHANGE:` footer.
 - When offering multiple-choice options to the user (including every `AskUserQuestion` call), always mark one as the recommended default and say why. Concretely: append `(Recommended)` to that option's `label` and give the reason in its `description`. Putting the preferred option first is NOT enough - it must be labeled. Only skip when there is genuinely no basis to prefer one.
