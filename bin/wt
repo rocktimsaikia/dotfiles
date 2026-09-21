@@ -75,16 +75,20 @@ if [ ! -d "$dir" ]; then
 	# a valid TypeScript installation". Borrow the main checkout's copy instead
 	# of installing 1.2G per worktree; branches that change deps get main's
 	# versions, which is already true of every tool run from the main checkout.
-	if [ -d "$REPO/web/node_modules" ] && [ ! -e "$dir/web/node_modules" ]; then
-		ln -s "$REPO/web/node_modules" "$dir/web/node_modules"
+	# ponytail: root and web/ cover every repo here; add more paths if a
+	# monorepo shows up with node_modules somewhere else.
+	exclude="$(git -C "$REPO" rev-parse --git-common-dir)/info/exclude"
+	for rel in node_modules web/node_modules; do
+		[ -d "$REPO/$rel" ] && [ ! -e "$dir/$rel" ] || continue
+		mkdir -p "$(dirname "$dir/$rel")"
+		ln -s "$REPO/$rel" "$dir/$rel"
 		# The repo ignores "node_modules/" -- trailing slash, so directories
 		# only. A symlink is not a directory and would show up as untracked,
 		# one `git add -A` away from being committed. info/exclude is shared by
 		# every worktree, so this is a one-time fixup per clone.
-		exclude="$(git -C "$REPO" rev-parse --git-common-dir)/info/exclude"
-		grep -qxF 'web/node_modules' "$exclude" 2>/dev/null ||
-			printf 'web/node_modules\n' >>"$exclude"
-	fi
+		grep -qxF "$rel" "$exclude" 2>/dev/null ||
+			printf '%s\n' "$rel" >>"$exclude"
+	done
 fi
 
 # "CE-8334 Fix the thing" - the status bar shows only the id until the window is
