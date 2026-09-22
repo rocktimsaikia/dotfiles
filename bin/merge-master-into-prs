@@ -22,10 +22,10 @@ for b in "${branches[@]}"; do
   git fetch -q origin "$b"
   git checkout -q "$b" || git checkout -q -b "$b" "origin/$b"
   git reset -q --hard "origin/$b"
-  if git merge -m "merge $BASE" "origin/$BASE"; then
-    git push -q origin "$b"
+  if git rebase "origin/$BASE"; then
+    git push -qf origin "$b"
   else
-    git merge --abort
+    git rebase --abort
     skipped+=("$b")
     echo "  ! conflict, skipped"
   fi

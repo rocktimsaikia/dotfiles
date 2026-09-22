@@ -64,4 +64,7 @@ case "$(uname)" in
     ;;
 esac
 
+# Crontab (not a plain file — spool is root-owned, so load via crontab(1) instead of symlinking)
+crontab "$DOT/cron/crontab" && echo "loaded  crontab -> $DOT/cron/crontab"
+
 echo "Done. Run 'exec zsh' to reload the shell."
