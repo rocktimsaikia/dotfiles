@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [ -n "$1" ]; then
+  npx live-server --open="$1"
+else
+  npx live-server
+fi
