@@ -11,6 +11,8 @@ Personal global memory shared across AI CLI agents:
 - New git worktree: symlink `node_modules` into it from original repo so worktree run same as original, no reinstall.
 - Multiple Linear MCPs may exist. For any Linear task whose issue ID prefix is `ROC-`, always use the `linear-rocktim` MCP.
 - Always use the `agent-browser` skill to open any internet links (do not use other browser automation tools for this).
+- New custom agent, from any repo or directory: always create it at `~/dotfiles-private/agents/<employer>/<name>.md`, never in a project's `.claude/agents/` or `~/.claude/agents/`. Current employer is `codingal`. Not sure which employer it belongs to? Ask me first. New employer folder? Add it to `links` in `~/dotfiles-private/setup-agents.sh` and run that script.
+- New skill, from any repo or directory: always create it at `~/dotfiles-private/skills/<name>/SKILL.md`, never directly in `~/.claude/skills`, `~/.claude/commands`, `~/.codex/skills`, or a project's `.claude/`. Then run `~/dotfiles-private/setup-skills.sh` to symlink it into every CLI agent.
 
 ## UI / styling
 
