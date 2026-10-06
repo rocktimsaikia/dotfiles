@@ -7,7 +7,52 @@
     "pr": ""
   },
   "permissions": {
-    "defaultMode": "auto"
+    "defaultMode": "auto",
+    "deny": [
+      "mcp__facebook__ads_activate_entity",
+      "mcp__facebook__ads_boost_ig_post",
+      "mcp__facebook__ads_catalog_create",
+      "mcp__facebook__ads_catalog_create_feed_rule",
+      "mcp__facebook__ads_catalog_create_product_feed",
+      "mcp__facebook__ads_catalog_create_product_feed_upload_session",
+      "mcp__facebook__ads_catalog_create_product_set",
+      "mcp__facebook__ads_catalog_delete_product",
+      "mcp__facebook__ads_catalog_event_source_connect",
+      "mcp__facebook__ads_catalog_event_source_disconnect",
+      "mcp__facebook__ads_catalog_product_create",
+      "mcp__facebook__ads_catalog_product_feed_delete",
+      "mcp__facebook__ads_catalog_product_feed_delete_rule",
+      "mcp__facebook__ads_catalog_product_set_delete",
+      "mcp__facebook__ads_catalog_update_catalog",
+      "mcp__facebook__ads_catalog_update_product",
+      "mcp__facebook__ads_catalog_update_product_feed",
+      "mcp__facebook__ads_catalog_update_product_set",
+      "mcp__facebook__ads_create_ad",
+      "mcp__facebook__ads_create_ad_set",
+      "mcp__facebook__ads_create_campaign",
+      "mcp__facebook__ads_create_creative",
+      "mcp__facebook__ads_create_custom_audience",
+      "mcp__facebook__ads_creative_delete",
+      "mcp__facebook__ads_creative_update",
+      "mcp__facebook__ads_creative_upload_local_image",
+      "mcp__facebook__ads_creative_upload_media",
+      "mcp__facebook__ads_delete_custom_audience",
+      "mcp__facebook__ads_delete_local_ad_image",
+      "mcp__facebook__ads_experiment_abtest_create_test",
+      "mcp__facebook__ads_experiment_abtest_update_test",
+      "mcp__facebook__ads_experiment_lift_create_test",
+      "mcp__facebook__ads_finalize_local_ad_image_upload",
+      "mcp__facebook__ads_log_ui_interaction",
+      "mcp__facebook__ads_pixel_event_create",
+      "mcp__facebook__ads_pixel_event_delete",
+      "mcp__facebook__ads_pixel_event_update",
+      "mcp__facebook__ads_pixel_parameter_create",
+      "mcp__facebook__ads_pixel_parameter_delete",
+      "mcp__facebook__ads_pixel_parameter_update",
+      "mcp__facebook__ads_update_custom_audience",
+      "mcp__facebook__ads_update_custom_audience_users",
+      "mcp__facebook__ads_update_entity"
+    ]
   },
   "model": "opus",
   "hooks": {
@@ -18,6 +63,16 @@
           {
             "type": "command",
             "command": "rtk hook claude"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__facebook__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/rocktim/dotfiles/.claude/hooks/facebook-ads-readonly.sh",
+            "timeout": 10
           }
         ]
       }
