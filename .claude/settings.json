@@ -54,7 +54,7 @@
       "mcp__facebook__ads_update_entity"
     ]
   },
-  "model": "opus",
+  "model": "claude-opus-5-5",
   "hooks": {
     "PreToolUse": [
       {
