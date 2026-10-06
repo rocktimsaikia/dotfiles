@@ -183,10 +183,10 @@ sync-ai-skills() {
 }
 
 # Claude CLI
-cc() { sync-ai-skills; claude --chrome "$@"; }
-ccr() { sync-ai-skills; claude --resume "$@"; }
-cct() { sync-ai-skills; claude --continue "$@"; }
-ccw() { sync-ai-skills; claude --chrome --worktree "$@"; }
+cc() { sync-ai-skills; claude --model claude-opus-5-5 --chrome "$@"; }
+ccr() { sync-ai-skills; claude --model claude-opus-5-5 --resume "$@"; }
+cct() { sync-ai-skills; claude --model claude-opus-5-5 --continue "$@"; }
+ccw() { sync-ai-skills; claude --model claude-opus-5-5 --chrome --worktree "$@"; }
 alias ccs="claude-sessions"
 # -s user, else default local scope binds server to the dir it was added from
 alias ccmcp="claude mcp add -s user --transport http"
